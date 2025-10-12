@@ -16,11 +16,12 @@ export function useBoardgames(userId?: string) {
         try {
             setLoading(true);
 
-            // Busca todos os jogos - COM OS NOMES CORRETOS DAS COLUNAS
+            // Busca todos os jogos ativos
             const { data: games, error: gamesError } = await supabase
                 .from('boardgames')
                 .select('*')
-                .order('name');  // ← era "nome"
+                //.eq('active', true)
+                .order('name');
 
             if (gamesError) throw gamesError;
 
@@ -91,20 +92,35 @@ export function useBoardgames(userId?: string) {
 
     const getGameTeachers = async (boardgameId: string): Promise<Profile[]> => {
         try {
-            const { data, error } = await supabase
+            // Passo 1: Buscar user_ids que ensinam este jogo
+            const { data: teachData, error: teachError } = await supabase
                 .from('user_teaches_game')
-                .select(`
-        profiles!inner (
-            id,
-            name,
-            email
-        )
-        `)
+                .select('user_id')
                 .eq('boardgame_id', boardgameId);
 
-            if (error) throw error;
+            if (teachError) {
+                console.error('Erro ao buscar user_teaches_game:', teachError);
+                throw teachError;
+            }
 
-            return data?.flatMap(item => item.profiles || []) || [];
+            if (!teachData || teachData.length === 0) {
+                return [];
+            }
+
+            // Passo 2: Buscar os perfis desses usuários
+            const userIds = teachData.map(t => t.user_id);
+
+            const { data: profiles, error: profilesError } = await supabase
+                .from('profiles')
+                .select('id, name, email')
+                .in('id', userIds);
+
+            if (profilesError) {
+                console.error('Erro ao buscar profiles:', profilesError);
+                throw profilesError;
+            }
+
+            return profiles || [];
         } catch (err) {
             console.error('Erro ao buscar professores:', err);
             return [];

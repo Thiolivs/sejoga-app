@@ -22,13 +22,7 @@ export function BoardgameList() {
     const [teachers, setTeachers] = useState<Profile[]>([]);
     const [loadingTeachers, setLoadingTeachers] = useState(false);
 
-
-    // 🔍 DEBUG: Adicione estes logs
-    console.log('🔍 User:', user?.id);
-    console.log('🔍 Loading:', loading);
-    console.log('🔍 Boardgames:', boardgames);
-
-
+    
     const handleGameClick = async (game: BoardgameWithTeachers) => {
         setSelectedGame(game);
         setLoadingTeachers(true);

@@ -1,18 +1,20 @@
 export interface Boardgame {
     id: string;
-    name: string;  // era "nome"
-    publisher?: string;  // era "editora"
-    year_received?: number;  // era "ano_recebimento"
-    year_release?: number;  // era "ano_lancamento"
-    players_min?: number;  // era "jogadores_min"
-    players_max?: number;  // era "jogadores_max"
-    coop: boolean;  // era "cooperativo"
-    comp: boolean;  // era "competitivo"
-    kids: boolean;  // era "infantil"
-    base: boolean;  // era "jogo_base"
-    expansion: boolean;  // era "expansao"
+    name: string;  
+    publisher?: string;  
+    year_received?: number;  
+    year_release?: number;  
+    players_min?: number;  
+    players_max?: number;  
+    coop: boolean;  
+    comp: boolean;  
+    kids: boolean;  
+    base: boolean;  
+    expansion: boolean; 
     created_at: string;
     updated_at: string;
+    active: boolean;
+    copies: number;
 }
 
 export interface UserTeachesGame {
