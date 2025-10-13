@@ -27,7 +27,7 @@ export function useBoardgames(userId?: string) {
 
             if (gamesError) throw gamesError;
 
-            // Se tiver userId, busca os jogos que o usuário sabe ensinar
+            // If userId, search games that user can teach
             let userTeaches: string[] = [];
             if (userId) {
                 const { data: teachData, error: teachError } = await supabase
@@ -42,7 +42,7 @@ export function useBoardgames(userId?: string) {
                 }
             }
 
-            // Combina os dados com informações de empréstimo
+            // Combine data with loan infos
             const gamesWithInfo = games?.map(game => {
                 const loan = loans.get(game.id);
                 return {
