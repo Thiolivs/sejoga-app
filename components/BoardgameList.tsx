@@ -3,23 +3,56 @@
 import { useState } from 'react';
 import { useBoardgames } from '@/hooks/useBoardgames';
 import { useUser } from '@/hooks/useUser';
-import { useUserRole } from '@/hooks/useUserRole'; // ← NOVO
+import { useUserRole } from '@/hooks/useUserRole';
+import { useGameLoans } from '@/hooks/useGameLoans';
 import type { BoardgameWithTeachers, Profile } from '@/types/database';
 
 export function BoardgameList() {
     const { user, loading: userLoading } = useUser();
-    const { role, isAdmin, isMonitor, loading: roleLoading } = useUserRole(); // ← NOVO
+    const { role, isAdmin, isMonitor, loading: roleLoading } = useUserRole();
     const { boardgames, loading, error, toggleTeach, getGameTeachers } = useBoardgames(user?.id);
+    const { borrowGame, returnGame, getLoanInfo, isLoanedByMe } = useGameLoans();
+
     const [selectedGame, setSelectedGame] = useState<BoardgameWithTeachers | null>(null);
     const [teachers, setTeachers] = useState<Profile[]>([]);
     const [loadingTeachers, setLoadingTeachers] = useState(false);
+    const [borrower, setBorrower] = useState<Profile | null>(null);
+    const [loadingBorrower, setLoadingBorrower] = useState(false);
 
     const handleGameClick = async (game: BoardgameWithTeachers) => {
         setSelectedGame(game);
         setLoadingTeachers(true);
+        setLoadingBorrower(true);
+
+        // Busca professores
         const teachersList = await getGameTeachers(game.id);
         setTeachers(teachersList);
         setLoadingTeachers(false);
+
+        // Busca info de empréstimo
+        const { borrower: gameBorrower } = await getLoanInfo(game.id);
+        setBorrower(gameBorrower);
+        setLoadingBorrower(false);
+    };
+
+    const handleBorrow = async (boardgameId: string) => {
+        if (!user) return;
+
+        const result = await borrowGame(boardgameId, user.id);
+        if (result.success) {
+            alert('Jogo emprestado com sucesso! ✅');
+        } else {
+            alert(`Erro: ${result.error}`);
+        }
+    };
+
+    const handleReturn = async (boardgameId: string) => {
+        const result = await returnGame(boardgameId);
+        if (result.success) {
+            alert('Jogo devolvido com sucesso! ✅');
+        } else {
+            alert(`Erro: ${result.error}`);
+        }
     };
 
     if (userLoading || loading || roleLoading) {
@@ -50,14 +83,6 @@ export function BoardgameList() {
             <div className="p-4">
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
                     <h3 className="text-yellow-800 font-semibold text-lg">Nenhum jogo encontrado</h3>
-                    <p className="text-yellow-600 text-sm mt-2">
-                        Parece que ainda não há jogos cadastrados no sistema.
-                    </p>
-                    {isAdmin && (
-                        <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                            Adicionar Primeiro Jogo
-                        </button>
-                    )}
                 </div>
             </div>
         );
@@ -65,141 +90,132 @@ export function BoardgameList() {
 
     return (
         <div className="space-y-4 p-4">
-            {/* NOVO: Badge mostrando o role do usuário */}
             <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center gap-2">
-                    <p className="text-sm text-gray-600">
-                        {boardgames.length} {boardgames.length === 1 ? 'jogo encontrado' : 'jogos encontrados'}
-                    </p>
-                </div>
+                <p className="text-sm text-gray-600">
+                    {boardgames.length} {boardgames.length === 1 ? 'jogo encontrado' : 'jogos encontrados'}
+                </p>
 
-                {/* Badge de role */}
                 {(isAdmin || isMonitor) && (
-                    <div className="flex items-center gap-2">
-                        <span
-                            className={`px-3 py-1 rounded-full text-xs font-semibold ${isAdmin
-                                    ? 'bg-red-100 text-red-800'
-                                    : 'bg-blue-100 text-blue-800'
-                                }`}
-                        >
-                            {isAdmin ? '👑 Admin' : '🎓 Monitor'}
-                        </span>
-                    </div>
+                    <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${isAdmin ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+                            }`}
+                    >
+                        {isAdmin ? '👑 Admin' : '🎓 Monitor'}
+                    </span>
                 )}
             </div>
-
-            {/* NOVO: Botão para adicionar jogo (apenas admins) */}
-            {isAdmin && (
-                <div className="mb-4">
-                    <button
-                        onClick={() => {/* TODO: abrir modal de adicionar jogo */ }}
-                        className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center justify-center gap-2"
-                    >
-                        ➕ Adicionar Novo Jogo
-                    </button>
-                </div>
-            )}
 
             {boardgames.map((game) => (
                 <div
                     key={game.id}
-                    className="border rounded-lg p-4 hover:shadow-md transition-shadow bg-white"
+                    className={`border rounded-lg p-4 transition-all ${game.isLoaned
+                            ? 'bg-red-50 border-red-300'
+                            : 'bg-white hover:shadow-md'
+                        }`}
                 >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-4">
                         <div
                             className="flex-1 cursor-pointer"
                             onClick={() => handleGameClick(game)}
                         >
                             <div className="flex items-center gap-2">
                                 <h3 className="font-semibold text-lg">{game.name}</h3>
-                                {/* NOVO: Badge de número de cópias (apenas admins veem) */}
-                                {isAdmin && game.copies > 0 && (
-                                    <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded">
+
+                                {/* Badge de empréstimo */}
+                                {game.isLoaned && (
+                                    <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded">
+                                        🔒 Emprestado
+                                    </span>
+                                )}
+
+                                {game.copies > 0 && (
+                                    <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
                                         {game.copies} {game.copies === 1 ? 'cópia' : 'cópias'}
                                     </span>
                                 )}
                             </div>
+
                             <div className="flex gap-2 mt-2 flex-wrap text-sm">
                                 {game.publisher && (
-                                    <span className="px-2 py-1 bg-gray-100 rounded">
+                                    <span className="px-2 py-1 bg-gray-100 rounded text-xs">
                                         {game.publisher}
                                     </span>
                                 )}
                                 {game.players_min && game.players_max && (
-                                    <span className="px-2 py-1 bg-gray-100 rounded">
+                                    <span className="px-2 py-1 bg-gray-100 rounded text-xs">
                                         {game.players_min}-{game.players_max} jogadores
                                     </span>
                                 )}
                                 {game.coop && (
-                                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded">
+                                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
                                         Cooperativo
                                     </span>
                                 )}
                                 {game.comp && (
-                                    <span className="px-2 py-1 bg-red-100 text-red-800 rounded">
+                                    <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">
                                         Competitivo
                                     </span>
                                 )}
                                 {game.kids && (
-                                    <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded">
+                                    <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs">
                                         Infantil
-                                    </span>
-                                )}
-                                {game.expansion && (
-                                    <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded">
-                                        Expansão
                                     </span>
                                 )}
                             </div>
                         </div>
 
-                        {/* NOVO: Checkbox apenas para monitores e admins */}
-                        {isMonitor && (
-                            <div className="flex items-center gap-2 ml-4">
-                                <input
-                                    type="checkbox"
-                                    id={`teach-${game.id}`}
-                                    checked={game.canTeach}
-                                    onChange={() => toggleTeach(game.id, game.canTeach || false)}
-                                    className="w-4 h-4 cursor-pointer"
-                                />
-                                <label
-                                    htmlFor={`teach-${game.id}`}
-                                    className="text-sm cursor-pointer whitespace-nowrap"
-                                >
-                                    Sei ensinar
-                                </label>
-                            </div>
-                        )}
+                        <div className="flex flex-col gap-2">
+                            {/* Checkbox "Sei ensinar" - apenas monitores */}
+                            {isMonitor && (
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        id={`teach-${game.id}`}
+                                        checked={game.canTeach}
+                                        onChange={() => toggleTeach(game.id, game.canTeach || false)}
+                                        className="w-4 h-4 cursor-pointer"
+                                    />
+                                    <label
+                                        htmlFor={`teach-${game.id}`}
+                                        className="text-sm cursor-pointer whitespace-nowrap"
+                                    >
+                                        Sei ensinar
+                                    </label>
+                                </div>
+                            )}
 
-                        {/* NOVO: Botões de ação para admins */}
-                        {isAdmin && (
-                            <div className="flex gap-2 ml-4">
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        // TODO: editar jogo
-                                    }}
-                                    className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded"
-                                >
-                                    ✏️ Editar
-                                </button>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        // TODO: deletar jogo
-                                    }}
-                                    className="px-3 py-1 text-xs bg-red-100 text-red-700 hover:bg-red-200 rounded"
-                                >
-                                    🗑️ Deletar
-                                </button>
-                            </div>
-                        )}
+                            {/* Botão de empréstimo/devolução - apenas monitores */}
+                            {isMonitor && (
+                                <div>
+                                    {game.isLoaned ? (
+                                        isLoanedByMe(game.id, user?.id) ? (
+                                            <button
+                                                onClick={() => handleReturn(game.id)}
+                                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+                                            >
+                                                ✅ Devolver
+                                            </button>
+                                        ) : (
+                                            <div className="px-4 py-2 bg-gray-300 text-gray-600 rounded-lg text-sm font-medium cursor-not-allowed">
+                                                🔒 Indisponível
+                                            </div>
+                                        )
+                                    ) : (
+                                        <button
+                                            onClick={() => handleBorrow(game.id)}
+                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+                                        >
+                                            📦 Pegar Emprestado
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             ))}
 
-            {/* Modal - continua igual */}
+            {/* Modal */}
             {selectedGame && (
                 <div
                     className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
@@ -220,6 +236,35 @@ export function BoardgameList() {
                         </div>
 
                         <div className="space-y-4">
+                            {/* Status de empréstimo */}
+                            {selectedGame.isLoaned && (
+                                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                                    <h4 className="font-semibold text-red-800 mb-2">
+                                        🔒 Jogo Emprestado
+                                    </h4>
+                                    {loadingBorrower ? (
+                                        <p className="text-sm text-red-600">Carregando...</p>
+                                    ) : borrower ? (
+                                        <div>
+                                            <p className="text-sm text-red-700">
+                                                Emprestado para: <strong>{borrower.name}</strong>
+                                            </p>
+                                            <p className="text-xs text-red-600 mt-1">
+                                                {borrower.email}
+                                            </p>
+                                            {selectedGame.borrowedAt && (
+                                                <p className="text-xs text-red-600 mt-1">
+                                                    Desde: {new Date(selectedGame.borrowedAt).toLocaleString('pt-BR')}
+                                                </p>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-red-600">Informações não disponíveis</p>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Informações do jogo */}
                             <div>
                                 <h4 className="font-semibold mb-2">Informações do Jogo</h4>
                                 <div className="grid grid-cols-2 gap-2 text-sm">
@@ -241,16 +286,10 @@ export function BoardgameList() {
                                             <span>{selectedGame.players_min} - {selectedGame.players_max}</span>
                                         </>
                                     )}
-                                    {/* NOVO: Mostrar cópias apenas para admins */}
-                                    {isAdmin && selectedGame.copies && (
-                                        <>
-                                            <span className="text-gray-600">Cópias disponíveis:</span>
-                                            <span className="font-semibold text-green-700">{selectedGame.copies}</span>
-                                        </>
-                                    )}
                                 </div>
                             </div>
 
+                            {/* Quem sabe ensinar */}
                             <div>
                                 <h4 className="font-semibold mb-2">Quem sabe ensinar</h4>
                                 {loadingTeachers ? (
@@ -266,7 +305,6 @@ export function BoardgameList() {
                                                     <p className="text-sm font-medium">{teacher.name}</p>
                                                     <p className="text-xs text-gray-600">{teacher.email}</p>
                                                 </div>
-                                                {/* NOVO: Badge de role dos professores */}
                                                 {teacher.role === 'admin' && (
                                                     <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs rounded">
                                                         Admin

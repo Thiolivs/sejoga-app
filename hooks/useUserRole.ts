@@ -4,7 +4,7 @@ import { useUser } from './useUser';
 
 export function useUserRole() {
     const { user, loading: userLoading } = useUser();
-    const [role, setRole] = useState<'admin' | 'monitor' | 'user' | null>(null);
+    const [role, setRole] = useState <'admin' | 'monitor' | 'user' | null > (null);
     const [loading, setLoading] = useState(true);
     const supabase = createClientComponentClient();
 

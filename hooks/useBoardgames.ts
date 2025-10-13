@@ -1,22 +1,24 @@
 import { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { BoardgameWithTeachers, Profile } from '@/types/database';
+import { useGameLoans } from './useGameLoans';
 
 export function useBoardgames(userId?: string) {
     const [boardgames, setBoardgames] = useState<BoardgameWithTeachers[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const supabase = createClientComponentClient();
+    const { loans, isGameLoaned, isLoanedByMe } = useGameLoans();
 
     useEffect(() => {
         fetchBoardgames();
-    }, [userId]);
+    }, [userId, loans]); // Uptade when loans change
 
     const fetchBoardgames = async () => {
         try {
             setLoading(true);
 
-            // Busca todos os jogos ativos
+            // Search all active boards
             const { data: games, error: gamesError } = await supabase
                 .from('boardgames')
                 .select('*')
@@ -40,13 +42,20 @@ export function useBoardgames(userId?: string) {
                 }
             }
 
-            // Combina os dados
-            const gamesWithTeachStatus = games?.map(game => ({
-                ...game,
-                canTeach: userTeaches.includes(game.id)
-            })) || [];
+            // Combina os dados com informações de empréstimo
+            const gamesWithInfo = games?.map(game => {
+                const loan = loans.get(game.id);
+                return {
+                    ...game,
+                    canTeach: userTeaches.includes(game.id),
+                    isLoaned: isGameLoaned(game.id),
+                    loanedBy: loan?.user_id,
+                    borrowedAt: loan?.borrowed_at,
+                    dueDate: loan?.due_date,
+                };
+            }) || [];
 
-            setBoardgames(gamesWithTeachStatus);
+            setBoardgames(gamesWithInfo);
             setError(null);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Erro ao carregar jogos');
@@ -60,7 +69,6 @@ export function useBoardgames(userId?: string) {
 
         try {
             if (canTeach) {
-                // Remove o relacionamento
                 const { error } = await supabase
                     .from('user_teaches_game')
                     .delete()
@@ -69,7 +77,6 @@ export function useBoardgames(userId?: string) {
 
                 if (error) throw error;
             } else {
-                // Adiciona o relacionamento
                 const { error } = await supabase
                     .from('user_teaches_game')
                     .insert({ user_id: userId, boardgame_id: boardgameId });
@@ -77,7 +84,6 @@ export function useBoardgames(userId?: string) {
                 if (error) throw error;
             }
 
-            // Atualiza o estado local
             setBoardgames(prev =>
                 prev.map(game =>
                     game.id === boardgameId
@@ -92,22 +98,14 @@ export function useBoardgames(userId?: string) {
 
     const getGameTeachers = async (boardgameId: string): Promise<Profile[]> => {
         try {
-            // Passo 1: Buscar user_ids que ensinam este jogo
             const { data: teachData, error: teachError } = await supabase
                 .from('user_teaches_game')
                 .select('user_id')
                 .eq('boardgame_id', boardgameId);
 
-            if (teachError) {
-                console.error('Erro ao buscar user_teaches_game:', teachError);
-                throw teachError;
-            }
+            if (teachError) throw teachError;
+            if (!teachData || teachData.length === 0) return [];
 
-            if (!teachData || teachData.length === 0) {
-                return [];
-            }
-
-            // Passo 2: Buscar os perfis desses usuários
             const userIds = teachData.map(t => t.user_id);
 
             const { data: profiles, error: profilesError } = await supabase
@@ -115,10 +113,7 @@ export function useBoardgames(userId?: string) {
                 .select('id, name, email, role')
                 .in('id', userIds);
 
-            if (profilesError) {
-                console.error('Erro ao buscar profiles:', profilesError);
-                throw profilesError;
-            }
+            if (profilesError) throw profilesError;
 
             return profiles || [];
         } catch (err) {
@@ -133,6 +128,6 @@ export function useBoardgames(userId?: string) {
         error,
         toggleTeach,
         getGameTeachers,
-        refetch: fetchBoardgames
+        refetch: fetchBoardgames,
     };
 }
