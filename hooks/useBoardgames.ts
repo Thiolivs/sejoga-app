@@ -112,7 +112,7 @@ export function useBoardgames(userId?: string) {
 
             const { data: profiles, error: profilesError } = await supabase
                 .from('profiles')
-                .select('id, name, email')
+                .select('id, name, email, role')
                 .in('id', userIds);
 
             if (profilesError) {
