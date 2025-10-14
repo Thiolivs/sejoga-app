@@ -117,103 +117,73 @@ export function BoardgameList() {
             {boardgames.map((game) => (
                 <div
                     key={game.id}
-                    className={`border rounded-lg p-4 transition-all ${game.isLoaned
-                        ? 'bg-red-50 border-red-300'
-                        : 'bg-white hover:shadow-md'
+                    className={`border rounded-lg p-4 transition-all ${game.isLoaned ? 'bg-red-50 border-red-300' : 'bg-white hover:shadow-md'
                         }`}
                 >
-                    <div className="flex items-center justify-between gap-4">
-                        <div
-                            className="flex-1 cursor-pointer"
-                            onClick={() => handleGameClick(game)}
-                        >
-                            <div className="flex items-center gap-2">
-                                <h3 className="font-semibold text-lg">{game.name}</h3>
+                    {/* LINHA 1 - Nome + Tag */}
+                    <div
+                        className="flex items-center justify-between gap-4 cursor-pointer"
+                        onClick={() => handleGameClick(game)}
+                    >
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="font-semibold text-lg">{game.name}</h3>
 
-                                {game.isLoaned && (
-                                    <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded">
-                                        ⚔️ Emprestado
-                                    </span>
-                                )}
-
-                                {/*{game.copies > 0 && (
-                                    <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
-                                        {game.copies} {game.copies === 1 ? 'cópia' : 'cópias'}
-                                    </span>
-                                )}*/}
-                            </div>
-
-                            <div className="flex gap-2 mt-2 flex-wrap text-sm">
-                                {game.publisher && (
-                                    <span className="px-2 py-1 bg-gray-100 rounded text-xs">
-                                        {game.publisher}
-                                    </span>
-                                )}
-                                {/*{game.players_min && game.players_max && (
-                                    <span className="px-2 py-1 bg-gray-100 rounded text-xs">
-                                        {game.players_min}-{game.players_max} jogadores
-                                    </span>
-                                )}
-                                {game.coop && (
-                                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
-                                        Cooperativo
-                                    </span>
-                                )}
-                                {game.comp && (
-                                    <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">
-                                        Competitivo
-                                    </span>
-                                )}
-                                {game.kids && (
-                                    <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs">
-                                        Infantil
-                                    </span>
-                                )}*/}
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            {isMonitor && (
-                                <div className="flex items-center justify-end gap-2 text-right">
-                                    <span>Sei ensinar</span>
-                                    <input
-                                        type="checkbox"
-                                        id={`teach-${game.id}`}
-                                        checked={game.canTeach}
-                                        onChange={() => toggleTeach(game.id, game.canTeach || false)}
-                                        className="w-7 h-7 cursor-pointer"
-                                    />
-                                </div>
-                            )}
-
-                            {isMonitor && (
-                                <div>
-                                    {game.isLoaned ? (
-                                        game.loanedBy === user?.id ? (
-                                            <button
-                                                onClick={() => handleReturn(game.id)}
-                                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
-                                            >
-                                                👍 Devolver
-                                            </button>
-                                        ) : (
-                                            <div className="px-4 py-2 bg-gray-300 text-gray-600 rounded-lg text-sm font-medium cursor-not-allowed">
-                                                🔒 Indisponível
-                                            </div>
-                                        )
-                                    ) : (
-                                        <button
-                                            onClick={() => handleBorrow(game.id)}
-                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
-                                        >
-                                            🤏 Pegar Emprestado
-                                        </button>
-                                    )}
-                                </div>
+                            {game.isLoaned && (
+                                <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded">
+                                    ⚔️ Emprestado
+                                </span>
                             )}
                         </div>
                     </div>
+
+                    {/* LINHA 2 - Checkbox + Botão */}
+                    {isMonitor && (
+                        <div className="flex items-center justify-between mt-3">
+                            {/* Checkbox e texto à esquerda */}
+                            <div className="flex items-center gap-2 text-left">
+                                <input
+                                    type="checkbox"
+                                    id={`teach-${game.id}`}
+                                    checked={game.canTeach}
+                                    onChange={() => toggleTeach(game.id, game.canTeach || false)}
+                                    className="w-6 h-6 cursor-pointer"
+                                />
+                                <label
+                                    htmlFor={`teach-${game.id}`}
+                                    className="text-sm cursor-pointer select-none"
+                                >
+                                    Sei ensinar
+                                </label>
+                            </div>
+
+                            {/* Botão à direita */}
+                            <div>
+                                {game.isLoaned ? (
+                                    game.loanedBy === user?.id ? (
+                                        <button
+                                            onClick={() => handleReturn(game.id)}
+                                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+                                        >
+                                            👍 Devolver
+                                        </button>
+                                    ) : (
+                                        <div className="px-4 py-2 bg-gray-300 text-gray-600 rounded-lg text-sm font-medium cursor-not-allowed">
+                                            🔒 Indisponível
+                                        </div>
+                                    )
+                                ) : (
+                                    <button
+                                        onClick={() => handleBorrow(game.id)}
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+                                    >
+                                        🤏 Pegar Emprestado
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
+
             ))}
 
             {selectedGame && (
