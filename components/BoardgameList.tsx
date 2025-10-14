@@ -42,7 +42,7 @@ export function BoardgameList() {
             await refetchLoans?.();
             //await new Promise(resolve => setTimeout(resolve, 50));
             await refetch();
-            
+
             if (selectedGame?.id === boardgameId) {
                 const { borrower: gameBorrower } = await getLoanInfo(boardgameId);
                 setBorrower(gameBorrower);
@@ -57,7 +57,7 @@ export function BoardgameList() {
             await refetchLoans?.();
             //await new Promise(resolve => setTimeout(resolve, 50));
             await refetch();
-            
+
             if (selectedGame?.id === boardgameId) {
                 setBorrower(null);
             }
@@ -118,8 +118,8 @@ export function BoardgameList() {
                 <div
                     key={game.id}
                     className={`border rounded-lg p-4 transition-all ${game.isLoaned
-                            ? 'bg-red-50 border-red-300'
-                            : 'bg-white hover:shadow-md'
+                        ? 'bg-red-50 border-red-300'
+                        : 'bg-white hover:shadow-md'
                         }`}
                 >
                     <div className="flex items-center justify-between gap-4">
@@ -172,9 +172,10 @@ export function BoardgameList() {
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-2 border-2">
+                        <div className="flex flex-col gap-2">
                             {isMonitor && (
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center justify-end gap-2 text-right">
+                                    <span>Sei ensinar</span>
                                     <input
                                         type="checkbox"
                                         id={`teach-${game.id}`}
@@ -182,12 +183,6 @@ export function BoardgameList() {
                                         onChange={() => toggleTeach(game.id, game.canTeach || false)}
                                         className="w-7 h-7 cursor-pointer"
                                     />
-                                    <label
-                                        htmlFor={`teach-${game.id}`}
-                                        className="text-sm cursor-pointer whitespace-nowrap"
-                                    >
-                                        Sei ensinar
-                                    </label>
                                 </div>
                             )}
 
@@ -258,7 +253,7 @@ export function BoardgameList() {
                                             </p>*/}
                                             {selectedGame.borrowedAt && (
                                                 <p className="text-xs text-red-600 mt-1">
-                                                    Desde: {new Date(selectedGame.borrowedAt).toLocaleString('pt-BR').slice(0,10)}
+                                                    Desde: {new Date(selectedGame.borrowedAt).toLocaleString('pt-BR').slice(0, 10)}
                                                 </p>
                                             )}
                                         </div>
@@ -295,7 +290,7 @@ export function BoardgameList() {
                                             <span>{selectedGame.copies}</span>
                                         </>
                                     )}
-                                    
+
                                 </div>
                             </div>
 
