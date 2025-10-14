@@ -10,8 +10,8 @@ import type { BoardgameWithTeachers, Profile } from '@/types/database';
 export function BoardgameList() {
     const { user, loading: userLoading } = useUser();
     const { role, isAdmin, isMonitor, loading: roleLoading } = useUserRole();
-    const { boardgames, loading, error, toggleTeach, getGameTeachers } = useBoardgames(user?.id);
-    const { borrowGame, returnGame, getLoanInfo, isLoanedByMe } = useGameLoans();
+    const { boardgames, loading, error, toggleTeach, getGameTeachers, refetch } = useBoardgames(user?.id);
+    const { borrowGame, returnGame, getLoanInfo, refetchLoans } = useGameLoans();
 
     const [selectedGame, setSelectedGame] = useState<BoardgameWithTeachers | null>(null);
     const [teachers, setTeachers] = useState<Profile[]>([]);
@@ -24,12 +24,10 @@ export function BoardgameList() {
         setLoadingTeachers(true);
         setLoadingBorrower(true);
 
-        // Busca professores
         const teachersList = await getGameTeachers(game.id);
         setTeachers(teachersList);
         setLoadingTeachers(false);
 
-        // Busca info de empréstimo
         const { borrower: gameBorrower } = await getLoanInfo(game.id);
         setBorrower(gameBorrower);
         setLoadingBorrower(false);
@@ -40,18 +38,29 @@ export function BoardgameList() {
 
         const result = await borrowGame(boardgameId, user.id);
         if (result.success) {
-            alert('Jogo emprestado com sucesso! ✅');
-        } else {
-            alert(`Erro: ${result.error}`);
+            //await new Promise(resolve => setTimeout(resolve, 50));
+            await refetchLoans?.();
+            //await new Promise(resolve => setTimeout(resolve, 50));
+            await refetch();
+            
+            if (selectedGame?.id === boardgameId) {
+                const { borrower: gameBorrower } = await getLoanInfo(boardgameId);
+                setBorrower(gameBorrower);
+            }
         }
     };
 
     const handleReturn = async (boardgameId: string) => {
         const result = await returnGame(boardgameId);
         if (result.success) {
-            alert('Jogo devolvido com sucesso! ✅');
-        } else {
-            alert(`Erro: ${result.error}`);
+            //await new Promise(resolve => setTimeout(resolve, 50));
+            await refetchLoans?.();
+            //await new Promise(resolve => setTimeout(resolve, 50));
+            await refetch();
+            
+            if (selectedGame?.id === boardgameId) {
+                setBorrower(null);
+            }
         }
     };
 
@@ -100,7 +109,7 @@ export function BoardgameList() {
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${isAdmin ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
                             }`}
                     >
-                        {isAdmin ? '👑 Admin' : '🎓 Monitor'}
+                        {isAdmin ? 'Admin' : 'Monitor'}
                     </span>
                 )}
             </div>
@@ -121,18 +130,17 @@ export function BoardgameList() {
                             <div className="flex items-center gap-2">
                                 <h3 className="font-semibold text-lg">{game.name}</h3>
 
-                                {/* Badge de empréstimo */}
                                 {game.isLoaned && (
                                     <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded">
-                                        🔒 Emprestado
+                                        ⚔️ Emprestado
                                     </span>
                                 )}
 
-                                {game.copies > 0 && (
+                                {/*{game.copies > 0 && (
                                     <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
                                         {game.copies} {game.copies === 1 ? 'cópia' : 'cópias'}
                                     </span>
-                                )}
+                                )}*/}
                             </div>
 
                             <div className="flex gap-2 mt-2 flex-wrap text-sm">
@@ -141,7 +149,7 @@ export function BoardgameList() {
                                         {game.publisher}
                                     </span>
                                 )}
-                                {game.players_min && game.players_max && (
+                                {/*{game.players_min && game.players_max && (
                                     <span className="px-2 py-1 bg-gray-100 rounded text-xs">
                                         {game.players_min}-{game.players_max} jogadores
                                     </span>
@@ -160,12 +168,11 @@ export function BoardgameList() {
                                     <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs">
                                         Infantil
                                     </span>
-                                )}
+                                )}*/}
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-2">
-                            {/* Checkbox "Sei ensinar" - apenas monitores */}
+                        <div className="flex flex-col gap-2 border-2">
                             {isMonitor && (
                                 <div className="flex items-center gap-2">
                                     <input
@@ -173,7 +180,7 @@ export function BoardgameList() {
                                         id={`teach-${game.id}`}
                                         checked={game.canTeach}
                                         onChange={() => toggleTeach(game.id, game.canTeach || false)}
-                                        className="w-4 h-4 cursor-pointer"
+                                        className="w-7 h-7 cursor-pointer"
                                     />
                                     <label
                                         htmlFor={`teach-${game.id}`}
@@ -184,16 +191,15 @@ export function BoardgameList() {
                                 </div>
                             )}
 
-                            {/* Botão de empréstimo/devolução - apenas monitores */}
                             {isMonitor && (
                                 <div>
                                     {game.isLoaned ? (
-                                        isLoanedByMe(game.id, user?.id) ? (
+                                        game.loanedBy === user?.id ? (
                                             <button
                                                 onClick={() => handleReturn(game.id)}
                                                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
                                             >
-                                                ✅ Devolver
+                                                👍 Devolver
                                             </button>
                                         ) : (
                                             <div className="px-4 py-2 bg-gray-300 text-gray-600 rounded-lg text-sm font-medium cursor-not-allowed">
@@ -205,7 +211,7 @@ export function BoardgameList() {
                                             onClick={() => handleBorrow(game.id)}
                                             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
                                         >
-                                            📦 Pegar Emprestado
+                                            🤏 Pegar Emprestado
                                         </button>
                                     )}
                                 </div>
@@ -215,7 +221,6 @@ export function BoardgameList() {
                 </div>
             ))}
 
-            {/* Modal */}
             {selectedGame && (
                 <div
                     className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
@@ -236,25 +241,24 @@ export function BoardgameList() {
                         </div>
 
                         <div className="space-y-4">
-                            {/* Status de empréstimo */}
                             {selectedGame.isLoaned && (
-                                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                                <div className="bg-red-50 border text-center border-red-200 rounded-lg p-4">
                                     <h4 className="font-semibold text-red-800 mb-2">
-                                        🔒 Jogo Emprestado
+                                        ⚔️ Jogo Emprestado
                                     </h4>
                                     {loadingBorrower ? (
                                         <p className="text-sm text-red-600">Carregando...</p>
                                     ) : borrower ? (
                                         <div>
                                             <p className="text-sm text-red-700">
-                                                Emprestado para: <strong>{borrower.name}</strong>
+                                                Para: 👤<strong>{borrower.name}</strong>
                                             </p>
-                                            <p className="text-xs text-red-600 mt-1">
+                                            {/*<p className="text-xs text-red-600 mt-1">
                                                 {borrower.email}
-                                            </p>
+                                            </p>*/}
                                             {selectedGame.borrowedAt && (
                                                 <p className="text-xs text-red-600 mt-1">
-                                                    Desde: {new Date(selectedGame.borrowedAt).toLocaleString('pt-BR')}
+                                                    Desde: {new Date(selectedGame.borrowedAt).toLocaleString('pt-BR').slice(0,10)}
                                                 </p>
                                             )}
                                         </div>
@@ -264,7 +268,6 @@ export function BoardgameList() {
                                 </div>
                             )}
 
-                            {/* Informações do jogo */}
                             <div>
                                 <h4 className="font-semibold mb-2">Informações do Jogo</h4>
                                 <div className="grid grid-cols-2 gap-2 text-sm">
@@ -286,11 +289,17 @@ export function BoardgameList() {
                                             <span>{selectedGame.players_min} - {selectedGame.players_max}</span>
                                         </>
                                     )}
+                                    {selectedGame.copies && (
+                                        <>
+                                            <span className="text-gray-600">Cópias:</span>
+                                            <span>{selectedGame.copies}</span>
+                                        </>
+                                    )}
+                                    
                                 </div>
                             </div>
 
-                            {/* Quem sabe ensinar */}
-                            <div>
+                            <div className="bg-green-50 border  border-green-200 rounded-lg p-4">
                                 <h4 className="font-semibold mb-2">Quem sabe ensinar</h4>
                                 {loadingTeachers ? (
                                     <p className="text-sm text-gray-600">Carregando...</p>
@@ -298,14 +307,14 @@ export function BoardgameList() {
                                     <ul className="space-y-2">
                                         {teachers.map((teacher) => (
                                             <li key={teacher.id} className="flex items-center gap-2">
-                                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                                {/*<div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                                                     {teacher.name?.charAt(0).toUpperCase()}
-                                                </div>
+                                                </div>*/}
                                                 <div className="flex-1">
-                                                    <p className="text-sm font-medium">{teacher.name}</p>
-                                                    <p className="text-xs text-gray-600">{teacher.email}</p>
+                                                    <p className="text-sm font-medium">👤 {teacher.name}</p>
+                                                    {/*<p className="text-xs text-gray-600">{teacher.email}</p>*/}
                                                 </div>
-                                                {teacher.role === 'admin' && (
+                                                {/*{teacher.role === 'admin' && (
                                                     <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs rounded">
                                                         Admin
                                                     </span>
@@ -314,7 +323,7 @@ export function BoardgameList() {
                                                     <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded">
                                                         Monitor
                                                     </span>
-                                                )}
+                                                )}*/}
                                             </li>
                                         ))}
                                     </ul>

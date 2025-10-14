@@ -13,26 +13,34 @@ export function useGameLoans() {
     }, []);
 
     const fetchActiveLoans = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('game_loans')
-                .select('*')
-                .is('returned_at', null); // Only active loans
+    try {
+        
+        const { data, error } = await supabase
+            .from('game_loans')
+            .select('*')
+            .is('returned_at', null);
 
-            if (error) throw error;
+        if (error) throw error;
 
-            const loansMap = new Map<string, GameLoan>();
-            data?.forEach(loan => {
-                loansMap.set(loan.boardgame_id, loan);
-            });
 
+        const loansMap = new Map<string, GameLoan>();
+        data?.forEach(loan => {
+            loansMap.set(loan.boardgame_id, loan);
+        });
+
+        
+        // Retorna uma promise que resolve quando setState terminar
+        return new Promise<void>((resolve) => {
             setLoans(loansMap);
-        } catch (err) {
-            console.error('Erro ao buscar empréstimos:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
+            // Aguarda o próximo tick para garantir que o estado foi atualizado
+            setTimeout(() => resolve(), 0);
+        });
+    } catch (err) {
+        console.error('Erro ao buscar empréstimos:', err);
+    } finally {
+        setLoading(false);
+    }
+};
 
     const subscribeToLoans = () => {
         // REALTIME: Listen changes on table game_loans
@@ -99,6 +107,7 @@ export function useGameLoans() {
             return { success: true, loan: data };
         } catch (err: any) {
             console.error('Erro ao emprestar jogo:', err);
+            alert("O jogo está emprestado. Recarregue a página ")
             return {
                 success: false,
                 error: err.message || 'Erro ao emprestar jogo'
@@ -170,5 +179,7 @@ export function useGameLoans() {
         getLoanInfo,
         isGameLoaned,
         isLoanedByMe,
+        refetchLoans: fetchActiveLoans, 
+
     };
 }
