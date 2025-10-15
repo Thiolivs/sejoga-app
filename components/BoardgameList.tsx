@@ -9,7 +9,7 @@ import type { BoardgameWithTeachers, Profile } from '@/types/database';
 
 export function BoardgameList() {
     const { user, loading: userLoading } = useUser();
-    const { role, isAdmin, isMonitor, loading: roleLoading } = useUserRole();
+    const { isAdmin, isMonitor, loading: roleLoading } = useUserRole();
     const { boardgames, loading, error, toggleTeach, getGameTeachers, refetch } = useBoardgames(user?.id);
     const { borrowGame, returnGame, getLoanInfo, refetchLoans } = useGameLoans();
 
@@ -156,7 +156,6 @@ export function BoardgameList() {
                                 </label>
                             </div>
 
-                            {/* Botão à direita */}
                             <div>
                                 {game.isLoaned ? (
                                     game.loanedBy === user?.id ? (

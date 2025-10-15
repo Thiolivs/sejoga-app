@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
-
-
 type Tab = 'jogos' | 'perfil' | 'estatisticas' | 'gerenciar';
 
 interface UserAppContentProps {
