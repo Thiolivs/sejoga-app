@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
 
+
 type Tab = 'jogos' | 'perfil' | 'estatisticas' | 'gerenciar';
 
 interface UserAppContentProps {
@@ -23,17 +24,17 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                         <button
                             onClick={() => setActiveTab('jogos')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'jogos'
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                         >
-                            Meus Jogos
+                            Acervo
                         </button>
                         <button
                             onClick={() => setActiveTab('perfil')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'perfil'
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                         >
                             Perfil
@@ -41,8 +42,8 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                         <button
                             onClick={() => setActiveTab('estatisticas')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'estatisticas'
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                         >
                             Estatísticas
@@ -53,25 +54,31 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                             <button
                                 onClick={() => setActiveTab('gerenciar')}
                                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'gerenciar'
-                                        ? 'border-red-500 text-red-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    ? 'border-red-500 text-red-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                     }`}
                             >
-                                👑 Gerenciar
+                                Gerenciar
                             </button>
                         )}
                     </nav>
                 </div>
             </div>
 
+
             {/* Conteúdo das abas */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-2 py-2">
                 {activeTab === 'jogos' && (
                     <div>
                         <div className="mb-6">
-                            <h2 className="text-3xl font-bold text-gray-900">Meus Jogos</h2>
+                            <h2 className="text-gray-600 text-center mb-8 text-2xl font-bold">
+                                Todos os Jogos
+                            </h2>
                             <p className="text-gray-600 mt-2">
-                                Marque os jogos que você sabe ensinar para ajudar outros jogadores
+                                <i>"Prepara, menina, é sua vez de brilhar!"</i>🌟
+                            </p>
+                            <p className="text-gray-600 mt-0 text-md">
+                                <b>Marque aqui os jogos que você sabe ensinar 👨🏾‍🏫  </b>
                             </p>
                         </div>
                         <BoardgameList />

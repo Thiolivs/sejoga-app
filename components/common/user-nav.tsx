@@ -1,95 +1,108 @@
-"use client"
+"use client";
 
-import { User, createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { UserIcon } from "lucide-react"
-
-import {Avatar, AvatarFallback,AvatarImage,} from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { User, createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuShortcut,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
+} from "@/components/ui/dropdown-menu";
 
 export function UserNav() {
-    
-    const [user, setUser] = useState<User |null>()
-    const supabase = createClientComponentClient()
-    const router = useRouter()
+    const [user, setUser] = useState<User | null>(null);
+    const [name, setName] = useState<string | null>(null);
+    const [role, setRole] = useState<string | null>(null);
+    const supabase = createClientComponentClient();
+    const router = useRouter();
 
-    const getUser = async () => {
-        const {
-            data: {user},
-            error,
-        } = await supabase.auth.getUser()
-        
-        if (error){
-            console.log("UserNav: ", error)
-        }else{
-            setUser(user)
-        }
-    }
+    // Busca o usuário autenticado e o nome no perfil
+    useEffect(() => {
+        const fetchUserAndProfile = async () => {
+            const {
+                data: { user },
+                error: userError,
+            } = await supabase.auth.getUser();
 
-    useEffect(()=>{
-        getUser()
-    })
+            if (userError || !user) {
+                console.log("Erro ao buscar usuário:", userError);
+                return;
+            }
 
-    const handleSignOut = async ()=>{
+            setUser(user);
+
+            // Busca o nome do perfil na tabela "profiles"
+            const { data: profile, error: profileError } = await supabase
+                .from("profiles")
+                .select("name, role")
+                .eq("id", user.id)
+                .single();
+
+            if (profileError) {
+                console.log("Erro ao buscar perfil:", profileError);
+            } else if (profile) {
+                setName(profile.name)
+                setRole(profile.role);
+            }
+        };
+
+        fetchUserAndProfile();
+    }, [supabase]); // roda apenas uma vez
+
+    const handleSignOut = async () => {
         await supabase.auth.signOut();
         router.refresh();
-    }
+    };
 
     return (
         <>
-        {user && (
-            <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-9 w-9">
-                        <AvatarImage src="/avatars/user.png" alt="reStore" />
-                        <AvatarFallback>RS</AvatarFallback>
-                    </Avatar>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                            {user.email?.split("@")[0]}
-                        </p>
-                        <p className="text-xs leading-none text-muted-foreground">
-                            {user.email}
-                        </p>
-                    </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                        Profile
-                        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
-                    Log out
-                    <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-        
-        )
-        
-        }
-        
+            {user && (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                            <Avatar className="h-9 w-9">
+                                <AvatarImage src="/avatars/user.png" alt="User avatar" />
+                                <AvatarFallback>
+                                    {name ? name[0]?.toUpperCase() : name?.charAt(0)}
+                                </AvatarFallback>
+                            </Avatar>
+                        </Button>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent className="w-56" align="end" forceMount>
+                        <DropdownMenuLabel className="font-normal">
+                        
+                        <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-semibold leading-none">{name}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                        <p></p>
+                        <p></p>
+                            <span className="self-start bg-red-100 text-red-800 text-[11px] font-medium rounded px-1 py-0.5 leading-tight capitalize">
+                                {role}
+                            </span>
+                        </div>
+
+                        </DropdownMenuLabel>
+
+                        <DropdownMenuSeparator />
+
+                        <DropdownMenuItem onClick={handleSignOut}>
+                            Sair
+                            <DropdownMenuShortcut></DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            )}
         </>
-    )
+    );
 }
