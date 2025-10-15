@@ -73,7 +73,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                                 Todos os Jogos
                             </h2>
                             <p className="text-gray-600 mt-2">
-                                <i>"Prepara, menina, é sua vez de brilhar!"</i>🌟
+                                <i>&quot;Prepara, menina, é sua vez de brilhar!&quot;</i>🌟
                             </p>
                             <p className="text-gray-600 mt-0 text-md">
                                 <b>Marque aqui os jogos que você sabe ensinar 👨🏾‍🏫  </b>
