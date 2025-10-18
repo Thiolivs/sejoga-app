@@ -131,7 +131,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                                 Meu Perfil
                             </h2>
                             <p className="text-gray-600 mt-2"> 
-                                <i>&quot;It's me... {name}! &quot;</i>🍄
+                                <i>&quot;It&apos;s me... {name}!&quot;</i>🍄
                             </p>
                             <p className="text-gray-600 ml-5 text-md">
                                 <b>Aqui estão suas informações pessoais 💁🏽‍♀️ </b>
