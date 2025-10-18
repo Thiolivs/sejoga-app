@@ -20,12 +20,12 @@ import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     email: z.email({
-        error: "Must be a valid email",
+        error: "Precisa ser um e-mail válido",
     }),
     password: z.string({
-        error: "Password is required",
-    }).min(7, {
-        message: "Password must have a minimum 7 characters"
+        error: "Esqueceu a senha, bebê?",
+    }).min(6, {
+        message: "A senha precisa de no mínimo 6 caracteres"
     }).max(12),
 });
 
@@ -56,8 +56,9 @@ export function LoginAccountForm() {
         
     }
 
-    return <div className = "flex flex-col justify-center items-center space-y-2">
-        <span className="text-lg">Good to see you again</span>
+    return <div className = "flex flex-col justify-center text-center w-full space-y-4 p-6">
+        <span className="text-lg mb-10 "><i>Entra, vai ter Bordgame!</i></span>
+        
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} 
             className="flex flex-col space-y-2">
@@ -69,11 +70,9 @@ export function LoginAccountForm() {
                         <FormItem>
                             <FormLabel>E-mail</FormLabel>
                             <FormControl>
-                                <Input placeholder="E-mail" {...field} />
+                                <Input placeholder="" {...field} />
                             </FormControl>
-                            <FormDescription>
-                                This is your E-mail
-                            </FormDescription>
+                            
                             <FormMessage/>
                         </FormItem>
                     )}
@@ -84,19 +83,19 @@ export function LoginAccountForm() {
                     name="password"
                     render={({field}) =>(
                         <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel>Senha</FormLabel>
                             <FormControl>
-                                <Input placeholder="Password" {...field} />
+                                <Input type="password" placeholder="" {...field} />
                             </FormControl>
-                            <FormDescription>
+                            {/*<FormDescription>
                                 This is your Password
-                            </FormDescription>
+                            </FormDescription>*/}
                             <FormMessage/>
                         </FormItem>
                     )}
                 />
 
-                <Button type ="submit"> Login Account</Button>
+                <Button type ="submit" className="flex flex-col justify-center items-center mt-5"> SeJoga! </Button>
 
 
             </form>

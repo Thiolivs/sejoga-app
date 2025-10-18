@@ -215,7 +215,7 @@ export function BoardgameList() {
                                     ) : borrower ? (
                                         <div>
                                             <p className="text-sm text-red-700">
-                                                Para: 👤<strong>{borrower.name}</strong>
+                                                Para: 👤<strong>{borrower.first_name}</strong>
                                             </p>
                                             {/*<p className="text-xs text-red-600 mt-1">
                                                 {borrower.email}
@@ -275,7 +275,7 @@ export function BoardgameList() {
                                                     {teacher.name?.charAt(0).toUpperCase()}
                                                 </div>*/}
                                                 <div className="flex-1">
-                                                    <p className="text-sm font-medium">👤 {teacher.name}</p>
+                                                    <p className="text-sm font-medium">👤 {teacher.first_name}</p>
                                                     {/*<p className="text-xs text-gray-600">{teacher.email}</p>*/}
                                                 </div>
                                                 {/*{teacher.role === 'admin' && (

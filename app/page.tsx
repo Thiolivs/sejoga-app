@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/tabs"
 
 import { CreateAccountForm } from "@/components/auth/create-account-form";
-import { LoginAccountForm } from "@/components/auth/login-account-form";
+import { LoginAccountForm } from "@/components/auth/login-account-form"
+import Image from "next/image";
 
 export default async function Home() {
   
@@ -31,11 +32,23 @@ export default async function Home() {
   
 return (
     <div className="flex flex-col h-screen w-full justify-center items-center">
-      <Tabs defaultValue="create-account" className="w-[400px] border rounded-md pb-4 shadow-2xl">
+
+      <Image
+        src="/sejoga-id/MeepleColorido.png"
+        alt="Meeple Colorido"
+        width={160}
+        height={160}
+        className="mb-4"
+      />
+
+
+      {/*<div className="flex flex-col mb-10 w-full justify-center items-center">SeJoga no App!</div>*/}
+      
+      <Tabs defaultValue="login" className="w-[300px] border rounded-md pb-4 shadow-2xl">
         
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="create-account">Account</TabsTrigger>
           <TabsTrigger value="login">Login</TabsTrigger>
+          <TabsTrigger value="create-account">Criar conta</TabsTrigger>
         </TabsList>
         <TabsContent value="create-account">
           <CreateAccountForm />

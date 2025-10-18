@@ -148,7 +148,7 @@ export function useGameLoans() {
         try {
             const { data: borrower, error } = await supabase
                 .from('profiles')
-                .select('id, name, email, role')
+                .select('id, first_name, last_name, email, role')
                 .eq('id', loan.user_id)
                 .single();
 

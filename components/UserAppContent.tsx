@@ -39,14 +39,14 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                 // Busca o nome do perfil na tabela "profiles"
                 const { data: profile, error: profileError } = await supabase
                     .from("profiles")
-                    .select("name, role")
+                    .select("first_name, role")
                     .eq("id", user.id)
                     .single();
     
                 if (profileError) {
                     console.log("Erro ao buscar perfil:", profileError);
                 } else if (profile) {
-                    setName(profile.name)
+                    setName(profile.first_name)
                     setRole(profile.role)
                 }
             };
