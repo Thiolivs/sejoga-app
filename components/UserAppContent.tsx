@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { User, createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useState, useEffect } from 'react';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
 type Tab = 'jogos' | 'perfil' | 'estatisticas' | 'gerenciar';
@@ -12,6 +13,46 @@ interface UserAppContentProps {
 export function UserAppContent({ userEmail }: UserAppContentProps) {
     const [activeTab, setActiveTab] = useState<Tab>('jogos');
     const { isAdmin } = useUserRole();
+    const supabase = createClientComponentClient();
+    const [user, setUser] = useState<User | null>(null);
+    const [name, setName] = useState<string | null>(null);
+    const [role, setRole] = useState<string | null>(null);
+
+
+
+
+    // Busca o usuário autenticado e o nome no perfil
+        useEffect(() => {
+            const fetchUserAndProfile = async () => {
+                const {
+                    data: { user },
+                    error: userError,
+                } = await supabase.auth.getUser();
+    
+                if (userError || !user) {
+                    console.log("Erro ao buscar usuário:", userError);
+                    return;
+                }
+    
+                setUser(user);
+    
+                // Busca o nome do perfil na tabela "profiles"
+                const { data: profile, error: profileError } = await supabase
+                    .from("profiles")
+                    .select("name, role")
+                    .eq("id", user.id)
+                    .single();
+    
+                if (profileError) {
+                    console.log("Erro ao buscar perfil:", profileError);
+                } else if (profile) {
+                    setName(profile.name)
+                    setRole(profile.role)
+                }
+            };
+
+            fetchUserAndProfile();
+        }, [supabase]); // roda apenas uma vez
 
     return (
         <>
@@ -69,13 +110,13 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                 {activeTab === 'jogos' && (
                     <div>
                         <div className="mb-6">
-                            <h2 className="text-gray-600 text-center mb-8 text-2xl font-bold">
+                            <h2 className="text-gray-600 text-center mb-6 text-2xl font-bold">
                                 Todos os Jogos
                             </h2>
                             <p className="text-gray-600 mt-2">
                                 <i>&quot;Prepara, menina, é sua vez de brilhar!&quot;</i>🌟
                             </p>
-                            <p className="text-gray-600 mt-0 text-md">
+                            <p className="text-gray-600 ml-5 text-md">
                                 <b>Marque aqui os jogos que você sabe ensinar 👨🏾‍🏫  </b>
                             </p>
                         </div>
@@ -86,16 +127,27 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                 {activeTab === 'perfil' && (
                     <div>
                         <div className="mb-6">
-                            <h2 className="text-3xl font-bold text-gray-900">Meu Perfil</h2>
-                            <p className="text-gray-600 mt-2">Gerencie suas informações pessoais</p>
+                            <h2 className="text-gray-600 text-center mb-6 text-2xl font-bold">
+                                Meu Perfil
+                            </h2>
+                            <p className="text-gray-600 mt-2"> 
+                                <i>&quot;It's me... {name}! &quot;</i>🍄
+                            </p>
+                            <p className="text-gray-600 ml-5 text-md">
+                                <b>Aqui estão suas informações pessoais 💁🏽‍♀️ </b>
+                            </p>
                         </div>
-                        <div className="bg-white rounded-lg shadow p-6">
+                        <div className="bg-white rounded-lg shadow p-2">
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        Email
-                                    </label>
-                                    <p className="mt-1 text-sm text-gray-900">{userEmail}</p>
+                                    <label className="block text-sm font-medium text-gray-700"> Nome: {name} </label>
+                                    <p className="mt-1 ml-5 text-sm text-gray-900"></p>
+                                    
+                                    <label className="block text-sm font-medium text-gray-700"> Email: {userEmail} </label>
+                                    <p className="mt-1 ml-5 text-sm text-gray-900"></p>
+
+                                    <label className="block text-sm font-medium text-gray-700"> Função: {role} </label>
+                                    <p className="mt-1 ml-5 text-sm text-gray-900"></p>
                                 </div>
                             </div>
                         </div>
