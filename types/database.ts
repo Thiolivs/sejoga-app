@@ -6,6 +6,23 @@ export interface Profile {
     role: 'admin' | 'monitor' | 'user';
 }
 
+export interface GameMechanic {
+    id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    type: 'mechanic' | 'category' | 'mode';
+    icon?: string;
+    created_at: string;
+}
+
+export interface BoardgameMechanic {
+    id: string;
+    boardgame_id: string;
+    mechanic_id: string;
+    created_at: string;
+}
+
 export interface Boardgame {
     id: string;
     name: string;
@@ -14,15 +31,12 @@ export interface Boardgame {
     year_release?: number;
     players_min?: number;
     players_max?: number;
-    coop: boolean;
-    comp: boolean;
-    kids: boolean;
-    base: boolean;
     expansion: boolean;
     active: boolean;
     copies: number;
     created_at: string;
     updated_at: string;
+    mechanics?: GameMechanic[];
 }
 
 export interface UserTeachesGame {
@@ -47,7 +61,7 @@ export interface BoardgameWithTeachers extends Boardgame {
     teachers?: Profile[];
     isLoaned?: boolean;
     loanedTo?: Profile;
-    loanedBy?: string; 
+    loanedBy?: string;
     borrowedAt?: string;
     dueDate?: string;
 }

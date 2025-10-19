@@ -1,9 +1,12 @@
 'use client';
 
 import { User, createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { AddGameForm } from '@/components/admin/AddGameForm';
+import { AdminGamesList } from '@/components/admin/AdminGamesList';
 import { useState, useEffect } from 'react';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
+import { EditGameForm } from "./admin/EditGameForm";
 type Tab = 'jogos' | 'perfil' | 'estatisticas' | 'gerenciar';
 
 interface UserAppContentProps {
@@ -22,37 +25,37 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
 
 
     // Busca o usuário autenticado e o nome no perfil
-        useEffect(() => {
-            const fetchUserAndProfile = async () => {
-                const {
-                    data: { user },
-                    error: userError,
-                } = await supabase.auth.getUser();
-    
-                if (userError || !user) {
-                    console.log("Erro ao buscar usuário:", userError);
-                    return;
-                }
-    
-                setUser(user);
-    
-                // Busca o nome do perfil na tabela "profiles"
-                const { data: profile, error: profileError } = await supabase
-                    .from("profiles")
-                    .select("first_name, role")
-                    .eq("id", user.id)
-                    .single();
-    
-                if (profileError) {
-                    console.log("Erro ao buscar perfil:", profileError);
-                } else if (profile) {
-                    setName(profile.first_name)
-                    setRole(profile.role)
-                }
-            };
+    useEffect(() => {
+        const fetchUserAndProfile = async () => {
+            const {
+                data: { user },
+                error: userError,
+            } = await supabase.auth.getUser();
 
-            fetchUserAndProfile();
-        }, [supabase]); // roda apenas uma vez
+            if (userError || !user) {
+                console.log("Erro ao buscar usuário:", userError);
+                return;
+            }
+
+            setUser(user);
+
+            // Busca o nome do perfil na tabela "profiles"
+            const { data: profile, error: profileError } = await supabase
+                .from("profiles")
+                .select("first_name, role")
+                .eq("id", user.id)
+                .single();
+
+            if (profileError) {
+                console.log("Erro ao buscar perfil:", profileError);
+            } else if (profile) {
+                setName(profile.first_name)
+                setRole(profile.role)
+            }
+        };
+
+        fetchUserAndProfile();
+    }, [supabase]); // roda apenas uma vez
 
     return (
         <>
@@ -130,7 +133,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                             <h2 className="text-gray-600 text-center mb-6 text-2xl font-bold">
                                 Meu Perfil
                             </h2>
-                            <p className="text-gray-600 mt-2"> 
+                            <p className="text-gray-600 mt-2">
                                 <i>&quot;It&apos;s me... {name}!&quot;</i>🍄
                             </p>
                             <p className="text-gray-600 ml-5 text-md">
@@ -142,7 +145,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700"> Nome: {name} </label>
                                     <p className="mt-1 ml-5 text-sm text-gray-900"></p>
-                                    
+
                                     <label className="block text-sm font-medium text-gray-700"> Email: {userEmail} </label>
                                     <p className="mt-1 ml-5 text-sm text-gray-900"></p>
 
@@ -246,6 +249,28 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                                     </li>
                                 </ul>
                             </div>
+                        </div>
+                    </div>
+                )}
+                {activeTab === 'gerenciar' && isAdmin && (
+                    <div>
+                        <div className="mb-6">
+                            <h2 className="text-3xl font-bold text-gray-900">Painel de Administração</h2>
+                        </div>
+
+                        <div className="space-y-8">
+                            {/* Adicionar Jogo */}
+                            <div>
+                                <AddGameForm onSuccess={() => {
+                                    // Opcional: recarregar lista
+                                }} />
+                            </div>
+
+                            {/* Lista de Jogos */}
+                            <div className="border-t pt-8">
+                                <AdminGamesList />
+                            </div>
+                            
                         </div>
                     </div>
                 )}
