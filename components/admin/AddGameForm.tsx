@@ -26,7 +26,6 @@ const formSchema = z.object({
     players_min: z.number().int().positive().optional(),
     players_max: z.number().int().positive().optional(),
     copies: z.number().int().positive(),
-    base: z.boolean(),
     expansion: z.boolean(),
 });
 
@@ -55,7 +54,6 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
             players_min: undefined,
             players_max: undefined,
             copies: 1,
-            base: true,
             expansion: false,
         },
     });
@@ -98,7 +96,6 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                     players_min: values.players_min || null,
                     players_max: values.players_max || null,
                     copies: values.copies,
-                    base: values.base,
                     expansion: values.expansion,
                     active: true,
                 })
@@ -308,24 +305,6 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
 
                         {/* Tipo */}
                         <div className="flex gap-6">
-                            <FormField
-                                control={form.control}
-                                name="base"
-                                render={({ field }) => (
-                                    <FormItem className="flex items-center gap-2">
-                                        <FormControl>
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormLabel className="!mt-0 cursor-pointer">
-                                            Jogo Base
-                                        </FormLabel>
-                                    </FormItem>
-                                )}
-                            />
-
                             <FormField
                                 control={form.control}
                                 name="expansion"
