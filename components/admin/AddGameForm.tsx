@@ -125,9 +125,10 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
             form.reset();
             setSelectedMechanics([]);
             if (onSuccess) onSuccess();
-        } catch (error: any) {
+        } catch (error) { 
             console.error('Erro ao adicionar jogo:', error);
-            alert(`❌ Erro: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+            alert(`❌ Erro: ${errorMessage}`);
         } finally {
             setLoading(false);
         }
@@ -353,8 +354,8 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                                 <label
                                     key={mechanic.id}
                                     className={`px-4 py-2 rounded-lg cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
-                                            ? 'bg-blue-600 text-white shadow-md scale-105'
-                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                        ? 'bg-blue-600 text-white shadow-md scale-105'
+                                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                         }`}
                                 >
                                     <input
@@ -379,8 +380,8 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                                 <label
                                     key={mechanic.id}
                                     className={`px-3 py-1.5 rounded text-sm cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
-                                            ? 'bg-green-600 text-white shadow-md scale-105'
-                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                        ? 'bg-green-600 text-white shadow-md scale-105'
+                                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                         }`}
                                 >
                                     <input
@@ -403,8 +404,8 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                                 <label
                                     key={mechanic.id}
                                     className={`px-3 py-1.5 rounded text-sm cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
-                                            ? 'bg-purple-600 text-white shadow-md scale-105'
-                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                        ? 'bg-purple-600 text-white shadow-md scale-105'
+                                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                         }`}
                                 >
                                     <input

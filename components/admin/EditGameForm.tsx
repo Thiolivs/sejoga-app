@@ -166,9 +166,10 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
 
             alert('✅ Jogo atualizado com sucesso!');
             if (onSuccess) onSuccess();
-        } catch (error: any) {
+        } catch (error) { // Remove `: any`
             console.error('Erro ao atualizar jogo:', error);
-            alert(`❌ Erro: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+            alert(`❌ Erro: ${errorMessage}`);
         } finally {
             setLoading(false);
         }
