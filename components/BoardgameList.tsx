@@ -125,7 +125,7 @@ export function BoardgameList() {
                         className="flex items-center justify-between gap-4 cursor-pointer"
                         onClick={() => handleGameClick(game)}
                     >
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-2 flex-wrap ">
                             <h3 className="font-semibold text-lg">{game.name}</h3>
 
                             {game.isLoaned && (
@@ -138,7 +138,7 @@ export function BoardgameList() {
 
                     {/* LINHA 2 - Checkbox + Botão */}
                     {isMonitor && (
-                        <div className="flex items-center justify-between mt-3">
+                                    <div className="flex items-center justify-between pt-2 border-t-2 border-gray-100">
                             {/* Checkbox e texto à esquerda */}
                             <div className="flex items-center gap-2 text-left">
                                 <input
@@ -146,7 +146,8 @@ export function BoardgameList() {
                                     id={`teach-${game.id}`}
                                     checked={game.canTeach}
                                     onChange={() => toggleTeach(game.id, game.canTeach || false)}
-                                    className="w-6 h-6 cursor-pointer"
+                                    className="custom-check"
+
                                 />
                                 <label
                                     htmlFor={`teach-${game.id}`}
@@ -161,19 +162,19 @@ export function BoardgameList() {
                                     game.loanedBy === user?.id ? (
                                         <button
                                             onClick={() => handleReturn(game.id)}
-                                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+                                            className="px-4 py-2 bg-sejoga-verde-oficial text-white rounded-lg hover:bg-green-700 text-sm font-medium"
                                         >
                                             👍 Devolver
                                         </button>
                                     ) : (
                                         <div className="px-4 py-2 bg-gray-300 text-gray-600 rounded-lg text-sm font-medium cursor-not-allowed">
-                                            🔒 Indisponível
+                                            ⚔️ Indisponível
                                         </div>
                                     )
                                 ) : (
                                     <button
                                         onClick={() => handleBorrow(game.id)}
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+                                        className="px-4 py-2 bg-sejoga-azul-oficial text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
                                     >
                                         🤏 Pegar Emprestado
                                     </button>

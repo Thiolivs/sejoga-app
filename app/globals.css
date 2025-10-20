@@ -120,3 +120,70 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@theme {
+  --color-sejoga-vermelho-oficial: #DD2228;
+  --color-sejoga-laranja-oficial: #F48429;
+  --color-sejoga-amarelo-oficial: #ECE950;
+  --color-sejoga-verde-oficial: #7BC244;
+  --color-sejoga-azul-oficial: #3AC3DF;
+  --color-sejoga-rosa-oficial: #EC0577;
+
+  --color-sejoga-vermelho-chiclete: #FF3131;
+  --color-sejoga-laranja-chiclete: #F6BB42;
+  --color-sejoga-amarelo-chiclete: #F0FD71;
+  --color-sejoga-verde-chiclete: #8AD84D;
+  --color-sejoga-azul-chiclete: #5CE1E6;
+  --color-sejoga-rosa-chiclete: #FA4EB0;
+
+  --color-sejoga-vermelho-giz: #FF6060;
+  --color-sejoga-laranja-giz: #Fbc758;
+  --color-sejoga-amarelo-giz: #FFFF8A;
+  --color-sejoga-verde-giz: #A2F263;
+  --color-sejoga-azul-giz: #95FBFF;
+  --color-sejoga-rosa-giz: #FF8ED3;
+}
+
+/* Checkbox customizado */
+input[type="checkbox"].custom-check {
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid #000000;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  position: relative;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+input[type="checkbox"].custom-check:checked {
+  background-color: #7BC244;
+  border-color: #7BC244;
+}
+
+input[type="checkbox"].custom-check:checked::after {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
