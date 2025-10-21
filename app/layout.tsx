@@ -27,7 +27,7 @@ const caveatBrush = Caveat_Brush({
 });
 
 export const metadata: Metadata = {
-  title: "SeJoga - Gerenciamento de Boardgames",
+  title: "SeJoga",
   description: "Sistema de empréstimo e ensino de jogos de tabuleiro",
 };
 
