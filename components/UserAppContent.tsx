@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
 
-type Tab = 'jogos' | 'perfil' | 'estatisticas' | 'gerenciar';
+type Tab = 'jogos' | 'meu-sejoga' | 'jogos-evento' | 'form-evento' | 'gerenciar';
 type AdminSection = 'menu' | 'add-game' | 'manage-games' | 'manage-users';
 
 interface UserAppContentProps {
@@ -22,6 +22,11 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
     const [user, setUser] = useState<User | null>(null);
     const [name, setName] = useState<string | null>(null);
     const [role, setRole] = useState<string | null>(null);
+    const [teachCount, setTeachCount] = useState(0);
+    const [totalGames, setTotalGames] = useState(0);
+
+
+
 
     // Busca o usuário autenticado e o nome no perfil
     useEffect(() => {
@@ -50,7 +55,31 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
             } else if (profile) {
                 setName(profile.first_name);
                 setRole(profile.role);
+
+                // 👇 Conta quantos jogos o usuário sabe ensinar
+                const { count: teachCount, error: teachesError } = await supabase
+                    .from("user_teaches_game")
+                    .select("*", { count: "exact", head: true })
+                    .eq("user_id", user.id);
+
+                if (teachesError) {
+                    console.log("Erro ao contar jogos ensinados:", teachesError);
+                } else {
+                    setTeachCount(teachCount ?? 0);
+                }
+
+                // 👇 Conta quantos jogos existem no total
+                const { count: totalGames, error: gamesError } = await supabase
+                    .from("boardgames")
+                    .select("*", { count: "exact", head: true });
+
+                if (gamesError) {
+                    console.log("Erro ao contar jogos totais:", gamesError);
+                } else {
+                    setTotalGames(totalGames ?? 0);
+                }
             }
+
         };
 
         fetchUserAndProfile();
@@ -72,29 +101,38 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                         <button
                             onClick={() => setActiveTab('jogos')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'jogos'
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                         >
                             Acervo
                         </button>
                         <button
-                            onClick={() => setActiveTab('perfil')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'perfil'
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            onClick={() => setActiveTab('meu-sejoga')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'meu-sejoga'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                         >
-                            Perfil
+                            Meu SeJoga
                         </button>
                         <button
-                            onClick={() => setActiveTab('estatisticas')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'estatisticas'
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            onClick={() => setActiveTab('jogos-evento')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'jogos-evento'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                         >
-                            Estatísticas
+                            Evento
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('form-evento')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'form-evento'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                        >
+                            Forms
                         </button>
 
                         {/* NOVA ABA: Apenas para admins */}
@@ -102,8 +140,8 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                             <button
                                 onClick={() => setActiveTab('gerenciar')}
                                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'gerenciar'
-                                        ? 'border-red-500 text-red-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    ? 'border-red-500 text-red-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                     }`}
                             >
                                 Gerenciar
@@ -132,42 +170,37 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                     </div>
                 )}
 
-                {activeTab === 'perfil' && (
+                {activeTab === 'meu-sejoga' && (
                     <div>
                         <div className="mb-6">
                             <h2 className="text-gray-600 text-center mb-6 text-2xl font-bold">
                                 Meu Perfil
                             </h2>
                             <p className="text-gray-600 mt-2">
-                                <i>&quot;It&apos;s me... {name}!&quot;</i> 🄼
+                                <i>&quot;It&apos;s me... {name}!&quot;</i> 🍄
                             </p>
                             <p className="text-gray-600 ml-5 text-md">
                                 <b>Aqui estão suas informações pessoais 💁🏽‍♀️</b>
                             </p>
                         </div>
-                        <div className="bg-white rounded-lg shadow p-6">
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        Nome: {name}
-                                    </label>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        Email: {userEmail}
-                                    </label>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        Função: {role}
-                                    </label>
-                                </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <h3 className="text-sm font-medium text-gray-500">
+                                    <p>Nome: {name}</p>
+                                    <p>Email: {userEmail}</p>
+                                </h3>
+                            </div>
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <h3 className="text-sm font-medium text-gray-500">
+                                    Sei ensinar {teachCount ?? 0} jogo{teachCount === 1 ? '' : 's'} dentre os {totalGames} jogos no Acervo. Um total de {totalGames > 0 ? ((teachCount / totalGames) * 100).toFixed(0) : 0}%!
+                                </h3>
                             </div>
                         </div>
                     </div>
                 )}
 
-                {activeTab === 'estatisticas' && (
+                {activeTab === 'jogos-evento' && (
                     <div>
                         <div className="mb-6">
                             <h2 className="text-3xl font-bold text-gray-900">Estatísticas</h2>
@@ -175,35 +208,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                                 Veja suas estatísticas e contribuições
                             </p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="bg-white rounded-lg shadow p-6">
-                                <h3 className="text-sm font-medium text-gray-500">
-                                    Jogos que ensino
-                                </h3>
-                                <p className="mt-2 text-3xl font-bold text-gray-900">-</p>
-                                <p className="mt-1 text-sm text-gray-600">
-                                    Total de jogos marcados
-                                </p>
-                            </div>
-                            <div className="bg-white rounded-lg shadow p-6">
-                                <h3 className="text-sm font-medium text-gray-500">
-                                    Jogos no evento
-                                </h3>
-                                <p className="mt-2 text-3xl font-bold text-gray-900">-</p>
-                                <p className="mt-1 text-sm text-gray-600">
-                                    Total disponível
-                                </p>
-                            </div>
-                            <div className="bg-white rounded-lg shadow p-6">
-                                <h3 className="text-sm font-medium text-gray-500">
-                                    Contribuição
-                                </h3>
-                                <p className="mt-2 text-3xl font-bold text-gray-900">-%</p>
-                                <p className="mt-1 text-sm text-gray-600">
-                                    Dos jogos você ensina
-                                </p>
-                            </div>
-                        </div>
+
                     </div>
                 )}
 
