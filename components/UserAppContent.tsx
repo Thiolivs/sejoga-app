@@ -1,13 +1,14 @@
 'use client';
 
 import { User, createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { EventGameSelection } from '@/components/admin/EventGameSelection';
 import { AddGameForm } from '@/components/admin/AddGameForm';
 import { AdminGamesList } from '@/components/admin/AdminGamesList';
 import { useState, useEffect } from 'react';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
 
-type Tab = 'jogos' | 'meu-sejoga' | 'jogos-evento' | 'form-evento' | 'gerenciar';
+type Tab = 'jogos' | 'meu-sejoga' | 'evento' | 'form-evento' | 'gerenciar';
 type AdminSection = 'menu' | 'add-game' | 'manage-games' | 'manage-users';
 
 interface UserAppContentProps {
@@ -117,15 +118,6 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                             Meu SeJoga
                         </button>
                         <button
-                            onClick={() => setActiveTab('jogos-evento')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'jogos-evento'
-                                ? 'border-blue-500 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
-                        >
-                            Evento
-                        </button>
-                        <button
                             onClick={() => setActiveTab('form-evento')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'form-evento'
                                 ? 'border-blue-500 text-blue-600'
@@ -145,6 +137,18 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                                     }`}
                             >
                                 Gerenciar
+                            </button>
+                        )}
+
+                        {isAdmin && (
+                            <button
+                                onClick={() => setActiveTab('evento')}
+                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'evento'
+                                        ? 'border-purple-500 text-purple-600'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    }`}
+                            >
+                                Seleção para Evento
                             </button>
                         )}
                     </nav>
@@ -200,15 +204,9 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                     </div>
                 )}
 
-                {activeTab === 'jogos-evento' && (
+                {activeTab === 'evento' && isAdmin && (
                     <div>
-                        <div className="mb-6">
-                            <h2 className="text-3xl font-bold text-gray-900">Estatísticas</h2>
-                            <p className="text-gray-600 mt-2">
-                                Veja suas estatísticas e contribuições
-                            </p>
-                        </div>
-
+                        <EventGameSelection />
                     </div>
                 )}
 
