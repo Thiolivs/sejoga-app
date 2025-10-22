@@ -194,7 +194,7 @@ export function EventGameSelection() {
         <div className="space-y-6">
             {/* Header com estatísticas */}
             <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-2xl font-bold mb-4">Seleção de Jogos para o Evento</h2>
+                <h2 className="text-[20px] text-center font-bold mb-4">Seleção de Jogos para o Evento</h2>
                 <div className="grid grid-cols-3 gap-4">
                     <div className="text-center">
                         <p className="text-3xl font-bold text-green-600">
@@ -222,7 +222,7 @@ export function EventGameSelection() {
                 {/* Coluna Esquerda: DISPONÍVEIS (Verde) */}
                 <div className="bg-green-50 rounded-lg border-1 border-green-200 p-6">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-bold text-green-800">
+                        <h3 className="text-xl text-center font-bold text-green-800">
                             ✅ Jogos Disponíveis para o Evento
                         </h3>
                         <span className="px-3 py-1 bg-green-600 text-white rounded-full text-sm font-semibold">
@@ -273,14 +273,15 @@ export function EventGameSelection() {
                                                     )}
                                                 </div>
                                                 <div className="flex gap-2">
-                                                    <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded font-semibold">
-                                                        👤 {game.teacherCount} {game.teacherCount === 1 ? 'monitor' : 'monitores'}
-                                                    </span>
+
                                                     {game.isLoaned && (
                                                         <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded">
-                                                            ⚔️  Emprestado
+                                                            ⚔️ Emprestado
                                                         </span>
-                                                    )}
+                                                    )}                                                    <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded font-semibold">
+                                                        👤{game.teacherCount} {/*{game.teacherCount === 1 ? 'monitor' : 'monitores'}*/}
+                                                    </span>
+
                                                 </div>
                                             </div>
                                         </label>
@@ -294,7 +295,7 @@ export function EventGameSelection() {
                 {/* Coluna Direita: INDISPONÍVEIS (Vermelho) */}
                 <div className="bg-red-50 rounded-lg border-1 border-red-200 p-6">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-bold text-red-800">
+                        <h3 className="text-xl text-center font-bold text-red-800">
                             ❌ Jogos Indisponíveis
                         </h3>
                         <span className="px-3 py-1 bg-red-600 text-white rounded-full text-sm font-semibold">
@@ -336,17 +337,18 @@ export function EventGameSelection() {
                                                     )}
                                                 </div>
                                                 <div className="flex gap-2">
-                                                    <span className={`px-2 py-1 text-xs rounded font-semibold ${game.teacherCount === 0
-                                                        ? 'bg-red-200 text-red-900'
-                                                        : 'bg-orange-100 text-orange-800'
-                                                        }`}>
-                                                        👤{game.teacherCount} {game.teacherCount === 1 ? 'monitor' : 'monitores'}
-                                                    </span>
-                                                    {!game.active && (
+                                                                                                        {!game.active && (
                                                         <span className="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">
                                                             🚫 Inativo
                                                         </span>
                                                     )}
+                                                    <span className={`px-2 py-1 text-xs rounded font-semibold ${game.teacherCount === 0
+                                                        ? 'bg-red-200 text-red-900'
+                                                        : 'bg-orange-100 text-orange-800'
+                                                        }`}>
+                                                        👤{game.teacherCount} {/*{game.teacherCount === 1 ? 'monitor' : 'monitores'}*/}
+                                                    </span>
+
                                                 </div>
                                             </div>
                                             <p className="text-xs text-red-600 mt-2">
