@@ -65,3 +65,33 @@ export interface BoardgameWithTeachers extends Boardgame {
     borrowedAt?: string;
     dueDate?: string;
 }
+
+export interface Event {
+  id: string;
+  name: string;
+  description?: string;
+  event_date: string;
+  start_time?: string;
+  end_time?: string;
+  location?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TeachingSession {
+  id: string;
+  event_id: string;
+  monitor_id: string;
+  boardgame_id: string;
+  players_count: number;
+  notes?: string;
+  session_date: string;
+  created_at: string;
+}
+
+export interface TeachingSessionWithDetails extends TeachingSession {
+  monitor?: Profile;
+  boardgame?: Boardgame;
+  event?: Event;
+}
