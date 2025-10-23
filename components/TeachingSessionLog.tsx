@@ -5,13 +5,13 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 {/*import { Textarea } from '@/components/ui/textarea';*/}
-import type { Boardgame, Event, TeachingSessionWithDetails } from '@/types/database';
+import type { Event, TeachingSessionWithDetails } from '@/types/database';
 
 export function TeachingSessionLog() {
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<string>('');
   const [sessions, setSessions] = useState<TeachingSessionWithDetails[]>([]);
-  const [boardgames, setBoardgames] = useState<Boardgame[]>([]);
+  const [boardgames, setBoardgames] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const supabase = createClientComponentClient();

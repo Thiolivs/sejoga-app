@@ -31,11 +31,11 @@ export interface Boardgame {
     year_release?: number;
     players_min?: number;
     players_max?: number;
-    expansion: boolean;
-    active: boolean;
-    copies: number;
-    created_at: string;
-    updated_at: string;
+    expansion?: boolean;
+    active?: boolean;
+    copies?: number;
+    created_at?: string;
+    updated_at?: string;
     mechanics?: GameMechanic[];
 }
 
