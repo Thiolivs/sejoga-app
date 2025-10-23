@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
 
-type Tab = 'jogos' | 'meu-sejoga' | 'evento' | 'gerenciar' | 'registro';
+type Tab = 'jogos' | 'meu-sejoga' | 'registro' | 'gerenciar' | 'evento' ;
 type AdminSection = 'menu' | 'add-game' | 'manage-games' | 'manage-events' | 'manage-users';
 
 interface UserAppContentProps {
@@ -27,9 +27,6 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
     const [role, setRole] = useState<string | null>(null);
     const [teachCount, setTeachCount] = useState(0);
     const [totalGames, setTotalGames] = useState(0);
-
-    // Declaração de isMonitor para evitar erro (ajuste conforme sua lógica)
-    const isMonitor = false; // Ou importe/sete conforme sua aplicação
 
     // Busca o usuário autenticado e o nome no perfil
     useEffect(() => {
@@ -128,7 +125,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                             }`}
                         >
-                            Ensino
+                            Registro
                         </button>
 
                         {/* NOVA ABA: Apenas para admins */}
@@ -217,7 +214,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                     </div>
                 )}
 
-                {activeTab === 'registro' && isMonitor && (
+                {activeTab === 'registro' && (
                     <div>
                         <TeachingSessionLog />
                     </div>
