@@ -1,4 +1,5 @@
 'use client';
+import { Boardgame } from '@/types';
 
 import { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
