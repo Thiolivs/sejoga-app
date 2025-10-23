@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+{/*import { Textarea } from '@/components/ui/textarea';*/}
 import type { Event } from '@/types/database';
 
 export function EventManagement() {
@@ -170,12 +170,12 @@ export function EventManagement() {
 
           <div>
             <label className="block text-sm font-medium mb-1">Descrição</label>
-            <Textarea
+            {/*<Textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Descrição do evento..."
               rows={3}
-            />
+            />*/}
           </div>
 
           <div className="grid grid-cols-3 gap-4">
