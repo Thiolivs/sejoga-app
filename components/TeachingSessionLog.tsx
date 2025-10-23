@@ -11,7 +11,7 @@ export function TeachingSessionLog() {
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<string>('');
   const [sessions, setSessions] = useState<TeachingSessionWithDetails[]>([]);
-  const [boardgames, setBoardgames] = useState<any[]>([]);
+  const [boardgames, setBoardgames] = useState<Boardgame[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const supabase = createClientComponentClient();
