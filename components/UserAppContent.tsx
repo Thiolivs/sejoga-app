@@ -11,7 +11,7 @@ import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
 
 type Tab = 'jogos' | 'meu-sejoga' | 'evento' | 'gerenciar' | 'registro';
-type AdminSection = 'menu' | 'add-game' | 'manage-games' | 'manage-users';
+type AdminSection = 'menu' | 'add-game' | 'manage-games' | 'manage-event' | 'manage-users';
 
 interface UserAppContentProps {
     userEmail: string;
