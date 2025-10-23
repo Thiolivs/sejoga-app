@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+{/*import { Textarea } from '@/components/ui/textarea';*/}
 import type { Event, TeachingSessionWithDetails } from '@/types/database';
 
 export function TeachingSessionLog() {
@@ -222,12 +222,12 @@ export function TeachingSessionLog() {
 
           <div>
             <label className="block text-sm font-medium mb-1">Observações</label>
-            <Textarea
+            {/*<Textarea
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               placeholder="Adicione observações sobre a sessão..."
               rows={3}
-            />
+            />*/}
           </div>
 
           <div className="flex gap-2">
