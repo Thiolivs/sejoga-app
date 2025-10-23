@@ -148,7 +148,7 @@ export function TeachingSessionLog() {
 
   // Agrupar sessões por monitor
   const sessionsByMonitor = sessions.reduce((acc, session) => {
-    const monitorName = session.monitor?.name || session.monitor?.first_name || 'Desconhecido';
+    const monitorName = session.monitor?.first_name || 'Desconhecido';
     if (!acc[monitorName]) {
       acc[monitorName] = [];
     }
