@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
 
-type Tab = 'jogos' | 'meu-sejoga' | 'registro' | 'gerenciar' | 'evento' ;
+type Tab = 'jogos' | 'meu-sejoga' | 'registro' | 'gerenciar' | 'evento';
 type AdminSection = 'menu' | 'add-game' | 'manage-games' | 'manage-events' | 'manage-users';
 
 interface UserAppContentProps {
@@ -99,31 +99,28 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                     <nav className="flex space-x-2" aria-label="Tabs">
                         <button
                             onClick={() => setActiveTab('jogos')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                                activeTab === 'jogos'
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'jogos'
                                     ? 'border-blue-500 text-blue-600'
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            }`}
+                                }`}
                         >
                             Acervo
                         </button>
                         <button
                             onClick={() => setActiveTab('meu-sejoga')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                                activeTab === 'meu-sejoga'
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'meu-sejoga'
                                     ? 'border-blue-500 text-blue-600'
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            }`}
+                                }`}
                         >
                             Meu SeJoga
                         </button>
                         <button
                             onClick={() => setActiveTab('registro')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                                activeTab === 'registro'
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'registro'
                                     ? 'border-orange-500 text-orange-600'
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            }`}
+                                }`}
                         >
                             Registro
                         </button>
@@ -132,11 +129,10 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                         {isAdmin && (
                             <button
                                 onClick={() => setActiveTab('gerenciar')}
-                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                                    activeTab === 'gerenciar'
+                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'gerenciar'
                                         ? 'border-red-500 text-red-600'
                                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
+                                    }`}
                             >
                                 Gerenciar
                             </button>
@@ -145,11 +141,10 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                         {isAdmin && (
                             <button
                                 onClick={() => setActiveTab('evento')}
-                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                                    activeTab === 'evento'
+                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'evento'
                                         ? 'border-purple-500 text-purple-600'
                                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
+                                    }`}
                             >
                                 Seleção Evento
                             </button>
@@ -220,22 +215,6 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                     </div>
                 )}
 
-                {activeTab === 'gerenciar' && adminSection === 'menu' && (
-                    <button
-                        onClick={() => setAdminSection('manage-events')}
-                        className="bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg shadow-lg p-8 transition-all hover:scale-105 text-left"
-                    >
-                        <div className="text-4xl mb-4">📅</div>
-                        <h3 className="text-xl font-bold mb-2">Gerenciar Eventos</h3>
-                        <p className="text-orange-100 text-sm">Criar e gerenciar eventos do SeJoga</p>
-                    </button>
-                )}
-
-                {adminSection === 'manage-events' && (
-                    <div className="animate-fadeIn">
-                        <EventManagement />
-                    </div>
-                )}
 
                 {/* ABA GERENCIAR - NOVO LAYOUT */}
                 {activeTab === 'gerenciar' && isAdmin && (
@@ -285,6 +264,15 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                                         <h3 className="text-lg font-bold mb-1">👥 Gerenciar Usuários</h3>
                                         <p className="text-purple-100 text-xs">Ver, promover ou gerenciar permissões</p>
                                     </button>
+
+                                    {/* Card: Gerenciar eventos */}
+                                    <button
+                                        onClick={() => setAdminSection('manage-events')}
+                                        className="bg-sejoga-laranja-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
+                                    >
+                                        <h3 className="text-lg font-bold mb-1">📅 Gerenciar Eventos</h3>
+                                        <p className="text-purple-100 text-xs">Criar e gerenciar eventos</p>
+                                    </button>
                                 </div>
                             </div>
                         )}
@@ -323,6 +311,13 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                                         🚧 Em desenvolvimento - Em breve você poderá gerenciar usuários aqui
                                     </p>
                                 </div>
+                            </div>
+                        )}
+
+                        {/* SEÇÃO: GERENCIAR EVENTOS */}
+                        {adminSection === 'manage-events' && (
+                            <div className="animate-fadeIn">
+                                <EventManagement />
                             </div>
                         )}
                     </div>

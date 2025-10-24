@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-{/*import { Textarea } from '@/components/ui/textarea';*/}
+import { Textarea } from '@/components/ui/textarea';
 import type { Event } from '@/types/database';
 
 export function EventManagement() {
@@ -170,12 +170,12 @@ export function EventManagement() {
 
           <div>
             <label className="block text-sm font-medium mb-1">Descrição</label>
-            {/*<Textarea
+            <Textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Descrição do evento..."
               rows={3}
-            />*/}
+            />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
@@ -236,37 +236,36 @@ export function EventManagement() {
           events.map((event) => (
             <div
               key={event.id}
-              className={`bg-white rounded-lg shadow p-6 ${
-                !event.is_active ? 'opacity-60' : ''
-              }`}
+              className={`bg-white rounded-lg shadow p-6 ${!event.is_active ? 'opacity-60' : ''
+                }`}
             >
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-bold">{event.name}</h3>
-                    {!event.is_active && (
-                      <span className="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">
-                        Inativo
-                      </span>
-                    )}
-                  </div>
-                  {event.description && (
-                    <p className="text-gray-600 mt-1">{event.description}</p>
+              <div className="flex flex-col gap-3">
+                {/* Conteúdo do evento */}
+                <div className="flex items-center gap-3">
+                  <h3 className="text-xl font-bold">{event.name}</h3>
+                  {!event.is_active && (
+                    <span className="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">
+                      Inativo
+                    </span>
                   )}
-                  <div className="flex gap-4 mt-3 text-sm text-gray-600">
-                    <span>📅 {new Date(event.event_date).toLocaleDateString('pt-BR')}</span>
-                    {event.start_time && <span>🕐 {event.start_time}</span>}
-                    {event.location && <span>📍 {event.location}</span>}
-                  </div>
+                </div>
+                {event.description && (
+                  <p className="text-gray-600">{event.description}</p>
+                )}
+                <div className="flex gap-4 text-sm text-gray-600">
+                  <span>📅 {new Date(event.event_date).toLocaleDateString('pt-BR')}</span>
+                  {event.start_time && <span>🕐 {event.start_time}</span>}
+                  {event.location && <span>📍 {event.location}</span>}
                 </div>
 
-                <div className="flex gap-2">
+                {/* Botões embaixo */}
+                <div className="flex gap-2 mt-4">
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => toggleActive(event.id, event.is_active)}
                   >
-                    {event.is_active ? '👁️ Ativo' : '👁️‍🗨️ Inativo'}
+                    {event.is_active ? 'Ativo' : 'Inativo'}
                   </Button>
                   <Button
                     size="sm"
@@ -280,7 +279,7 @@ export function EventManagement() {
                     variant="destructive"
                     onClick={() => handleDelete(event.id)}
                   >
-                    🗑️
+                    🗑️ Excluir
                   </Button>
                 </div>
               </div>
@@ -288,6 +287,7 @@ export function EventManagement() {
           ))
         )}
       </div>
+
     </div>
   );
 }
