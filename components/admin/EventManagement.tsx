@@ -58,7 +58,6 @@ export function EventManagement() {
           .eq('id', editingEvent.id);
 
         if (error) throw error;
-        alert('✅ Evento atualizado com sucesso!');
       } else {
         // Criar novo
         const { error } = await supabase
@@ -66,7 +65,6 @@ export function EventManagement() {
           .insert(formData);
 
         if (error) throw error;
-        alert('✅ Evento criado com sucesso!');
       }
 
       resetForm();
@@ -100,7 +98,6 @@ export function EventManagement() {
         .eq('id', eventId);
 
       if (error) throw error;
-      alert('✅ Evento deletado com sucesso!');
       fetchEvents();
     } catch (error) {
       console.error('Erro ao deletar evento:', error);
@@ -163,18 +160,8 @@ export function EventManagement() {
             <Input
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Ex: SeJoga de Halloween"
+              placeholder=""
               required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Descrição</label>
-            <Textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Descrição do evento..."
-              rows={3}
             />
           </div>
 
@@ -189,7 +176,7 @@ export function EventManagement() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Início</label>
+              <label className="block text-sm font-medium mb-1">Início *</label>
               <Input
                 type="time"
                 value={formData.start_time}
@@ -197,7 +184,7 @@ export function EventManagement() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Fim</label>
+              <label className="block text-sm font-medium mb-1">Fim *</label>
               <Input
                 type="time"
                 value={formData.end_time}
@@ -211,7 +198,7 @@ export function EventManagement() {
             <Input
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              placeholder="Ex: Sala 101"
+              placeholder=""
             />
           </div>
 
@@ -253,9 +240,10 @@ export function EventManagement() {
                   <p className="text-gray-600">{event.description}</p>
                 )}
                 <div className="flex gap-4 text-sm text-gray-600">
+                  
                   <span>📅 {new Date(event.event_date).toLocaleDateString('pt-BR')}</span>
                   {event.start_time && <span>🕐 {event.start_time}</span>}
-                  {event.location && <span>📍 {event.location}</span>}
+                  {event.location && <span>📌 {event.location}</span>}
                 </div>
 
                 {/* Botões embaixo */}

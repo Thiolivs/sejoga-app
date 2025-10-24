@@ -107,7 +107,6 @@ export function TeachingSessionLog() {
 
       if (error) throw error;
 
-      alert('✅ Sessão registrada com sucesso!');
       setFormData({ boardgame_id: '', players_count: 0, notes: '' });
       setShowForm(false);
       fetchSessions();
@@ -127,7 +126,6 @@ export function TeachingSessionLog() {
         .eq('id', sessionId);
 
       if (error) throw error;
-      alert('✅ Registro deletado!');
       fetchSessions();
     } catch (error) {
       console.error('Erro ao deletar:', error);
@@ -205,10 +203,10 @@ export function TeachingSessionLog() {
           <label className="block text-sm font-medium mb-1">Número de Jogadores *</label>
           <Input
             type="number"
-            min="0"
+            min="1"
             value={formData.players_count}
             onChange={(e) =>
-              setFormData({ ...formData, players_count: parseInt(e.target.value) || 0 })
+              setFormData({ ...formData, players_count: parseInt(e.target.value)})
             }
             required
           />
@@ -227,9 +225,6 @@ export function TeachingSessionLog() {
         <div className="flex gap-2">
           <Button type="submit" className="bg-green-600 hover:bg-green-700">
             💾 Salvar
-          </Button>
-          <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
-            Cancelar
           </Button>
         </div>
       </form>
