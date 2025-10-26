@@ -154,10 +154,10 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
             </div>
 
             {/* Conteúdo das abas */}
-            <main className="max-w-7xl mx-auto sm:px-6 lg:px-2 py-2">
+            <main className="max-w-7xl px-4 mx-auto sm:px-6 lg:px-2 py-2">
                 {activeTab === 'jogos' && (
                     <div>
-                        <div className="mb-6 px-4">
+                        <div className="mb-6 px-1">
                             <h2 className="text-gray-600 text-center mb-4 text-2xl font-bold">
                                 Todos os Jogos
                             </h2>

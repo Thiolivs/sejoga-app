@@ -174,7 +174,7 @@ export function BoardgameList() {
     }
 
     return (
-        <div className="space-y-2 p-4">
+        <div className="space-y-2">
             {/* Barra de Busca e Filtros */}
             <div className="bg-white rounded-lg shadow-md p-3 z-10">
                 <div className="flex gap-3 items-center">
@@ -223,6 +223,7 @@ export function BoardgameList() {
                             <div className="flex gap-4 items-center">
                                 <div className="flex-1">
                                     <Input
+                                        className="text-sm placeholder:text-xs"
                                         type="number"
                                         min="1"
                                         placeholder='Min:'
@@ -237,6 +238,7 @@ export function BoardgameList() {
                                 </div>
                                 <div className="flex-1">
                                     <Input
+                                        className="text-sm placeholder:text-xs"
                                         type="number"
                                         min="1"
                                         placeholder='Max:'
@@ -363,7 +365,7 @@ export function BoardgameList() {
             {filteredGames.length === 0 && (
                 <div className="text-center py-12 bg-gray-50 rounded-lg">
                     <p className="text-gray-600 mb-4">
-                        😔 Nenhum jogo encontrado com os filtros aplicados
+                        🙁 Nenhum jogo encontrado com os filtros aplicados
                     </p>
                     <Button onClick={clearFilters} variant="outline">
                         🔄 Limpar filtros
