@@ -174,15 +174,15 @@ export function BoardgameList() {
     }
 
     return (
-        <div className="space-y-4 p-4">
+        <div className="space-y-2 p-4">
             {/* Barra de Busca e Filtros */}
-            <div className="bg-white rounded-lg shadow-md p-4 sticky top-0 z-10">
+            <div className="bg-white rounded-lg shadow-md p-3 z-10">
                 <div className="flex gap-3 items-center">
                     {/* Campo de busca */}
                     <div className="flex-1 relative">
                         <Input
                             type="text"
-                            placeholder="🔍 Buscar jogo por nome..."
+                            placeholder="🔍 Buscar jogos..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pr-10"
@@ -203,7 +203,7 @@ export function BoardgameList() {
                         variant={showFilters ? "default" : "outline"}
                         className={`whitespace-nowrap ${hasActiveFilters && !showFilters ? 'border-blue-500 text-blue-600' : ''}`}
                     >
-                        🎛️ Filtros
+                        {showFilters ? '▲' : '▼'} Filtros
                         {hasActiveFilters && !showFilters && (
                             <span className="ml-2 px-2 py-0.5 bg-blue-600 text-white rounded-full text-xs">
                                 {(filters.minPlayers !== null ? 1 : 0) +
@@ -212,34 +212,20 @@ export function BoardgameList() {
                             </span>
                         )}
                     </Button>
-
-                    {/* Botão limpar */}
-                    {hasActiveFilters && (
-                        <Button
-                            onClick={clearFilters}
-                            variant="ghost"
-                            className="text-gray-600 hover:text-gray-800"
-                        >
-                            🔄 Limpar
-                        </Button>
-                    )}
                 </div>
 
                 {/* Painel de Filtros Avançados */}
                 {showFilters && (
                     <div className="mt-4 pt-4 border-t space-y-4">
-                        <h3 className="font-semibold text-gray-700">Filtros Avançados</h3>
-
                         {/* Filtro por número de jogadores */}
                         <div>
-                            <p className="text-sm font-medium text-gray-700 mb-2">Número de Jogadores:</p>
+                            <p className="text-sm font-medium text-gray-700 mb-2">Jogadores:</p>
                             <div className="flex gap-4 items-center">
                                 <div className="flex-1">
-                                    <label className="text-xs text-gray-600">Mínimo:</label>
                                     <Input
                                         type="number"
                                         min="1"
-                                        placeholder="Ex: 2"
+                                        placeholder='Min:'
                                         value={filters.minPlayers || ''}
                                         onChange={(e) =>
                                             setFilters({
@@ -250,11 +236,10 @@ export function BoardgameList() {
                                     />
                                 </div>
                                 <div className="flex-1">
-                                    <label className="text-xs text-gray-600">Máximo:</label>
                                     <Input
                                         type="number"
                                         min="1"
-                                        placeholder="Ex: 6"
+                                        placeholder='Max:'
                                         value={filters.maxPlayers || ''}
                                         onChange={(e) =>
                                             setFilters({
@@ -275,7 +260,7 @@ export function BoardgameList() {
                                     {mechanicsByType.category.map((mechanic) => (
                                         <label
                                             key={mechanic.id}
-                                            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-sm ${filters.selectedMechanics.includes(mechanic.id)
+                                            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
                                                 ? 'bg-blue-600 text-white'
                                                 : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                                 }`}
