@@ -10,76 +10,86 @@ export function useBoardgames(userId?: string) {
     const supabase = createClientComponentClient();
     const { loans, isGameLoaned, isLoanedByMe } = useGameLoans();
 
-        useEffect(() => {
+    useEffect(() => {
         fetchBoardgames();
     }, [userId]);
 
     const fetchBoardgames = async () => {
-    try {
-        setLoading(true);
+        try {
+            setLoading(true);
 
-        // Busca todos os jogos ativos
-        const { data: games, error: gamesError } = await supabase
-            .from('boardgames')
-            .select('*')
-            //.eq('active', true)
-            .order('name');
+            // Busca todos os jogos ativos COM suas mecânicas
+            const { data: games, error: gamesError } = await supabase
+                .from('boardgames')
+                .select(`
+                    *,
+                    boardgame_mechanics(
+                        mechanic_id,
+                        game_mechanics(*)
+                    )
+                `)
+                //.eq('active', true)
+                .order('name');
 
-        if (gamesError) throw gamesError;
+            if (gamesError) throw gamesError;
 
-        // BUSCA OS LOANS DIRETAMENTE DO BANCO (não usa o Map de useGameLoans)
-        const { data: loansData, error: loansError } = await supabase
-            .from('game_loans')
-            .select('*')
-            .is('returned_at', null);
+            // BUSCA OS LOANS DIRETAMENTE DO BANCO (não usa o Map de useGameLoans)
+            const { data: loansData, error: loansError } = await supabase
+                .from('game_loans')
+                .select('*')
+                .is('returned_at', null);
 
-        if (loansError) {
-            console.error('Erro ao buscar loans:', loansError);
-        }
-
-        // Cria um Map local com os loans
-        const loansMap = new Map<string, any>();
-        loansData?.forEach(loan => {
-            loansMap.set(loan.boardgame_id, loan);
-        });
-
-
-        // Se userId, busca games que o usuário pode ensinar
-        let userTeaches: string[] = [];
-        if (userId) {
-            const { data: teachData, error: teachError } = await supabase
-                .from('user_teaches_game')
-                .select('boardgame_id')
-                .eq('user_id', userId);
-
-            if (teachError) {
-                console.error('⚠️ Erro ao buscar user_teaches_game:', teachError);
-            } else {
-                userTeaches = teachData?.map(t => t.boardgame_id) || [];
+            if (loansError) {
+                console.error('Erro ao buscar loans:', loansError);
             }
+
+            // Cria um Map local com os loans
+            const loansMap = new Map<string, any>();
+            loansData?.forEach(loan => {
+                loansMap.set(loan.boardgame_id, loan);
+            });
+
+            // Se userId, busca games que o usuário pode ensinar
+            let userTeaches: string[] = [];
+            if (userId) {
+                const { data: teachData, error: teachError } = await supabase
+                    .from('user_teaches_game')
+                    .select('boardgame_id')
+                    .eq('user_id', userId);
+
+                if (teachError) {
+                    console.error('⚠️ Erro ao buscar user_teaches_game:', teachError);
+                } else {
+                    userTeaches = teachData?.map(t => t.boardgame_id) || [];
+                }
+            }
+
+            // Combina dados com loan e mecânicas
+            const gamesWithInfo = games?.map(game => {
+                const loan = loansMap.get(game.id);
+
+                // Extrai as mecânicas do relacionamento
+                const mechanics = game.boardgame_mechanics?.map((bm: any) => bm.game_mechanics).filter(Boolean) || [];
+
+                return {
+                    ...game,
+                    mechanics, // Adiciona as mecânicas ao jogo
+                    canTeach: userTeaches.includes(game.id),
+                    isLoaned: !!loan,
+                    loanedBy: loan?.user_id,
+                    borrowedAt: loan?.borrowed_at,
+                    dueDate: loan?.due_date,
+                };
+            }) || [];
+
+            setBoardgames(gamesWithInfo);
+            setError(null);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Erro ao carregar jogos');
+        } finally {
+            setLoading(false);
         }
-
-        // Combina dados com loan
-        const gamesWithInfo = games?.map(game => {
-            const loan = loansMap.get(game.id);
-            return {
-                ...game,
-                canTeach: userTeaches.includes(game.id),
-                isLoaned: !!loan,
-                loanedBy: loan?.user_id,
-                borrowedAt: loan?.borrowed_at,
-                dueDate: loan?.due_date,
-            };
-        }) || [];
-
-        setBoardgames(gamesWithInfo);
-        setError(null);
-    } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erro ao carregar jogos');
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
     const toggleTeach = async (boardgameId: string, canTeach: boolean) => {
         if (!userId) return;

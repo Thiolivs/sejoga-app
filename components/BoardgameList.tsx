@@ -1,23 +1,103 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useBoardgames } from '@/hooks/useBoardgames';
 import { useUser } from '@/hooks/useUser';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useGameLoans } from '@/hooks/useGameLoans';
+import { useGameMechanics } from '@/hooks/useGameMechanics';
 import type { BoardgameWithTeachers, Profile } from '@/types/database';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export function BoardgameList() {
     const { user, loading: userLoading } = useUser();
     const { isAdmin, isMonitor, loading: roleLoading } = useUserRole();
     const { boardgames, loading, error, toggleTeach, getGameTeachers, refetch } = useBoardgames(user?.id);
     const { borrowGame, returnGame, getLoanInfo, refetchLoans } = useGameLoans();
+    const { mechanics, loading: mechanicsLoading } = useGameMechanics();
 
     const [selectedGame, setSelectedGame] = useState<BoardgameWithTeachers | null>(null);
     const [teachers, setTeachers] = useState<Profile[]>([]);
     const [loadingTeachers, setLoadingTeachers] = useState(false);
     const [borrower, setBorrower] = useState<Profile | null>(null);
     const [loadingBorrower, setLoadingBorrower] = useState(false);
+
+    // Estados de filtros
+    const [searchTerm, setSearchTerm] = useState('');
+    const [showFilters, setShowFilters] = useState(false);
+    const [filters, setFilters] = useState({
+        minPlayers: null as number | null,
+        maxPlayers: null as number | null,
+        selectedMechanics: [] as string[], // IDs das mecânicas selecionadas
+    });
+
+    // Agrupar mecânicas por tipo
+    const mechanicsByType = useMemo(() => {
+        return {
+            category: mechanics.filter(m => m.type === 'category'),
+            mechanic: mechanics.filter(m => m.type === 'mechanic'),
+            mode: mechanics.filter(m => m.type === 'mode'),
+        };
+    }, [mechanics]);
+
+    // Filtrar jogos
+    const filteredGames = useMemo(() => {
+        return boardgames.filter((game) => {
+            // Filtro de busca por nome
+            if (searchTerm && !game.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+                return false;
+            }
+
+            // Filtro por número de jogadores
+            if (filters.minPlayers && game.players_min && filters.minPlayers < game.players_min) {
+                return false;
+            }
+            if (filters.maxPlayers && game.players_max && filters.maxPlayers > game.players_max) {
+                return false;
+            }
+
+            // Filtro por mecânicas selecionadas
+            if (filters.selectedMechanics.length > 0) {
+                // Verifica se o jogo tem TODAS as mecânicas selecionadas (AND)
+                const hasAllMechanics = filters.selectedMechanics.every(selectedId =>
+                    game.mechanics?.some(mechanic => mechanic.id === selectedId)
+                );
+                
+                if (!hasAllMechanics) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    }, [boardgames, searchTerm, filters]);
+
+    // Verificar se há filtros ativos
+    const hasActiveFilters =
+        searchTerm !== '' ||
+        filters.minPlayers !== null ||
+        filters.maxPlayers !== null ||
+        filters.selectedMechanics.length > 0;
+
+    // Resetar filtros
+    const clearFilters = () => {
+        setSearchTerm('');
+        setFilters({
+            minPlayers: null,
+            maxPlayers: null,
+            selectedMechanics: [],
+        });
+    };
+
+    const toggleMechanic = (mechanicId: string) => {
+        setFilters(prev => ({
+            ...prev,
+            selectedMechanics: prev.selectedMechanics.includes(mechanicId)
+                ? prev.selectedMechanics.filter(id => id !== mechanicId)
+                : [...prev.selectedMechanics, mechanicId]
+        }));
+    };
 
     const handleGameClick = async (game: BoardgameWithTeachers) => {
         setSelectedGame(game);
@@ -38,9 +118,7 @@ export function BoardgameList() {
 
         const result = await borrowGame(boardgameId, user.id);
         if (result.success) {
-            //await new Promise(resolve => setTimeout(resolve, 50));
             await refetchLoans?.();
-            //await new Promise(resolve => setTimeout(resolve, 50));
             await refetch();
 
             if (selectedGame?.id === boardgameId) {
@@ -53,9 +131,7 @@ export function BoardgameList() {
     const handleReturn = async (boardgameId: string) => {
         const result = await returnGame(boardgameId);
         if (result.success) {
-            //await new Promise(resolve => setTimeout(resolve, 50));
             await refetchLoans?.();
-            //await new Promise(resolve => setTimeout(resolve, 50));
             await refetch();
 
             if (selectedGame?.id === boardgameId) {
@@ -64,7 +140,7 @@ export function BoardgameList() {
         }
     };
 
-    if (userLoading || loading || roleLoading) {
+    if (userLoading || loading || roleLoading || mechanicsLoading) {
         return (
             <div className="p-4">
                 <div className="animate-pulse space-y-4">
@@ -99,9 +175,193 @@ export function BoardgameList() {
 
     return (
         <div className="space-y-4 p-4">
+            {/* Barra de Busca e Filtros */}
+            <div className="bg-white rounded-lg shadow-md p-4 sticky top-0 z-10">
+                <div className="flex gap-3 items-center">
+                    {/* Campo de busca */}
+                    <div className="flex-1 relative">
+                        <Input
+                            type="text"
+                            placeholder="🔍 Buscar jogo por nome..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pr-10"
+                        />
+                        {searchTerm && (
+                            <button
+                                onClick={() => setSearchTerm('')}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Botão de filtros */}
+                    <Button
+                        onClick={() => setShowFilters(!showFilters)}
+                        variant={showFilters ? "default" : "outline"}
+                        className={`whitespace-nowrap ${hasActiveFilters && !showFilters ? 'border-blue-500 text-blue-600' : ''}`}
+                    >
+                        🎛️ Filtros
+                        {hasActiveFilters && !showFilters && (
+                            <span className="ml-2 px-2 py-0.5 bg-blue-600 text-white rounded-full text-xs">
+                                {(filters.minPlayers !== null ? 1 : 0) +
+                                    (filters.maxPlayers !== null ? 1 : 0) +
+                                    filters.selectedMechanics.length}
+                            </span>
+                        )}
+                    </Button>
+
+                    {/* Botão limpar */}
+                    {hasActiveFilters && (
+                        <Button
+                            onClick={clearFilters}
+                            variant="ghost"
+                            className="text-gray-600 hover:text-gray-800"
+                        >
+                            🔄 Limpar
+                        </Button>
+                    )}
+                </div>
+
+                {/* Painel de Filtros Avançados */}
+                {showFilters && (
+                    <div className="mt-4 pt-4 border-t space-y-4">
+                        <h3 className="font-semibold text-gray-700">Filtros Avançados</h3>
+
+                        {/* Filtro por número de jogadores */}
+                        <div>
+                            <p className="text-sm font-medium text-gray-700 mb-2">Número de Jogadores:</p>
+                            <div className="flex gap-4 items-center">
+                                <div className="flex-1">
+                                    <label className="text-xs text-gray-600">Mínimo:</label>
+                                    <Input
+                                        type="number"
+                                        min="1"
+                                        placeholder="Ex: 2"
+                                        value={filters.minPlayers || ''}
+                                        onChange={(e) =>
+                                            setFilters({
+                                                ...filters,
+                                                minPlayers: e.target.value ? parseInt(e.target.value) : null,
+                                            })
+                                        }
+                                    />
+                                </div>
+                                <div className="flex-1">
+                                    <label className="text-xs text-gray-600">Máximo:</label>
+                                    <Input
+                                        type="number"
+                                        min="1"
+                                        placeholder="Ex: 6"
+                                        value={filters.maxPlayers || ''}
+                                        onChange={(e) =>
+                                            setFilters({
+                                                ...filters,
+                                                maxPlayers: e.target.value ? parseInt(e.target.value) : null,
+                                            })
+                                        }
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Categorias */}
+                        {mechanicsByType.category.length > 0 && (
+                            <div>
+                                <p className="text-sm font-medium text-gray-700 mb-2">Categorias:</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {mechanicsByType.category.map((mechanic) => (
+                                        <label
+                                            key={mechanic.id}
+                                            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-sm ${filters.selectedMechanics.includes(mechanic.id)
+                                                ? 'bg-blue-600 text-white'
+                                                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                                }`}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                className="hidden"
+                                                checked={filters.selectedMechanics.includes(mechanic.id)}
+                                                onChange={() => toggleMechanic(mechanic.id)}
+                                            />
+                                            {mechanic.name}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Mecânicas */}
+                        {mechanicsByType.mechanic.length > 0 && (
+                            <div>
+                                <p className="text-sm font-medium text-gray-700 mb-2">Mecânicas:</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {mechanicsByType.mechanic.map((mechanic) => (
+                                        <label
+                                            key={mechanic.id}
+                                            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
+                                                ? 'bg-green-600 text-white'
+                                                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                                }`}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                className="hidden"
+                                                checked={filters.selectedMechanics.includes(mechanic.id)}
+                                                onChange={() => toggleMechanic(mechanic.id)}
+                                            />
+                                            {mechanic.name}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Modos */}
+                        {mechanicsByType.mode.length > 0 && (
+                            <div>
+                                <p className="text-sm font-medium text-gray-700 mb-2">Modos:</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {mechanicsByType.mode.map((mechanic) => (
+                                        <label
+                                            key={mechanic.id}
+                                            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
+                                                ? 'bg-purple-600 text-white'
+                                                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                                }`}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                className="hidden"
+                                                checked={filters.selectedMechanics.includes(mechanic.id)}
+                                                onChange={() => toggleMechanic(mechanic.id)}
+                                            />
+                                            {mechanic.name}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            {/* Contador de resultados */}
             <div className="flex justify-between items-center mb-4">
                 <p className="text-sm text-gray-600">
-                    {boardgames.length} {boardgames.length === 1 ? 'jogo encontrado' : 'jogos encontrados'}
+                    {filteredGames.length === boardgames.length ? (
+                        <>
+                            <strong>{filteredGames.length}</strong>{' '}
+                            {filteredGames.length === 1 ? 'jogo' : 'jogos'} no acervo
+                        </>
+                    ) : (
+                        <>
+                            Mostrando <strong>{filteredGames.length}</strong> de{' '}
+                            <strong>{boardgames.length}</strong> jogos
+                        </>
+                    )}
                 </p>
 
                 {(isAdmin || isMonitor) && (
@@ -114,7 +374,20 @@ export function BoardgameList() {
                 )}
             </div>
 
-            {boardgames.map((game) => (
+            {/* Mensagem se não houver resultados */}
+            {filteredGames.length === 0 && (
+                <div className="text-center py-12 bg-gray-50 rounded-lg">
+                    <p className="text-gray-600 mb-4">
+                        😔 Nenhum jogo encontrado com os filtros aplicados
+                    </p>
+                    <Button onClick={clearFilters} variant="outline">
+                        🔄 Limpar filtros
+                    </Button>
+                </div>
+            )}
+
+            {/* Lista de jogos */}
+            {filteredGames.map((game) => (
                 <div
                     key={game.id}
                     className={`border rounded-lg p-4 transition-all ${game.isLoaned ? 'bg-red-50 border-red-300' : 'bg-white hover:shadow-md'
@@ -138,7 +411,7 @@ export function BoardgameList() {
 
                     {/* LINHA 2 - Checkbox + Botão */}
                     {isMonitor && (
-                                    <div className="flex items-center justify-between pt-2 border-t-2 border-gray-100">
+                        <div className="flex items-center justify-between pt-2 border-t-2 border-gray-100">
                             {/* Checkbox e texto à esquerda */}
                             <div className="flex items-center gap-2 text-left">
                                 <input
@@ -176,7 +449,7 @@ export function BoardgameList() {
                                         onClick={() => handleBorrow(game.id)}
                                         className="px-4 py-2 bg-sejoga-azul-oficial text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
                                     >
-                                        🤏 Pegar Emprestado
+                                        🤝 Pegar Emprestado
                                     </button>
                                 )}
                             </div>
@@ -186,6 +459,7 @@ export function BoardgameList() {
 
             ))}
 
+            {/* Modal - mantém sua formatação */}
             {selectedGame && (
                 <div
                     className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
@@ -218,9 +492,6 @@ export function BoardgameList() {
                                             <p className="text-sm text-red-700">
                                                 Para: 👤<strong>{borrower.first_name}</strong>
                                             </p>
-                                            {/*<p className="text-xs text-red-600 mt-1">
-                                                {borrower.email}
-                                            </p>*/}
                                             {selectedGame.borrowedAt && (
                                                 <p className="text-xs text-red-600 mt-1">
                                                     Desde: {new Date(selectedGame.borrowedAt).toLocaleString('pt-BR').slice(0, 10)}
@@ -272,23 +543,9 @@ export function BoardgameList() {
                                     <ul className="space-y-2">
                                         {teachers.map((teacher) => (
                                             <li key={teacher.id} className="flex items-center gap-2">
-                                                {/*<div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                                    {teacher.name?.charAt(0).toUpperCase()}
-                                                </div>*/}
                                                 <div className="flex-1">
                                                     <p className="text-sm font-medium">👤 {teacher.first_name}</p>
-                                                    {/*<p className="text-xs text-gray-600">{teacher.email}</p>*/}
                                                 </div>
-                                                {/*{teacher.role === 'admin' && (
-                                                    <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs rounded">
-                                                        Admin
-                                                    </span>
-                                                )}
-                                                {teacher.role === 'monitor' && (
-                                                    <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded">
-                                                        Monitor
-                                                    </span>
-                                                )}*/}
                                             </li>
                                         ))}
                                     </ul>
