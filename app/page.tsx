@@ -1,4 +1,3 @@
-
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { redirect, RedirectType } from "next/navigation";
@@ -12,52 +11,53 @@ import {
 import { CreateAccountForm } from "@/components/auth/create-account-form";
 import { LoginAccountForm } from "@/components/auth/login-account-form"
 import Image from "next/image";
+import { HomeWithSplash } from "@/components/HomeWithSplash"; // 👈 ADICIONE ISSO
 
 export default async function Home() {
-  
+
   let loggedIn = false
 
-  try{
+  try {
     const supabase = createServerComponentClient({ cookies });
-    const { data:{ session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabase.auth.getSession();
     if (session) loggedIn = true
   }
-  catch(error){
+  catch (error) {
     console.log("Home", error)
   }
 
-  finally{
+  finally {
     if (loggedIn) redirect("/user-app", RedirectType.replace);
   }
-  
-return (
-    <div className="flex flex-col h-screen w-full justify-center items-center">
 
-      <Image
-        src="/sejoga-id/MeepleColorido.png"
-        alt="Meeple Colorido"
-        width={160}
-        height={160}
-        className="mb-4"
-      />
+  // 👇 ENVOLVA TODO O CONTEÚDO COM HomeWithSplash
+  return (
+    <HomeWithSplash>
+      <div className="flex flex-col h-screen w-full justify-center items-center">
 
+        <Image
+          src="/sejoga-id/MeepleColorido.png"
+          alt="Meeple Colorido"
+          width={160}
+          height={160}
+          className="mb-4"
+        />
 
-      {/*<div className="flex flex-col mb-10 w-full justify-center items-center">SeJoga no App!</div>*/}
-      
-      <Tabs defaultValue="login" className="w-[300px] border rounded-md pb-4 shadow-2xl">
-        
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="login">Login</TabsTrigger>
-          <TabsTrigger value="create-account">Criar conta</TabsTrigger>
-        </TabsList>
-        <TabsContent value="create-account">
-          <CreateAccountForm />
-        </TabsContent>
+        <Tabs defaultValue="login" className="w-[300px] border rounded-md pb-4 shadow-2xl">
 
-        <TabsContent value="login">
-          <LoginAccountForm/>
-        </TabsContent>
-      </Tabs>
-    </div>
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="login">Login</TabsTrigger>
+            <TabsTrigger value="create-account">Criar conta</TabsTrigger>
+          </TabsList>
+          <TabsContent value="create-account">
+            <CreateAccountForm />
+          </TabsContent>
+
+          <TabsContent value="login">
+            <LoginAccountForm />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </HomeWithSplash>
   )
 }

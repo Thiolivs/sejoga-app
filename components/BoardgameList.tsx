@@ -212,6 +212,16 @@ export function BoardgameList() {
                             </span>
                         )}
                     </Button>
+                    {/* Botão limpar */}
+                    {hasActiveFilters && (
+                        <Button
+                            onClick={clearFilters}
+                            variant="ghost"
+                            className="text-gray-600 hover:text-gray-800"
+                        >
+                            ❌ Limpar
+                        </Button>
+                    )}
                 </div>
 
                 {/* Painel de Filtros Avançados */}
@@ -365,7 +375,7 @@ export function BoardgameList() {
             {filteredGames.length === 0 && (
                 <div className="text-center py-12 bg-gray-50 rounded-lg">
                     <p className="text-gray-600 mb-4">
-                        🙁 Nenhum jogo encontrado com os filtros aplicados
+                        🙁 Nenhum jogo encontrado
                     </p>
                     <Button onClick={clearFilters} variant="outline">
                         🔄 Limpar filtros
