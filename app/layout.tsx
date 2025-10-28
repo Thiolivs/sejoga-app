@@ -28,7 +28,18 @@ const caveatBrush = Caveat_Brush({
 
 export const metadata: Metadata = {
   title: "SeJoga",
-  description: "Sistema de empréstimo e ensino de jogos de tabuleiro",
+  description: " ",
+  manifest: "/manifest.json", 
+  themeColor: "#FFB3BA", 
+  appleWebApp: { 
+    capable: true,
+    statusBarStyle: "default",
+    title: "SeJoga",
+  },
+  icons: { 
+    icon: "/sejoga-id/MeepleColorido.png",
+    apple: "/sejoga-id/MeepleColorido.png",
+  },
 };
 
 export default function RootLayout({
@@ -41,7 +52,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} ${caveatBrush.variable} antialiased`}
       >
-        {children}
+          {children}
       </body>
     </html>
   );
