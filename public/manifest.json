@@ -17,13 +17,13 @@
             "src": "/sejoga-id/Meeple-512.png",
             "sizes": "512x512",
             "type": "image/png",
-            "purpose": "any"
+            "purpose": "maskable"
         },
         {
             "src": "/sejoga-id/White512.png",
             "sizes": "512x512",
             "type": "image/png",
-            "purpose": "maskable"
+            "purpose": "any"
         }
     ]
 }

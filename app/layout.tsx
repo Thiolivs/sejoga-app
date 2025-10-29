@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { RootLayoutClient } from "@/components/RootLayoutClient";
+
 
 export const metadata: Metadata = {
   title: "SeJoga",
@@ -8,24 +8,21 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
-    apple: "/sejoga-id/Meeple-192.png"
+    apple: "/sejoga-id/White192.png"
   }
 };
 
 export const viewport: Viewport = {
   themeColor: "#35588C",
 };
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body>
-        <RootLayoutClient>{children}</RootLayoutClient>
-      </body>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#35588C" />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }
