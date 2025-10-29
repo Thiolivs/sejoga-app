@@ -36,9 +36,11 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "SeJoga",
   },
-  icons: { 
-    icon: "/sejoga-id/IconWhite.png",
-    apple: "/sejoga-id/IconWhite.png",
+icons: { 
+    icon: [
+      { url: "/favicon.ico" }, // Favicon colorido para a aba do navegador
+    ],
+    apple: "/sejoga-id/IconWhite.png", // Ícone branco para iOS
   },
 };
 
