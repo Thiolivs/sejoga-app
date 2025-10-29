@@ -8,13 +8,13 @@
     "theme_color": "#35588C",
     "icons": [
         {
-            "src": "/sejoga-id/Meeple192.png",
+            "src": "/sejoga-id/Meeple-192.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "/sejoga-id/Meeple512.png",
+            "src": "/sejoga-id/Meeple-512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any"
