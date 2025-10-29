@@ -1,9 +1,6 @@
-"use client";
-
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { useState } from "react";
-import { SplashScreen } from "@/components/SplashScreen";
+import { RootLayoutClient } from "@/components/RootLayoutClient";
 
 export const metadata: Metadata = {
   title: "SeJoga",
@@ -24,22 +21,10 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [loading, setLoading] = useState(true);
-
   return (
     <html lang="pt-BR">
-      <head>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#35588C" />
-      </head>
       <body>
-        {loading && (
-          <SplashScreen
-            onFinish={() => setLoading(false)}
-            logoUrl="/sejoga-id/White512.png" // 👈 usa o ícone branco aqui
-          />
-        )}
-        {!loading && children}
+        <RootLayoutClient>{children}</RootLayoutClient>
       </body>
     </html>
   );
