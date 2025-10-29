@@ -37,8 +37,8 @@ export const metadata: Metadata = {
     title: "SeJoga",
   },
   icons: { 
-    icon: "/icon-splash-branco.png",
-    apple: "/icon-splash-branco.png",
+    icon: "/sejoga-id/IconWhite.png",
+    apple: "/sejoga-id/IconWhite.png",
   },
 };
 

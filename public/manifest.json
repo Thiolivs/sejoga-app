@@ -8,16 +8,14 @@
     "theme_color": "#FFFFFF",
     "icons": [
         {
-            "src": "/icon-splash-branco.png",
+            "src": "/sejoga-id/IconWhite.png",
             "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any"
+            "type": "image/png"
         },
         {
-            "src": "/icon-splash-branco.png",
+            "src": "/sejoga-id/IconWhite.png",
             "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
+            "type": "image/png"
         }
     ]
 }
