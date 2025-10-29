@@ -15,14 +15,13 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: "#35588C",
 };
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#35588C" />
+      </head>
       <body>{children}</body>
     </html>
   );
