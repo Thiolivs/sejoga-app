@@ -2,27 +2,21 @@
     "name": "SeJoga",
     "short_name": "SeJoga",
     "start_url": "/",
-    "scope": "/",
     "display": "standalone",
-    "background_color": "#FFFFFF",
+    "background_color": "#DD2228",
+    "theme_color": "#DD2228",
     "icons": [
         {
-            "src": "/sejoga-id/Meeple192.png",
+            "src": "/sejoga-id/White192.png",
             "sizes": "192x192",
             "type": "image/png",
-            "purpose": "any" 
-        },
-        {
-            "src": "/sejoga-id/Meeple512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any"
+            "purpose": "any maskable any"
         },
         {
             "src": "/sejoga-id/White512.png",
             "sizes": "512x512",
             "type": "image/png",
-            "purpose": "maskable"
+            "purpose": "any maskable any"
         }
     ]
 }
