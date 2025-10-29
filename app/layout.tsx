@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "SeJoga",
-  description: "Seu app de boardgames",
+  description: " ",
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#35588C", // splash
+  themeColor: "#35588C",
 };
 
 export default function RootLayout({
