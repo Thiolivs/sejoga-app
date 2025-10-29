@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   title: "SeJoga",
   description: " ",
   manifest: "/manifest.json", 
-  themeColor: "#FFB3BA", 
+  themeColor: "#FFFFFF", 
   appleWebApp: { 
     capable: true,
     statusBarStyle: "default",

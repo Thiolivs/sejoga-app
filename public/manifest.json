@@ -8,7 +8,7 @@
     "theme_color": "#FFFFFF",
     "icons": [
         {
-            "src": "/sejoga-id/MeepleColorido.png",
+            "src": "/icon-splash-branco.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any"
