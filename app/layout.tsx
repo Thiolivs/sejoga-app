@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Caveat, Caveat_Brush } from "next/font/google";
 import "./globals.css";
 
@@ -29,13 +29,16 @@ const caveatBrush = Caveat_Brush({
 
 export const metadata: Metadata = {
   title: "SeJoga",
-  description: "Seu app de boardgames",
+  description: " ",
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
     apple: "/sejoga-id/White192.png"
   },
-  themeColor: "#DD2228"
+};
+
+export const viewport: Viewport = {
+  themeColor: "#FFFFFF",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
