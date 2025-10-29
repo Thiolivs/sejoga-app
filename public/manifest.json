@@ -4,8 +4,7 @@
     "start_url": "/",
     "scope": "/",
     "display": "standalone",
-    "background_color": "#DD2228",
-    "theme_color": "#DD2228",
+    "background_color": "#FFFFFF",
     "icons": [
         {
             "src": "/sejoga-id/Meeple192.png",
