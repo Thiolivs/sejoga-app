@@ -1,11 +1,11 @@
 {
     "name": "SeJoga",
     "short_name": "SeJoga",
-    "description": "Seu evento de boardgames",
+    "description": " ",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#FFB3BA",
-    "theme_color": "#FFB3BA",
+    "background_color": "#FFFFFF",
+    "theme_color": "#FFFFFF",
     "icons": [
         {
             "src": "/sejoga-id/MeepleColorido.png",
@@ -14,7 +14,7 @@
             "purpose": "any"
         },
         {
-            "src": "/sejoga-id/MeepleColorido.png",
+            "src": "/icon-splash-branco.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
