@@ -3,8 +3,8 @@
     "short_name": "SeJoga",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#DD2228",
-    "theme_color": "#DD2228",
+    "background_color": "#FFFF86",
+    "theme_color": "#6AAB60",
     "icons": [
         {
             "src": "/sejoga-id/White192.png",
