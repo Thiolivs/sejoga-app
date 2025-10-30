@@ -105,13 +105,19 @@ export function AdminGamesList() {
                                 >
                                     ✏️ Editar
                                 </Button>
-                                <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    onClick={() => handleDelete(game.id, game.name)}
-                                >
-                                    🗑️ Deletar
-                                </Button>
+
+                                <div className="flex flex-col justify-center items-center border-l border-gray-200 pl-1 ml-2">
+                                    <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => handleDelete(game.id, game.name)}
+                                        className="text-red-600 hover:text-red-800 translate-x-1"
+                                    >
+                                        ❌
+                                    </Button>
+                                </div>
+
+
                             </div>
                         </div>
                     </div>

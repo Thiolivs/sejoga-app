@@ -1,335 +1,219 @@
 'use client';
-import { Boardgame } from '@/types/database';
 
 import { useState, useEffect } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useRouter } from 'next/navigation';
+import { useTrainings } from '@/hooks/useTrainings';
+import { useUser } from '@/hooks/useUser';
+import { useUserRole } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import type { Event, TeachingSessionWithDetails } from '@/types/database';
+import { Plus, Sun, Sunset, Moon, MapPin, Calendar } from 'lucide-react';
+import type { TrainingAvailability, Profile } from '@/types/database';
+
+const SHIFTS = {
+    morning: { label: 'Manhã', icon: Sun, color: 'bg-yellow-100 text-yellow-700 border-yellow-300' },
+    afternoon: { label: 'Tarde', icon: Sunset, color: 'bg-orange-100 text-orange-700 border-orange-300' },
+    night: { label: 'Noite', icon: Moon, color: 'bg-indigo-100 text-indigo-700 border-indigo-300' },
+};
 
 export function TrainingSession() {
-    const [events, setEvents] = useState<Event[]>([]);
-    const [selectedEvent, setSelectedEvent] = useState<string>('');
-    const [sessions, setSessions] = useState<TeachingSessionWithDetails[]>([]);
-    const [boardgames, setBoardgames] = useState<Boardgame[]>([]);
-    const [showForm, setShowForm] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const supabase = createClientComponentClient();
-
-    const [formData, setFormData] = useState({
-        boardgame_id: '',
-        players_count: 0,
-        notes: '',
-    });
+    const router = useRouter();
+    const { user } = useUser();
+    const { isAdmin, isMonitor } = useUserRole();
+    const { trainings, loading, toggleAvailability, getTrainingAvailability } = useTrainings();
+    
+    const [availabilities, setAvailabilities] = useState<Record<string, any[]>>({});
+    const [loadingAvailabilities, setLoadingAvailabilities] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
-        fetchEvents();
-        fetchBoardgames();
-    }, []);
+        trainings.forEach(training => {
+            loadAvailability(training.id);
+        });
+    }, [trainings]);
 
-    useEffect(() => {
-        if (selectedEvent) {
-            fetchSessions();
-        }
-    }, [selectedEvent]);
+    const loadAvailability = async (trainingId: string) => {
+        setLoadingAvailabilities(prev => ({ ...prev, [trainingId]: true }));
+        const data = await getTrainingAvailability(trainingId);
+        setAvailabilities(prev => ({ ...prev, [trainingId]: data }));
+        setLoadingAvailabilities(prev => ({ ...prev, [trainingId]: false }));
+    };
 
-    const fetchEvents = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('events')
-                .select('*')
-                .eq('is_active', true)
-                .order('event_date', { ascending: false });
+    const handleToggle = async (
+        trainingId: string,
+        shift: 'morning' | 'afternoon' | 'night',
+        isChecked: boolean
+    ) => {
+        if (!user) return;
 
-            if (error) throw error;
-            setEvents(data || []);
-
-            if (data && data.length > 0) {
-                setSelectedEvent(data[0].id);
-            }
-        } catch (error) {
-            console.error('Erro ao buscar eventos:', error);
-        } finally {
-            setLoading(false);
+        const result = await toggleAvailability(trainingId, user.id, shift, !isChecked);
+        
+        if (result.success) {
+            // Recarrega disponibilidade
+            await loadAvailability(trainingId);
         }
     };
 
-    const fetchBoardgames = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('boardgames')
-                .select('id, name')
-                .eq('active', true)
-                .order('name');
-
-            if (error) throw error;
-            setBoardgames(data || []);
-        } catch (error) {
-            console.error('Erro ao buscar jogos:', error);
-        }
+    const isUserAvailable = (trainingId: string, shift: string) => {
+        if (!user) return false;
+        const trainingAvail = availabilities[trainingId] || [];
+        return trainingAvail.some(
+            (a: any) => a.user_id === user.id && a.shift === shift
+        );
     };
 
-    const fetchSessions = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('teaching_sessions')
-                .select(`
-          *,
-          monitor:profiles!monitor_id (id, first_name, last_name, name),
-          boardgame:boardgames!boardgame_id (id, name),
-          event:events!event_id (id, name)
-        `)
-                .eq('event_id', selectedEvent)
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-            setSessions(data || []);
-        } catch (error) {
-            console.error('Erro ao buscar sessões:', error);
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        try {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) throw new Error('Usuário não autenticado');
-
-            const { error } = await supabase
-                .from('teaching_sessions')
-                .insert({
-                    event_id: selectedEvent,
-                    monitor_id: user.id,
-                    ...formData,
-                });
-
-            if (error) throw error;
-
-            setFormData({ boardgame_id: '', players_count: 0, notes: '' });
-            setShowForm(false);
-            fetchSessions();
-        } catch (error) {
-            console.error('Erro ao registrar sessão:', error);
-            alert('❌ Erro ao registrar sessão');
-        }
-    };
-
-    const handleDelete = async (sessionId: string) => {
-        if (!confirm('Tem certeza que deseja deletar este registro?')) return;
-
-        try {
-            const { error } = await supabase
-                .from('teaching_sessions')
-                .delete()
-                .eq('id', sessionId);
-
-            if (error) throw error;
-            fetchSessions();
-        } catch (error) {
-            console.error('Erro ao deletar:', error);
-            alert('❌ Erro ao deletar');
-        }
+    const getShiftParticipants = (trainingId: string, shift: string) => {
+        const trainingAvail = availabilities[trainingId] || [];
+        return trainingAvail
+            .filter((a: any) => a.shift === shift)
+            .map((a: any) => a.profiles?.first_name || 'Monitor')
+            .filter(Boolean);
     };
 
     if (loading) {
-        return <div className="text-center py-8">Carregando...</div>;
-    }
-
-    if (events.length === 0) {
         return (
-            <div className="text-center py-12 bg-yellow-50 rounded-lg">
-                <p className="text-yellow-800">Nenhum evento ativo. Crie um evento primeiro!</p>
+            <div className="p-4">
+                <div className="animate-pulse space-y-4">
+                    <div className="h-20 bg-gray-200 rounded"></div>
+                    <div className="h-20 bg-gray-200 rounded"></div>
+                </div>
+                <p className="text-center mt-4 text-gray-600">Carregando treinamentos...</p>
             </div>
         );
     }
 
-    // Agrupar sessões por monitor
-    const sessionsByMonitor = sessions.reduce((acc, session) => {
-        const monitorName = session.monitor?.first_name || 'Desconhecido';
-        if (!acc[monitorName]) {
-            acc[monitorName] = [];
-        }
-        acc[monitorName].push(session);
-        return acc;
-    }, {} as Record<string, TeachingSessionWithDetails[]>);
-
     return (
-        <div className="space-y-6">
-
-
-            {/* Formulário */}
-
-            <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
-                {/* Seletor de Evento */}
-                <h3 className="text-xl text-center font-bold">Registrar Jogo Ensinado</h3>
-
-                <div className="flex justify-between items-center">
-                    <div className="flex-1">
-                        <label className="block text-sm font-medium mb-2">Selecione o Evento:</label>
-                        <select
-                            value={selectedEvent}
-                            onChange={(e) => setSelectedEvent(e.target.value)}
-                            className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg"
-                        >
-                            {events.map((event) => (
-                                <option key={event.id} value={event.id}>
-                                    {event.name} - {new Date(event.event_date).toLocaleDateString('pt-BR')}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium mb-1">Jogo *</label>
-                    <select
-                        value={formData.boardgame_id}
-                        onChange={(e) => setFormData({ ...formData, boardgame_id: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                        required
+        <div className="p-4 space-y-6">
+            {/* Header com botão de adicionar (só admin) */}
+            <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-gray-900">Treinamentos</h2>
+                {isAdmin && (
+                    <Button
+                        onClick={() => router.push('/user-app/administration/add-training')}
+                        className="flex items-center gap-2"
                     >
-                        <option value="">Selecione um jogo</option>
-                        {boardgames.map((game) => (
-                            <option key={game.id} value={game.id}>
-                                {game.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium mb-1">Número de Jogadores *</label>
-                    <Input
-                        type="number"
-                        min="1"
-                        value={formData.players_count}
-                        onChange={(e) =>
-                            setFormData({ ...formData, players_count: parseInt(e.target.value) })
-                        }
-                        required
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium mb-1">Observações</label>
-                    <Textarea
-                        value={formData.notes}
-                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                        placeholder=""
-                        rows={3}
-                    />
-                </div>
-
-                <div className="flex gap-2">
-                    <Button type="submit" className="bg-green-600 hover:bg-green-700">
-                        💾 Salvar
+                        <Plus className="w-4 h-4" />
+                        Novo Treinamento
                     </Button>
-                </div>
-            </form>
-
-            {/* Resumo do Evento */}
-            <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg shadow p-6">
-                <h3 className="text-2xl text-center font-bold mb-4">
-                    {events.find(e => e.id === selectedEvent)?.name}
-                </h3>
-                <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center">
-                        <p className="text-3xl font-bold">{Object.keys(sessionsByMonitor).length}</p>
-                        <p className="text-purple-100 text-sm">Monitores Ativos</p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-3xl font-bold">{sessions.length}</p>
-                        <p className="text-purple-100 text-sm">Jogos Ensinados</p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-3xl font-bold">
-                            {sessions.reduce((sum, s) => sum + s.players_count, 0)}
-                        </p>
-                        <p className="text-purple-100 text-sm">Total de Jogadores</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Lista por Monitor */}
-            <div className="space-y-6">
-                <h3 className="text-[20px] text-center font-bold">Registros por Monitor</h3>
-
-                {Object.keys(sessionsByMonitor).length === 0 ? (
-                    <div className="text-center py-12 bg-gray-50 rounded-lg">
-                        <p className="text-gray-600">Nenhum registro ainda para este evento</p>
-                    </div>
-                ) : (
-                    Object.entries(sessionsByMonitor).map(([monitorName, monitorSessions]) => (
-                        <div key={monitorName} className="bg-white rounded-lg shadow p-6">
-                            <div className="flex justify-between items-center mb-4">
-                                <h4 className="text-xl font-bold text-purple-700">
-                                    👨‍🏫 {monitorName}
-                                </h4>
-                                <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">
-                                    {monitorSessions.length} {monitorSessions.length === 1 ? 'jogo' : 'jogos'}
-                                </span>
-                            </div>
-
-                            <div className="space-y-3">
-                                {monitorSessions.map((session) => (
-                                    <div
-                                        key={session.id}
-                                        className="flex justify-between items-stretch p-4 bg-gray-50 rounded-lg"
-                                    >
-                                        {/* 🧩 Conteúdo principal */}
-                                        <div className="flex-1 pr-4">
-                                            <h5 className="font-semibold text-blue-800">
-                                                🎲 {session.boardgame?.name || 'Jogo desconhecido'}
-                                            </h5>
-
-                                            {/* 👇 jogadores à esquerda, data à direita */}
-                                            <div className="flex items-center justify-between mt-1">
-                                                <p className="text-xs text-gray-400">
-                                                    {session.players_count}{' '}
-                                                    {session.players_count === 1 ? 'jogador' : 'jogadores'}
-                                                </p>
-                                                <p className="text-[11px] text-gray-400 italic">
-                                                    {(() => {
-                                                        const d = new Date(session.created_at);
-                                                        const dia = String(d.getDate()).padStart(2, '0');
-                                                        const mes = String(d.getMonth() + 1).padStart(2, '0');
-                                                        const ano = String(d.getFullYear()).slice(-2);
-                                                        const hora = d.getHours().toString().padStart(2, '0');
-                                                        const minuto = d.getMinutes().toString().padStart(2, '0');
-                                                        return `${dia}/${mes}/${ano} • ${hora}:${minuto}`;
-                                                    })()}
-                                                </p>
-                                            </div>
-
-                                            {session.notes && (
-                                                <p className="text-sm text-gray-500 mt-2">
-                                                    <i>{session.notes}</i>
-                                                </p>
-                                            )}
-                                        </div>
-
-                                        {/* 🧱 Divisor vertical de altura total + botão à direita */}
-                                        <div className="flex flex-col justify-center items-center border-l border-gray-200 pl-1 ml-2">
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                onClick={() => handleDelete(session.id)}
-                                                className="text-red-600 hover:text-red-800 translate-x-1"
-                                            >
-                                                ❌
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-
-                        </div>
-                    ))
                 )}
             </div>
+
+            {/* Lista de treinamentos */}
+            {trainings.length === 0 ? (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+                    <h3 className="text-yellow-800 font-semibold text-lg">
+                        Nenhum treinamento disponível
+                    </h3>
+                    <p className="text-yellow-600 text-sm mt-2">
+                        Aguarde novos treinamentos serem cadastrados.
+                    </p>
+                </div>
+            ) : (
+                <div className="space-y-4">
+                    {trainings.map((training) => {
+                        const trainingDate = new Date(training.training_date);
+                        const formattedDate = trainingDate.toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric'
+                        });
+
+                        return (
+                            <div key={training.id} className="bg-white border-2 border-gray-200 rounded-lg p-6 shadow-sm">
+                                {/* Cabeçalho do treinamento */}
+                                <div className="flex items-start justify-between mb-4">
+                                    <div>
+                                        <div className="flex items-center gap-2 text-gray-600 mb-2">
+                                            <Calendar className="w-4 h-4" />
+                                            <span className="font-semibold text-lg">{formattedDate}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-gray-600">
+                                            <MapPin className="w-4 h-4" />
+                                            <span>{training.location}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Turnos - apenas para monitores */}
+                                {isMonitor && (
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                                        {Object.entries(SHIFTS).map(([shiftKey, shiftData]) => {
+                                            const ShiftIcon = shiftData.icon;
+                                            const isChecked = isUserAvailable(training.id, shiftKey);
+                                            const participants = getShiftParticipants(training.id, shiftKey);
+
+                                            return (
+                                                <label
+                                                    key={shiftKey}
+                                                    className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                                                        isChecked
+                                                            ? shiftData.color
+                                                            : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                                                    }`}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isChecked}
+                                                        onChange={() => handleToggle(training.id, shiftKey as any, isChecked)}
+                                                        className="w-5 h-5 rounded"
+                                                    />
+                                                    <ShiftIcon className="w-5 h-5" />
+                                                    <div className="flex-1">
+                                                        <span className="font-semibold">{shiftData.label}</span>
+                                                        {participants.length > 0 && (
+                                                            <p className="text-xs mt-1">
+                                                                {participants.length} confirmado(s)
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </label>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+
+                                {/* Tabela de participantes */}
+                                {loadingAvailabilities[training.id] ? (
+                                    <p className="text-sm text-gray-500 text-center py-4">Carregando participantes...</p>
+                                ) : availabilities[training.id]?.length > 0 ? (
+                                    <div className="mt-4 border-t pt-4">
+                                        <h4 className="font-semibold text-sm text-gray-700 mb-3">Monitores Confirmados:</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            {Object.entries(SHIFTS).map(([shiftKey, shiftData]) => {
+                                                const participants = availabilities[training.id]
+                                                    .filter((a: any) => a.shift === shiftKey)
+                                                    .map((a: any) => a.profiles);
+
+                                                return (
+                                                    <div key={shiftKey} className="bg-gray-50 rounded-lg p-3">
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            {<shiftData.icon className="w-4 h-4 text-gray-600" />}
+                                                            <span className="font-semibold text-sm">{shiftData.label}</span>
+                                                        </div>
+                                                        {participants.length > 0 ? (
+                                                            <ul className="space-y-1">
+                                                                {participants.map((p: any) => (
+                                                                    <li key={p.id} className="text-sm text-gray-700">
+                                                                        • {p.first_name} {p.last_name}
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        ) : (
+                                                            <p className="text-xs text-gray-500 italic">Nenhum confirmado</p>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p className="text-sm text-gray-500 text-center py-4">
+                                        Nenhum monitor confirmado ainda
+                                    </p>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }

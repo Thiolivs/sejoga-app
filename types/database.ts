@@ -96,3 +96,24 @@ export interface TeachingSessionWithDetails extends TeachingSession {
     boardgame?: Boardgame;
     event?: Event;
 }
+
+export interface Training {
+    id: string;
+    training_date: string;
+    location: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface TrainingAvailability {
+    id: string;
+    training_id: string;
+    user_id: string;
+    shift: 'morning' | 'afternoon' | 'night';
+    created_at: string;
+}
+
+export interface TrainingWithAvailability extends Training {
+    availabilities?: (TrainingAvailability & { profile?: Profile })[];
+}
