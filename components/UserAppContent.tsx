@@ -9,8 +9,10 @@ import { AdminGamesList } from '@/components/admin/AdminGamesList';
 import { useState, useEffect } from 'react';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
+import { SidebarMenu } from '@/components/SidebarMenu';
 
-import { CircleUser, ClipboardList, Calendar, BarChart, Dices } from "lucide-react" 
+
+import { CircleUser, ClipboardList, Calendar, BarChart, Dices } from "lucide-react"
 
 
 type Tab = 'jogos' | 'profile' | 'register' | 'gerenciar' | 'evento';
@@ -24,6 +26,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
     const [activeTab, setActiveTab] = useState<Tab>('jogos');
     const [adminSection, setAdminSection] = useState<AdminSection>('menu');
     const { isAdmin } = useUserRole();
+    const { isMonitor } = useUserRole();
     const supabase = createClientComponentClient();
     const [user, setUser] = useState<User | null>(null);
     const [name, setName] = useState<string | null>(null);
@@ -98,16 +101,15 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
         <>
             {/* Tabs */}
             <div className="bg-white border-b">
-                <div className="max-w-7xl mx-auto px-4 border-4 flex flex-col items-center sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto px-4 flex flex-col items-center sm:px-6 lg:px-8">
                     <nav className="flex space-x-2 " aria-label="Tabs">
-                        
                         <button
                             onClick={() => setActiveTab('profile')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'profile'
                                 ? 'border-blue-500 text-blue-600'
                                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
-                        >                         
+                        >
                             <CircleUser className="w-4 h-4" />
                             Perfil
                         </button>
@@ -117,7 +119,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                                 ? 'border-blue-500 text-blue-600'
                                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
-                        >                            
+                        >
                             <Dices className="w-4 h-4" />
                             Acervo
                         </button>
@@ -131,31 +133,6 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                             <ClipboardList className="w-4 h-4" />
                             Registro
                         </button>
-
-                        {/* NOVA ABA: Apenas para admins */}
-                        {isAdmin && (
-                            <button
-                                onClick={() => setActiveTab('gerenciar')}
-                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'gerenciar'
-                                    ? 'border-red-500 text-red-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                    }`}
-                            >
-                                Gerenciar
-                            </button>
-                        )}
-
-                        {isAdmin && (
-                            <button
-                                onClick={() => setActiveTab('evento')}
-                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'evento'
-                                    ? 'border-purple-500 text-purple-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                    }`}
-                            >
-                                Seleção Evento
-                            </button>
-                        )}
                     </nav>
                 </div>
             </div>
@@ -165,9 +142,6 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                 {activeTab === 'jogos' && (
                     <div>
                         <div className="mb-6 px-1">
-                            <h2 className="text-gray-600 text-center mb-4 text-2xl font-bold">
-                                Todos os Jogos
-                            </h2>
                             <p className="text-gray-600 mt-2">
                                 <i>&quot;Prepara, menina, é sua vez de brilhar!&quot;</i> 🌟
                             </p>
@@ -210,123 +184,9 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                     </div>
                 )}
 
-                {activeTab === 'evento' && isAdmin && (
-                    <div>
-                        <EventGameSelection />
-                    </div>
-                )}
-
                 {activeTab === 'register' && (
                     <div>
                         <TeachingSessionLog />
-                    </div>
-                )}
-
-
-                {/* ABA GERENCIAR - NOVO LAYOUT */}
-                {activeTab === 'gerenciar' && isAdmin && (
-                    <div>
-                        {/* Breadcrumb para navegação */}
-                        {adminSection !== 'menu' && (
-                            <button
-                                onClick={() => setAdminSection('menu')}
-                                className="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2"
-                            >
-                                ← Voltar ao menu
-                            </button>
-                        )}
-
-                        {/* MENU PRINCIPAL */}
-                        {adminSection === 'menu' && (
-                            <div>
-                                <div className="mb-6">
-                                    <h2 className="text-3xl font-bold text-gray-900">Painel de Administração</h2>
-                                    <p className="text-gray-600 mt-2">Gerencie jogos, usuários e permissões</p>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {/* Card: Adicionar Jogo */}
-                                    <button
-                                        onClick={() => setAdminSection('add-game')}
-                                        className="bg-sejoga-azul-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
-                                    >
-                                        <h3 className="text-lg font-bold mb-1">➕ Adicionar Novo Jogo</h3>
-                                        <p className="text-blue-100 text-xs">Cadastrar um novo boardgame no sistema</p>
-                                    </button>
-
-                                    {/* Card: Gerenciar Jogos */}
-                                    <button
-                                        onClick={() => setAdminSection('manage-games')}
-                                        className="bg-sejoga-rosa-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
-                                    >
-                                        <h3 className="text-lg font-bold mb-1">🎲 Gerenciar Jogos</h3>
-                                        <p className="text-green-100 text-xs">Editar, remover ou visualizar jogos existentes</p>
-                                    </button>
-
-                                    {/* Card: Gerenciar Usuários */}
-                                    <button
-                                        onClick={() => setAdminSection('manage-users')}
-                                        className="bg-sejoga-verde-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
-                                    >
-                                        <h3 className="text-lg font-bold mb-1">👥 Gerenciar Usuários</h3>
-                                        <p className="text-purple-100 text-xs">Ver, promover ou gerenciar permissões</p>
-                                    </button>
-
-                                    {/* Card: Gerenciar eventos */}
-                                    <button
-                                        onClick={() => setAdminSection('manage-events')}
-                                        className="bg-sejoga-laranja-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
-                                    >
-                                        <h3 className="text-lg font-bold mb-1">📅 Gerenciar Eventos</h3>
-                                        <p className="text-purple-100 text-xs">Criar e gerenciar eventos</p>
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* SEÇÃO: ADICIONAR JOGO */}
-                        {adminSection === 'add-game' && (
-                            <div className="animate-fadeIn">
-                                <AddGameForm
-                                    onSuccess={() => {
-                                        setAdminSection('menu');
-                                    }}
-                                />
-                            </div>
-                        )}
-
-                        {/* SEÇÃO: GERENCIAR JOGOS */}
-                        {adminSection === 'manage-games' && (
-                            <div className="animate-fadeIn">
-                                <div className="mb-6">
-                                    <h2 className="text-3xl font-bold text-gray-900">Gerenciar Jogos</h2>
-                                    <p className="text-gray-600 mt-2">Edite ou remova jogos existentes</p>
-                                </div>
-                                <AdminGamesList />
-                            </div>
-                        )}
-
-                        {/* SEÇÃO: GERENCIAR USUÁRIOS */}
-                        {adminSection === 'manage-users' && (
-                            <div className="animate-fadeIn">
-                                <div className="mb-6">
-                                    <h2 className="text-3xl font-bold text-gray-900">Gerenciar Usuários</h2>
-                                    <p className="text-gray-600 mt-2">Veja todos os usuários e gerencie permissões</p>
-                                </div>
-                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-                                    <p className="text-yellow-800">
-                                        🚧 Em desenvolvimento - Em breve você poderá gerenciar usuários aqui
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* SEÇÃO: GERENCIAR EVENTOS */}
-                        {adminSection === 'manage-events' && (
-                            <div className="animate-fadeIn">
-                                <EventManagement />
-                            </div>
-                        )}
                     </div>
                 )}
             </main>

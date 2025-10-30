@@ -4,12 +4,13 @@ import { useUser } from './useUser';
 
 export function useUserRole() {
     const { user, loading: userLoading } = useUser();
-    const [role, setRole] = useState <'admin' | 'monitor' | 'user' | null > (null);
+    const [role, setRole] = useState<'admin' | 'monitor' | 'user' | null>(null);
     const [loading, setLoading] = useState(true);
     const supabase = createClientComponentClient();
 
     useEffect(() => {
         if (!user) {
+
             setRole(null);
             setLoading(false);
             return;
@@ -20,6 +21,9 @@ export function useUserRole() {
 
     const fetchUserRole = async () => {
         try {
+            
+            setLoading(true); // 
+
             const { data, error } = await supabase
                 .from('profiles')
                 .select('role')
@@ -28,12 +32,15 @@ export function useUserRole() {
 
             if (error) throw error;
 
-            setRole(data?.role || 'user');
+            const fetchedRole = data?.role || 'user';
+            setRole(fetchedRole);
+
         } catch (err) {
             console.error('Erro ao buscar role:', err);
             setRole('user'); // Default if error
         } finally {
             setLoading(false);
+
         }
     };
 
@@ -41,6 +48,10 @@ export function useUserRole() {
     const isAdmin = role === 'admin';
     const isMonitor = role === 'monitor' || role === 'admin'; // Admin can do everything that monitor can do
     const isUser = role === 'user';
+
+    useEffect(() => {
+}, [role, isAdmin, loading]);
+
 
     return {
         role,
