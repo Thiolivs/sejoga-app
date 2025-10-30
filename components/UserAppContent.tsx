@@ -1,22 +1,20 @@
 'use client';
 
-import { EventManagement } from '@/components/admin/EventManagement';
 import { TeachingSessionLog } from '@/components/TeachingSessionLog';
+import { TrainingSession } from '@/components/TrainingSession';
+import { StatisticsSession } from '@/components/StatisticsSession';
+
 import { User, createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { EventGameSelection } from '@/components/admin/EventGameSelection';
-import { AddGameForm } from '@/components/admin/AddGameForm';
-import { AdminGamesList } from '@/components/admin/AdminGamesList';
 import { useState, useEffect } from 'react';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
-import { SidebarMenu } from '@/components/SidebarMenu';
 
 
 import { CircleUser, ClipboardList, Calendar, BarChart, Dices } from "lucide-react"
 
 
-type Tab = 'jogos' | 'profile' | 'register' | 'gerenciar' | 'evento';
-type AdminSection = 'menu' | 'add-game' | 'manage-games' | 'manage-events' | 'manage-users';
+type Tab = 'training' | 'profile' | 'jogos' | 'register' | 'statistics';
+//type AdminSection = 'menu' | 'add-game' | 'manage-games' | 'manage-events' | 'manage-users';
 
 interface UserAppContentProps {
     userEmail: string;
@@ -24,7 +22,7 @@ interface UserAppContentProps {
 
 export function UserAppContent({ userEmail }: UserAppContentProps) {
     const [activeTab, setActiveTab] = useState<Tab>('jogos');
-    const [adminSection, setAdminSection] = useState<AdminSection>('menu');
+    //const [adminSection, setAdminSection] = useState<AdminSection>('menu');
     const { isAdmin } = useUserRole();
     const { isMonitor } = useUserRole();
     const supabase = createClientComponentClient();
@@ -91,11 +89,11 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
     }, [supabase]);
 
     // Reseta a seção de admin quando muda de aba
-    useEffect(() => {
+    /*useEffect(() => {
         if (activeTab !== 'gerenciar') {
             setAdminSection('menu');
         }
-    }, [activeTab]);
+    }, [activeTab]);*/
 
     return (
         <>
@@ -103,6 +101,21 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
             <div className="bg-white border-b">
                 <div className="max-w-7xl mx-auto px-4 flex flex-col items-center sm:px-6 lg:px-8">
                     <nav className="flex space-x-2 " aria-label="Tabs">
+                        
+                        
+                        
+                        <button
+                            onClick={() => setActiveTab('statistics')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'statistics'
+                                ? 'border-orange-500 text-orange-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                        >
+                            <BarChart className="w-4 h-4" />
+                            Estatísticas
+                        </button>
+
+
                         <button
                             onClick={() => setActiveTab('profile')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'profile'
@@ -113,6 +126,9 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                             <CircleUser className="w-4 h-4" />
                             Perfil
                         </button>
+
+
+
                         <button
                             onClick={() => setActiveTab('jogos')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${activeTab === 'jogos'
@@ -123,6 +139,8 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                             <Dices className="w-4 h-4" />
                             Acervo
                         </button>
+
+
                         <button
                             onClick={() => setActiveTab('register')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'register'
@@ -133,12 +151,27 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                             <ClipboardList className="w-4 h-4" />
                             Registro
                         </button>
+
+
+
+                        <button
+                            onClick={() => setActiveTab('training')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'training'
+                                ? 'border-orange-500 text-orange-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                        >
+                            <Calendar className="w-4 h-4" />
+                            Treinamentos
+                        </button>
                     </nav>
                 </div>
             </div>
 
             {/* Conteúdo das abas */}
             <main className="max-w-7xl px-4 mx-auto sm:px-6 lg:px-2 py-2">
+
+                {/* JOGOS */}
                 {activeTab === 'jogos' && (
                     <div>
                         <div className="mb-6 px-1">
@@ -153,6 +186,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                     </div>
                 )}
 
+                {/* PERFIL */}
                 {activeTab === 'profile' && (
                     <div>
                         <div className="mb-6">
@@ -184,9 +218,25 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                     </div>
                 )}
 
+                {/* REGISTRO */}
                 {activeTab === 'register' && (
                     <div>
                         <TeachingSessionLog />
+                    </div>
+                )}
+
+                {/* TREINAMENTOS */}
+                {activeTab === 'training' && (
+                    <div>
+                        <TrainingSession />
+                    </div>
+                )}
+
+
+                {/* ESTATISTICAS */}
+                {activeTab === 'statistics' && (
+                    <div>
+                        <StatisticsSession />
                     </div>
                 )}
             </main>
