@@ -223,7 +223,7 @@ export function TeachingSessionLog() {
         </div>
 
         <div className="flex gap-2">
-          <Button type="submit" className="bg-sejoga-verde-oficial hover:bg-sejoga-verde-giz">
+          <Button type="submit" className="bg-sejoga-verde-oficial hover:bg-green-500">
           Enviar
           </Button>
         </div>
