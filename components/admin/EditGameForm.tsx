@@ -422,8 +422,8 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                             {mechanicsByType.category.map((mechanic) => (
                                 <label
                                     key={mechanic.id}
-                                    className={`px-4 py-2 rounded-lg cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
-                                        ? 'bg-blue-600 text-white shadow-md scale-105'
+                                    className={`px-4 py-2 text-sm rounded-lg cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
+                                        ? 'bg-sejoga-azul-oficial text-white shadow-md scale-105'
                                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                         }`}
                                 >
@@ -449,7 +449,7 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                                 <label
                                     key={mechanic.id}
                                     className={`px-3 py-1.5 rounded text-sm cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
-                                        ? 'bg-green-600 text-white shadow-md scale-105'
+                                        ? 'bg-sejoga-rosa-oficial text-white shadow-md scale-105'
                                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                         }`}
                                 >
@@ -473,7 +473,7 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                                 <label
                                     key={mechanic.id}
                                     className={`px-3 py-1.5 rounded text-sm cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
-                                        ? 'bg-purple-600 text-white shadow-md scale-105'
+                                        ? 'bg-sejoga-laranja-oficial text-white shadow-md scale-105'
                                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                         }`}
                                 >
@@ -504,9 +504,9 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 bg-blue-600 hover:bg-blue-700"
+                            className="flex-1 bg-sejoga-verde-oficial hover:bg-sejoga-verde-giz"
                         >
-                            {loading ? 'Salvando...' : '💾 Salvar Alterações'}
+                            {loading ? 'Adicionando...' : '🗸 Adicionar Jogo'}
                         </Button>
                         {onCancel && (
                             <Button
@@ -515,7 +515,7 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                                 onClick={onCancel}
                                 disabled={loading}
                             >
-                                ✕ Cancelar
+                                ❌  Cancelar
                             </Button>
                         )}
                     </div>

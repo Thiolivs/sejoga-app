@@ -72,28 +72,30 @@ export function AdminGamesList() {
         <div className="space-y-4">
             <h2 className="text-2xl font-bold">Todos os Jogos ({games.length})</h2>
 
-            <div className="grid gap-4">
+            <div className="grid gap-2">
                 {games.map((game) => (
                     <div
                         key={game.id}
-                        className={`p-4 rounded-lg border ${game.active ? 'bg-white' : 'bg-gray-100'
+                        className={`p-3 rounded-lg border ${game.active ? 'bg-white' : 'bg-gray-100'
                             }`}
                     >
                         <div className="flex justify-between items-center">
                             <div>
-                                <h3 className="font-semibold text-lg">{game.name}</h3>
-                                {game.publisher && (
-                                    <p className="text-sm text-gray-600">{game.publisher}</p>
-                                )}
+                                <div className="flex items-baseline gap-2">
+                                    <h3 className="font-semibold text-md">{game.name}</h3>
+                                    {game.publisher && (
+                                        <>
+                                            <span className="text-gray-400">•</span>
+                                            <p className="text-sm text-gray-500 italic">{game.publisher}</p>
+                                        </>
+                                    )}
+                                </div>
                                 <div className="flex gap-2 mt-1">
                                     {!game.active && (
                                         <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs rounded">
                                             Inativo
                                         </span>
                                     )}
-                                    <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">
-                                        {game.copies} {game.copies === 1 ? 'cópia' : 'cópias'}
-                                    </span>
                                 </div>
                             </div>
 

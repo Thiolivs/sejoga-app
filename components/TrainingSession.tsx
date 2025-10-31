@@ -168,7 +168,7 @@ export function TrainingSession() {
                         </Button>
                         <Button
                             onClick={() => router.push('/user-app/administration/add-training')}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 bg-sejoga-azul-oficial hover:bg-sejoga-azul-giz"
                         >
                             <Plus className="w-4 h-4" />
                             Novo Treinamento

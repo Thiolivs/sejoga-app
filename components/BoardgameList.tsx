@@ -176,10 +176,10 @@ export function BoardgameList() {
     return (
         <div className="space-y-2">
             {/* Barra de Busca e Filtros */}
-            <div className="bg-white rounded-lg shadow-md p-3 z-10">
+            <div className="bg-white rounded-lg border-1 shadow-md p-2 mb-5">
                 <div className="flex gap-3 items-center">
                     {/* Campo de busca */}
-                    <div className="flex-1 relative">
+                    <div className=" bg-white flex-1 relative">
                         <Input
                             type="text"
                             placeholder="🔍 Buscar jogos..."
@@ -361,14 +361,14 @@ export function BoardgameList() {
                     )}
                 </p>
 
-                {(isAdmin || isMonitor) && (
+                {/*{(isAdmin || isMonitor) && (
                     <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${isAdmin ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
                             }`}
                     >
                         {isAdmin ? 'Admin' : 'Monitor'}
                     </span>
-                )}
+                )}*/}
             </div>
 
             {/* Mensagem se não houver resultados */}

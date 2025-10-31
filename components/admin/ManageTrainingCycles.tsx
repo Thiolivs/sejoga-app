@@ -15,7 +15,7 @@ export function ManageTrainingCycles() {
     const [loading, setLoading] = useState(true);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [showAddForm, setShowAddForm] = useState(false);
-    
+
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -141,7 +141,7 @@ export function ManageTrainingCycles() {
                 </Button>
                 <h2 className="text-2xl font-bold text-gray-900 flex-1">Ciclos de Treinamento</h2>
                 {!showAddForm && (
-                    <Button onClick={() => setShowAddForm(true)} className="flex items-center gap-2">
+                    <Button onClick={() => setShowAddForm(true)} className="bg-sejoga-azul-oficial flex items-center gap-2">
                         <Plus className="w-4 h-4" />
                         Novo Ciclo
                     </Button>
@@ -215,9 +215,8 @@ export function ManageTrainingCycles() {
                         <Button type="button" variant="outline" onClick={resetForm} className="flex-1">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={loading} className="flex-1">
-                            <Save className="w-4 h-4 mr-2" />
-                            {editingId ? 'Atualizar' : 'Criar Ciclo'}
+                        <Button type="submit" disabled={loading} className="bg-sejoga-verde-oficial flex-1">
+                            {editingId ? '🗸 Atualizar' : 'Criar Ciclo'}
                         </Button>
                     </div>
                 </form>
@@ -228,9 +227,8 @@ export function ManageTrainingCycles() {
                 {cycles.map((cycle) => (
                     <div
                         key={cycle.id}
-                        className={`bg-white border rounded-lg p-4 ${
-                            cycle.is_active ? 'border-gray-200' : 'border-gray-300 bg-gray-50'
-                        }`}
+                        className={`bg-white border rounded-lg p-3 ${cycle.is_active ? 'border-gray-200' : 'border-gray-300 bg-gray-50'
+                            }`}
                     >
                         <div className="flex justify-between items-start">
                             <div className="flex-1">
@@ -255,11 +253,11 @@ export function ManageTrainingCycles() {
                             </div>
                             <div className="flex gap-2">
                                 <Button
+                                    className='p-3'
                                     variant="outline"
-                                    size="icon"
                                     onClick={() => handleEdit(cycle)}
                                 >
-                                    <Edit2 className="w-4 h-4" />
+                                    ✏️ Editar
                                 </Button>
                                 <Button
                                     variant="outline"
@@ -267,7 +265,7 @@ export function ManageTrainingCycles() {
                                     onClick={() => handleDelete(cycle.id)}
                                     className="text-red-600 hover:bg-red-50"
                                 >
-                                    <Trash2 className="w-4 h-4" />
+                                    ❌
                                 </Button>
                             </div>
                         </div>

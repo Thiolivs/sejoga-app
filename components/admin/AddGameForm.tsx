@@ -333,7 +333,7 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                                 <label
                                     key={mechanic.id}
                                     className={`px-4 py-2 rounded-lg cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
-                                        ? 'bg-blue-600 text-white shadow-md scale-105'
+                                        ? 'bg-sejoga-azul-oficial text-white shadow-md scale-105'
                                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                         }`}
                                 >
@@ -359,7 +359,7 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                                 <label
                                     key={mechanic.id}
                                     className={`px-3 py-1.5 rounded text-sm cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
-                                        ? 'bg-green-600 text-white shadow-md scale-105'
+                                        ? 'bg-sejoga-rosa-oficial text-white shadow-md scale-105'
                                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                         }`}
                                 >
@@ -383,7 +383,7 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                                 <label
                                     key={mechanic.id}
                                     className={`px-3 py-1.5 rounded text-sm cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
-                                        ? 'bg-purple-600 text-white shadow-md scale-105'
+                                        ? 'bg-sejoga-laranja-oficial text-white shadow-md scale-105'
                                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                         }`}
                                 >
@@ -414,9 +414,9 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 bg-blue-600 hover:bg-blue-700"
+                            className="flex-1 bg-sejoga-verde-oficial hover:bg-sejoga-verde-giz"
                         >
-                            {loading ? 'Adicionando...' : '✅ Adicionar Jogo'}
+                            {loading ? 'Adicionando...' : '🗸 Adicionar Jogo'}
                         </Button>
                         <Button
                             type="button"
@@ -427,7 +427,7 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                             }}
                             disabled={loading}
                         >
-                            🔄 Limpar
+                            ❌ Limpar
                         </Button>
                     </div>
                 </form>

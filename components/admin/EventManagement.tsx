@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import type { Event } from '@/types/database';
+import { Plus } from 'lucide-react';
 
 export function EventManagement() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -141,10 +142,10 @@ export function EventManagement() {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Gerenciar Eventos</h2>
         <Button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 hover:bg-blue-700"
+          onClick={() => setShowForm(!showForm)} className="bg-sejoga-azul-oficial hover:bg-sejoga-azul-giz"
         >
-          {showForm ? '✕ Cancelar' : '➕ Novo Evento'}
+          <Plus className="w-4 h-4" />
+          Novo Evento
         </Button>
       </div>
 
@@ -203,11 +204,11 @@ export function EventManagement() {
           </div>
 
           <div className="flex gap-2">
-            <Button type="submit" className="bg-green-600 hover:bg-green-700">
-              💾 Salvar
+            <Button type="submit" className="bg-sejoga-verde-oficial hover:bg-sejoga-verde-giz">
+              🗸 Salvar
             </Button>
             <Button type="button" variant="outline" onClick={resetForm}>
-              Cancelar
+              ❌ Cancelar
             </Button>
           </div>
         </form>
@@ -240,7 +241,7 @@ export function EventManagement() {
                   <p className="text-gray-600">{event.description}</p>
                 )}
                 <div className="flex gap-4 text-sm text-gray-600">
-                  
+
                   <span>📅 {new Date(event.event_date).toLocaleDateString('pt-BR')}</span>
                   {event.start_time && <span>🕐 {event.start_time}</span>}
                   {event.location && <span>📌 {event.location}</span>}
@@ -264,10 +265,11 @@ export function EventManagement() {
                   </Button>
                   <Button
                     size="sm"
-                    variant="destructive"
+                    variant="outline"
+
                     onClick={() => handleDelete(event.id)}
                   >
-                    🗑️ Excluir
+                    ❌ Excluir
                   </Button>
                 </div>
               </div>
