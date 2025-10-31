@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from '@/components/ui/button';
 import { EditGameForm } from './EditGameForm';
+import router from 'next/router';
 
 interface Game {
     id: string;
@@ -71,6 +72,13 @@ export function AdminGamesList() {
     return (
         <div className="space-y-4">
             <h2 className="text-2xl font-bold">Todos os Jogos ({games.length})</h2>
+
+            <Button
+                onClick={() => router.push('/user-app/administration/add-game')}
+                className="flex items-center gap-2 bg-sejoga-verde-oficial hover:bg-green-500"
+            >
+                Adicionar Jogos
+            </Button>
 
             <div className="grid gap-2">
                 {games.map((game) => (

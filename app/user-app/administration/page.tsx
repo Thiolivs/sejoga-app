@@ -41,7 +41,10 @@ export default function AdministrationPage() {
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
-                        {/* Botão: Adicionar Jogo */}
+                       {/* Botão: Adicionar Jogo */}
+                        
+                        {/*
+                        
                         <button
                             onClick={() => router.push('/user-app/administration/add-game')}
                             className="bg-sejoga-azul-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
@@ -50,10 +53,12 @@ export default function AdministrationPage() {
                             <p className="text-blue-100 text-xs">Cadastrar um novo boardgame no sistema</p>
                         </button>
 
+                        */}
+
                         {/* Botão: Gerenciar Jogos */}
                         <button
                             onClick={() => router.push('/user-app/administration/manage-games')}
-                            className="bg-sejoga-rosa-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
+                            className="bg-sejoga-vermelho-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
                         >
                             <h3 className="text-lg font-bold mb-1">🎲 Gerenciar Jogos</h3>
                             <p className="text-green-100 text-xs">Editar, remover ou visualizar jogos existentes</p>
@@ -62,7 +67,7 @@ export default function AdministrationPage() {
                         {/* Botão: Eventos */}
                         <button
                             onClick={() => router.push('/user-app/administration/manage-events')}
-                            className="bg-sejoga-verde-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
+                            className="bg-sejoga-laranja-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
                         >
                             <h3 className="text-lg font-bold mb-1">📅 Gerenciar Eventos</h3>
                             <p className="text-purple-100 text-xs">Criar e gerenciar eventos</p>
@@ -71,7 +76,7 @@ export default function AdministrationPage() {
                         {/* Botão: Usuários */}
                         <button
                             onClick={() => router.push('/user-app/administration/manage-users')}
-                            className="bg-sejoga-laranja-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
+                            className="bg-sejoga-amarelo-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
                         >
                                 <h3 className="text-lg font-bold mb-1">👥 Gerenciar Usuários</h3>
                                 <p className="text-purple-100 text-xs">Ver, promover ou gerenciar permissões</p>
@@ -81,11 +86,33 @@ export default function AdministrationPage() {
                     {/* Botão: Gerenciar Ciclos*/}
                         <button
                             onClick={() => router.push('/user-app/administration/manage-cycles')}
-                            className="bg-sejoga-amarelo-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
+                            className="bg-sejoga-verde-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
                         >
-                                <h3 className="text-lg font-bold mb-1">Gerenciar Ciclos</h3>
+                                <h3 className="text-lg font-bold mb-1">Gerenciar Treinamentos</h3>
                                 <p className="text-purple-100 text-xs">Criar e gerenciar ciclos de treinamento</p>
                         </button>
+
+                        
+                    {/* Botão: Gerenciar Mecânicas*/}
+                        <button
+                            onClick={() => router.push('/user-app/administration/manage-cycles')}
+                            className="bg-sejoga-azul-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
+                        >
+                                <h3 className="text-lg font-bold mb-1">Gerenciar Mecânicas</h3>
+                                <p className="text-purple-100 text-xs">Criar e gerenciar mecânicas</p>
+                        </button>
+
+                        
+                    {/* Botão: Gerenciar Editoras*/}
+                        <button
+                            onClick={() => router.push('/user-app/administration/manage-cycles')}
+                            className="bg-sejoga-rosa-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
+                        >
+                                <h3 className="text-lg font-bold mb-1">Gerenciar Editoras</h3>
+                                <p className="text-purple-100 text-xs">Criar e gerenciar editoras</p>
+                        </button>
+
+
                     </div>
                 </div>
             </main>
