@@ -156,7 +156,7 @@ export function ManageTrainingCycles() {
                             {editingId ? 'Editar Ciclo' : 'Novo Ciclo'}
                         </h3>
                         <Button type="button" variant="ghost" size="icon" onClick={resetForm}>
-                            <X className="w-4 h-4" />
+                            ❌ 
                         </Button>
                     </div>
 
@@ -216,7 +216,7 @@ export function ManageTrainingCycles() {
                             Cancelar
                         </Button>
                         <Button type="submit" disabled={loading} className="bg-sejoga-verde-oficial flex-1">
-                            {editingId ? '🗸 Atualizar' : 'Criar Ciclo'}
+                            {editingId ? 'Atualizar' : 'Criar Ciclo'}
                         </Button>
                     </div>
                 </form>

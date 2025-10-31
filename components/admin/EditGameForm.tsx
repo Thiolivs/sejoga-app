@@ -203,18 +203,15 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                 <h2 className="text-3xl font-bold">Editar Jogo</h2>
                 {onCancel && (
                     <Button variant="ghost" onClick={onCancel}>
-                        ✕
+                        ❌ 
                     </Button>
                 )}
             </div>
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    {/* Informações Básicas */}
+                    {/* Informações*/}
                     <div className="space-y-4">
-                        <h3 className="text-xl font-semibold border-b pb-2">
-                            Informações Básicas
-                        </h3>
 
                         {/* Nome */}
                         <FormField
@@ -489,24 +486,14 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                         </div>
                     </div>
 
-                    {/* Resumo */}
-                    <div className="bg-gray-50 p-4 rounded-lg border">
-                        <p className="text-sm text-gray-600">
-                            <strong>Mecânicas selecionadas:</strong>{' '}
-                            {selectedMechanics.length > 0
-                                ? `${selectedMechanics.length} selecionada(s)`
-                                : 'Nenhuma selecionada'}
-                        </p>
-                    </div>
-
                     {/* Botões */}
                     <div className="flex gap-4">
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 bg-sejoga-verde-oficial hover:bg-sejoga-verde-giz"
+                            className="flex-1 bg-sejoga-verde-oficial hover:bg-green-500"
                         >
-                            {loading ? 'Adicionando...' : '🗸 Adicionar Jogo'}
+                            {loading ? 'Adicionando...' : 'Atualizar Jogo'}
                         </Button>
                         {onCancel && (
                             <Button

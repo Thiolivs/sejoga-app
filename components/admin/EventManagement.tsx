@@ -142,7 +142,7 @@ export function EventManagement() {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Gerenciar Eventos</h2>
         <Button
-          onClick={() => setShowForm(!showForm)} className="bg-sejoga-azul-oficial hover:bg-sejoga-azul-giz"
+          onClick={() => setShowForm(!showForm)} className="bg-sejoga-azul-oficial hover:bg-blue-400"
         >
           <Plus className="w-4 h-4" />
           Novo Evento
@@ -205,7 +205,7 @@ export function EventManagement() {
 
           <div className="flex gap-2">
             <Button type="submit" className="bg-sejoga-verde-oficial hover:bg-sejoga-verde-giz">
-              🗸 Salvar
+              Salvar
             </Button>
             <Button type="button" variant="outline" onClick={resetForm}>
               ❌ Cancelar
