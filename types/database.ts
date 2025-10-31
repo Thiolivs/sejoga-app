@@ -97,8 +97,20 @@ export interface TeachingSessionWithDetails extends TeachingSession {
     event?: Event;
 }
 
+export interface TrainingCycle {
+    id: string;
+    name: string;
+    description?: string;
+    start_date: string;
+    end_date: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface Training {
     id: string;
+    cycle_id: string;
     training_date: string;
     location: string;
     is_active: boolean;
@@ -116,4 +128,12 @@ export interface TrainingAvailability {
 
 export interface TrainingWithAvailability extends Training {
     availabilities?: (TrainingAvailability & { profile?: Profile })[];
+}
+
+export interface TrainingCycleUnavailability {
+    id: string;
+    cycle_id: string;
+    user_id: string;
+    reason?: string;
+    created_at: string;
 }

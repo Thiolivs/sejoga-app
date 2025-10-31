@@ -20,29 +20,30 @@ export function useUserRole() {
     }, [user]);
 
     const fetchUserRole = async () => {
-        try {
-            
-            setLoading(true); // 
+    try {
+        setLoading(true);
+        
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user!.id)
+            .single();
 
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('role')
-                .eq('id', user!.id)
-                .single();
+        if (error) throw error;
 
-            if (error) throw error;
-
-            const fetchedRole = data?.role || 'user';
-            setRole(fetchedRole);
-
-        } catch (err) {
-            console.error('Erro ao buscar role:', err);
-            setRole('user'); // Default if error
-        } finally {
-            setLoading(false);
-
-        }
-    };
+        const fetchedRole = data?.role || 'user';
+        console.log('📊 Role do banco:', fetchedRole); 
+        setRole(fetchedRole);
+        console.log('✅ Role atualizado para:', fetchedRole);
+        console.log('🎯 isAdmin será:', fetchedRole === 'admin');
+    } catch (err) {
+        console.error('Erro ao buscar role:', err instanceof Error ? err.message : 'Erro desconhecido');
+        setRole('user'); // Default if error
+    } finally {
+        setLoading(false);
+        console.log('⏹️ Loading finalizado');
+    }
+};
 
     // Auxiliar Functions
     const isAdmin = role === 'admin';

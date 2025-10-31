@@ -76,6 +76,18 @@ export default function AdministrationPage() {
                                 <h3 className="text-lg font-bold mb-1">👥 Gerenciar Usuários</h3>
                                 <p className="text-purple-100 text-xs">Ver, promover ou gerenciar permissões</p>
                         </button>
+
+
+                    {/* Botão: Gerenciar Ciclos (apenas admin) */}
+                    {isAdmin && (
+                        <button
+                            onClick={() => router.push('/user-app/administration/manage-cycles')}
+                            className="bg-sejoga-amarelo-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
+                        >
+                                <h3 className="text-lg font-bold mb-1">Gerenciar Ciclos</h3>
+                                <p className="text-purple-100 text-xs">Criar e gerenciar ciclos de treinamento</p>
+                        </button>
+                    )}
                     </div>
                 </div>
             </main>
