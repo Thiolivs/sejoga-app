@@ -149,7 +149,7 @@ export function AddTraining() {
                         ))}
                     </select>
                     <p className="text-xs text-gray-500 mt-1">
-                        Se não houver ciclos, crie um primeiro em "Gerenciar Ciclos"
+                        Se não houver ciclos, crie um primeiro em Gerenciar Ciclos
                     </p>
                 </div>
 
