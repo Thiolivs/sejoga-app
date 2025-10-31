@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from '@/components/ui/button';
 import { EditGameForm } from './EditGameForm';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 
 interface Game {
     id: string;
@@ -19,6 +19,7 @@ export function AdminGamesList() {
     const [loading, setLoading] = useState(true);
     const [editingGameId, setEditingGameId] = useState<string | null>(null);
     const supabase = createClientComponentClient();
+    const router = useRouter();
 
     useEffect(() => {
         fetchGames();
