@@ -236,12 +236,12 @@ export function AddTraining() {
                         disabled={loading}
                         className="flex-1"
                     >
-                        Cancelar
+                        ❌ Cancelar
                     </Button>
                     <Button
                         type="submit"
                         disabled={loading || cycles.length === 0}
-                        className="flex-1 bg-red-600 hover:bg-red-700"
+                        className="flex-1 bg-sejoga-verde-oficial hover:bg-green-500"
                     >
                         {loading ? (
                             <>
@@ -250,7 +250,6 @@ export function AddTraining() {
                             </>
                         ) : (
                             <>
-                                <Save className="w-4 h-4 mr-2" />
                                 Salvar Data
                             </>
                         )}
