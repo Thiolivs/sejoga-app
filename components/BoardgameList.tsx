@@ -439,7 +439,7 @@ export function BoardgameList() {
                             className="px-3 py-6 bg-green-50 text-green-700 border-l-2 border-green-300 hover:bg-green-100 text-xs font-medium flex flex-col items-center justify-center gap-1 min-w-[80px]"
                         >
                             <span className="text-xl"></span>
-                            <span>👍Devolver</span>
+                            <span>🫴 Devolver</span>
                         </button>
                     ) : (
                         <div className="px-3 py-6 bg-gray-100 text-gray-500 border-l-2 border-gray-300 text-xs font-medium cursor-not-allowed flex flex-col items-center justify-center gap-1 min-w-[80px]">
@@ -450,10 +450,10 @@ export function BoardgameList() {
                 ) : (
                     <button
                         onClick={() => handleBorrow(game.id)}
-                        className="px-3 py-6 bg-blue-50 text-blue-700 border-l-2 border-blue-300 hover:bg-blue-100 text-xs font-medium flex flex-col items-center justify-center gap-1 min-w-[80px]"
+                        className="px-3 py-6 bg-blue-50 text-sejoga-azul-oficial border-l-2 border-sejoga-azul-oficial hover:bg-blue-100 text-xs font-medium flex flex-col items-center justify-center gap-1 min-w-[80px]"
                     >
                         <span className="text-xl"></span>
-                        <span className="text-center leading-tight">🤏Pegar<br/>Emprestado</span>
+                        <span className="text-center leading-tight">🫳 Pegar<br/>Emprestado</span>
                     </button>
                 )}
             </div>
