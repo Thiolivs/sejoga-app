@@ -12,11 +12,13 @@ interface Game {
 export function GameAutocomplete({
     value,
     onChange,
-    required = false
+    required = false,
+    reset = false // ✅ novo prop para resetar
 }: {
     value: string;
     onChange: (gameId: string, gameName: string) => void;
     required?: boolean;
+    reset?: boolean; // ✅ adicionar
 }) {
     const [search, setSearch] = useState('');
     const [games, setGames] = useState<Game[]>([]);
@@ -26,11 +28,22 @@ export function GameAutocomplete({
     const supabase = createClientComponentClient();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
+    // ✅ CORREÇÃO 2: Resetar quando o componente pai pedir
+    useEffect(() => {
+        if (reset) {
+            setSearch('');
+            setSelectedGame('');
+            setGames([]);
+            setShowDropdown(false);
+        }
+    }, [reset]);
+
     // Buscar jogos quando o usuário digita
     useEffect(() => {
         const searchGames = async () => {
             if (search.length < 2) {
                 setGames([]);
+                setShowDropdown(false); // ✅ fecha dropdown quando limpa
                 return;
             }
 
@@ -44,12 +57,12 @@ export function GameAutocomplete({
 
             if (!error && data) {
                 setGames(data);
-                setShowDropdown(true);
+                setShowDropdown(data.length > 0); // ✅ só abre se tiver resultados
             }
             setLoading(false);
         };
 
-        const timeoutId = setTimeout(searchGames, 300); // debounce
+        const timeoutId = setTimeout(searchGames, 300);
         return () => clearTimeout(timeoutId);
     }, [search, supabase]);
 
@@ -65,11 +78,13 @@ export function GameAutocomplete({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    // ✅ CORREÇÃO 1: Selecionar jogo na primeira vez
     const handleSelect = (game: Game) => {
         setSelectedGame(game.name);
-        setSearch(game.name);
+        setSearch(''); // ✅ limpa a busca
+        setGames([]); // ✅ limpa os resultados
+        setShowDropdown(false); // ✅ fecha o dropdown
         onChange(game.id, game.name);
-        setShowDropdown(false);
     };
 
     return (
@@ -77,21 +92,25 @@ export function GameAutocomplete({
             <label className="block text-sm font-medium mb-0.5">Jogo *</label>
             <Input
                 type="text"
-                value={search || selectedGame}
+                value={selectedGame || search} // ✅ mostra o jogo selecionado ou a busca
                 onChange={(e) => {
                     setSearch(e.target.value);
-                    setSelectedGame('');
+                    setSelectedGame(''); // ✅ limpa seleção ao digitar
                     if (!e.target.value) {
                         onChange('', '');
                     }
                 }}
-                onFocus={() => search.length >= 2 && setShowDropdown(true)}
+                onFocus={() => {
+                    if (!selectedGame && search.length >= 2) {
+                        setShowDropdown(true);
+                    }
+                }}
                 placeholder="Digite para buscar um jogo..."
                 required={required}
             />
 
             {/* Dropdown com resultados */}
-            {showDropdown && games.length > 0 && (
+            {showDropdown && games.length > 0 && !selectedGame && ( // ✅ não mostra se já selecionou
                 <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                     {games.map((game) => (
                         <button

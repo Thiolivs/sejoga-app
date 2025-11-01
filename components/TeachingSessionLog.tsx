@@ -17,11 +17,12 @@ export function TeachingSessionLog() {
   const [boardgames, setBoardgames] = useState<Boardgame[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [resetAutocomplete, setResetAutocomplete] = useState(false); // ✅ estado para resetar
   const supabase = createClientComponentClient();
 
   const [formData, setFormData] = useState({
     boardgame_id: '',
-    players_count: '', //
+    players_count: '',
     notes: '',
   });
 
@@ -104,12 +105,18 @@ export function TeachingSessionLog() {
         .insert({
           event_id: selectedEvent,
           monitor_id: user.id,
-          ...formData,
+          boardgame_id: formData.boardgame_id,
+          players_count: parseInt(formData.players_count), // ✅ converte para número
+          notes: formData.notes || null,
         });
 
       if (error) throw error;
 
+      // ✅ Resetar formulário e autocomplete
       setFormData({ boardgame_id: '', players_count: '', notes: '' });
+      setResetAutocomplete(true);
+      setTimeout(() => setResetAutocomplete(false), 100);
+
       setShowForm(false);
       fetchSessions();
     } catch (error) {
@@ -129,6 +136,7 @@ export function TeachingSessionLog() {
 
       if (error) throw error;
       fetchSessions();
+      alert('✅ Registro deletado com sucesso!');
     } catch (error) {
       console.error('Erro ao deletar:', error);
       alert('❌ Erro ao deletar');
@@ -159,17 +167,16 @@ export function TeachingSessionLog() {
 
   return (
     <div className="space-y-6">
-
-
       {/* Formulário */}
-
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
-        {/* Seletor de Evento */}
-        <h1 className="text-[21px] text-center font-bold text-blue-800 flex-1 mb-5">✨<i>Registro de Jogos Ensinados</i>✨</h1>
+        <h1 className="text-[21px] text-center font-bold text-blue-800 flex-1 mb-5">
+          ✨<i>Registro de Jogos Ensinados</i>✨
+        </h1>
 
+        {/* Seletor de Evento */}
         <div className="flex justify-between items-center">
           <div className="flex-1">
-            <label className="block text-sm font-medium mb-0.5 ">Selecione o Evento:</label>
+            <label className="block text-sm font-medium mb-0.5">Selecione o Evento:</label>
             <select
               value={selectedEvent}
               onChange={(e) => setSelectedEvent(e.target.value)}
@@ -184,6 +191,7 @@ export function TeachingSessionLog() {
           </div>
         </div>
 
+        {/* Autocomplete de Jogo */}
         <div>
           <GameAutocomplete
             value={formData.boardgame_id}
@@ -191,13 +199,14 @@ export function TeachingSessionLog() {
               setFormData({
                 ...formData,
                 boardgame_id: gameId,
-                //game_name: gameName // opcional, se quiser guardar o nome também
               })
             }
+            reset={resetAutocomplete} // ✅ passa o reset
             required
           />
         </div>
 
+        {/* Número de Jogadores */}
         <div>
           <label className="block text-sm font-medium mb-1">Número de Jogadores *</label>
           <Input
@@ -207,25 +216,26 @@ export function TeachingSessionLog() {
             onChange={(e) =>
               setFormData({
                 ...formData,
-                players_count: e.target.value // mantém como string
+                players_count: e.target.value
               })
             }
             required
           />
         </div>
 
+        {/* Observações */}
         <div>
           <label className="block text-sm font-medium mb-1">Observações</label>
           <Textarea
             value={formData.notes}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-            placeholder=""
             rows={3}
           />
         </div>
 
+        {/* Botão de Submit */}
         <div className="flex justify-center items-center gap-2">
-          <Button type="submit" className="bg-sejoga-verde-oficial hover:bg-green-500">
+          <Button type="submit" className="bg-sejoga-verde-oficial hover:bg-sejoga-verde-oficial">
             Registrar
           </Button>
         </div>
@@ -256,7 +266,9 @@ export function TeachingSessionLog() {
 
       {/* Lista por Monitor */}
       <div className="space-y-6">
-        <h1 className="text-[22px] text-center font-bold text-blue-800 flex-1 mb-5">✨<i>Registro por Monitor</i>✨</h1>
+        <h1 className="text-[22px] text-center font-bold text-blue-800 flex-1 mb-5">
+          ✨<i>Registro por Monitor</i>✨
+        </h1>
 
         {Object.keys(sessionsByMonitor).length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-lg">
@@ -280,13 +292,13 @@ export function TeachingSessionLog() {
                     key={session.id}
                     className="flex justify-between items-stretch p-4 bg-gray-50 rounded-lg"
                   >
-                    {/* 🧩 Conteúdo principal */}
+                    {/* Conteúdo principal */}
                     <div className="flex-1 pr-4">
                       <h5 className="font-semibold text-blue-800">
                         🎲 {session.boardgame?.name || 'Jogo desconhecido'}
                       </h5>
 
-                      {/* 👇 jogadores à esquerda, data à direita */}
+                      {/* Jogadores à esquerda, data à direita */}
                       <div className="flex items-center justify-between mt-1">
                         <p className="text-xs text-gray-400">
                           {session.players_count}{' '}
@@ -312,7 +324,7 @@ export function TeachingSessionLog() {
                       )}
                     </div>
 
-                    {/* 🧱 Divisor vertical de altura total + botão à direita */}
+                    {/* Divisor vertical + botão deletar */}
                     <div className="flex flex-col justify-center items-center border-l border-gray-200 pl-1 ml-2">
                       <Button
                         size="sm"
@@ -326,8 +338,6 @@ export function TeachingSessionLog() {
                   </div>
                 ))}
               </div>
-
-
             </div>
           ))
         )}
