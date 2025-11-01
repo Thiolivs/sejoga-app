@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import type { Event, TeachingSessionWithDetails } from '@/types/database';
+import { GameAutocomplete } from '@/components/GameAutocomplete';
+
 
 export function TeachingSessionLog() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -19,7 +21,7 @@ export function TeachingSessionLog() {
 
   const [formData, setFormData] = useState({
     boardgame_id: '',
-    players_count: 0,
+    players_count: '', //
     notes: '',
   });
 
@@ -107,7 +109,7 @@ export function TeachingSessionLog() {
 
       if (error) throw error;
 
-      setFormData({ boardgame_id: '', players_count: 0, notes: '' });
+      setFormData({ boardgame_id: '', players_count: '', notes: '' });
       setShowForm(false);
       fetchSessions();
     } catch (error) {
@@ -167,7 +169,7 @@ export function TeachingSessionLog() {
 
         <div className="flex justify-between items-center">
           <div className="flex-1">
-            <label className="block text-sm font-medium mb-2">Selecione o Evento:</label>
+            <label className="block text-sm font-medium mb-0.5 ">Selecione o Evento:</label>
             <select
               value={selectedEvent}
               onChange={(e) => setSelectedEvent(e.target.value)}
@@ -183,20 +185,17 @@ export function TeachingSessionLog() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Jogo *</label>
-          <select
+          <GameAutocomplete
             value={formData.boardgame_id}
-            onChange={(e) => setFormData({ ...formData, boardgame_id: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+            onChange={(gameId, gameName) =>
+              setFormData({
+                ...formData,
+                boardgame_id: gameId,
+                //game_name: gameName // opcional, se quiser guardar o nome também
+              })
+            }
             required
-          >
-            <option value="">Selecione um jogo</option>
-            {boardgames.map((game) => (
-              <option key={game.id} value={game.id}>
-                {game.name}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         <div>
@@ -206,7 +205,10 @@ export function TeachingSessionLog() {
             min="1"
             value={formData.players_count}
             onChange={(e) =>
-              setFormData({ ...formData, players_count: parseInt(e.target.value) })
+              setFormData({
+                ...formData,
+                players_count: e.target.value // mantém como string
+              })
             }
             required
           />
@@ -230,7 +232,7 @@ export function TeachingSessionLog() {
       </form>
 
       {/* Resumo do Evento */}
-      <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg shadow p-6">
+      <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg shadow p-4">
         <h3 className="text-2xl text-center font-bold mb-4">
           {events.find(e => e.id === selectedEvent)?.name}
         </h3>

@@ -176,12 +176,12 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                     <div>
                         <h1 className="text-[22px] text-center font-bold text-blue-800 mt-4 flex-1 mb-5">✨<i>Lista de Jogos</i>✨</h1>
 
-                        <div className="mb-6 px-1">
-                            <p className="text-gray-600 mt-2">
+                        <div className="mb-5 border-b-1 border-t-1 p-1 ">
+                            <p className="text-sejoga-laranja-oficial">
                                 <i>&quot;Prepara, menina, é sua vez de brilhar!&quot;</i> 🌟
                             </p>
-                            <p className="text-gray-600 ml-5 text-md">
-                                <b>Marque aqui os jogos que você sabe ensinar 👨🏾‍🏫</b>
+                            <p className="text-sejoga-verde-oficial text-center font-semibold text-md">
+                                Marque aqui os jogos que você sabe ensinar
                             </p>
                         </div>
                         <BoardgameList />

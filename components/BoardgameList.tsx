@@ -63,7 +63,7 @@ export function BoardgameList() {
                 const hasAllMechanics = filters.selectedMechanics.every(selectedId =>
                     game.mechanics?.some(mechanic => mechanic.id === selectedId)
                 );
-                
+
                 if (!hasAllMechanics) {
                     return false;
                 }
@@ -201,7 +201,12 @@ export function BoardgameList() {
                     <Button
                         onClick={() => setShowFilters(!showFilters)}
                         variant={showFilters ? "default" : "outline"}
-                        className={`whitespace-nowrap ${hasActiveFilters && !showFilters ? 'border-blue-500 text-blue-600' : ''}`}
+                        className={`whitespace-nowrap ${showFilters
+                                ? 'bg-sejoga-vermelho-oficial hover:bg-red-600 text-white'
+                                : hasActiveFilters
+                                    ? 'border-blue-500 text-blue-600'
+                                    : ''
+                            }`}
                     >
                         {showFilters ? '▲' : '▼'} Filtros
                         {hasActiveFilters && !showFilters && (
@@ -212,6 +217,7 @@ export function BoardgameList() {
                             </span>
                         )}
                     </Button>
+                    
                     {/* Botão limpar */}
                     {hasActiveFilters && (
                         <Button
@@ -273,7 +279,7 @@ export function BoardgameList() {
                                         <label
                                             key={mechanic.id}
                                             className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
-                                                ? 'bg-blue-600 text-white'
+                                                ? 'bg-sejoga-azul-oficial text-white'
                                                 : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                                 }`}
                                         >
@@ -299,7 +305,7 @@ export function BoardgameList() {
                                         <label
                                             key={mechanic.id}
                                             className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
-                                                ? 'bg-green-600 text-white'
+                                                ? 'bg-sejoga-verde-oficial text-white'
                                                 : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                                 }`}
                                         >
@@ -325,7 +331,7 @@ export function BoardgameList() {
                                         <label
                                             key={mechanic.id}
                                             className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
-                                                ? 'bg-purple-600 text-white'
+                                                ? 'bg-sejoga-rosa-oficial text-white'
                                                 : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                                 }`}
                                         >
@@ -346,7 +352,7 @@ export function BoardgameList() {
             </div>
 
             {/* Contador de resultados */}
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb">
                 <p className="text-sm text-gray-600">
                     {filteredGames.length === boardgames.length ? (
                         <>
@@ -386,80 +392,80 @@ export function BoardgameList() {
             {/* Lista de jogos */}
             {filteredGames.map((game) => (
                 <div
-    key={game.id}
-    className={`border rounded-lg transition-all ${game.isLoaned ? 'bg-red-50 border-red-300' : 'bg-white hover:shadow-md'
-        }`}
->
-    <div className="flex gap-3">
-        {/* Conteúdo principal - esquerda */}
-        <div className="flex-1 p-4">
-            {/* LINHA 1 - Nome + Tag */}
-            <div
-                className="flex items-center justify-between gap-4 cursor-pointer"
-                onClick={() => handleGameClick(game)}
-            >
-                <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-semibold text-lg">{game.name}</h3>
+                    key={game.id}
+                    className={`border rounded-lg transition-all ${game.isLoaned ? 'bg-red-50 border-red-300' : 'bg-white hover:shadow-md'
+                        }`}
+                >
+                    <div className="flex gap-2">
+                        {/* Conteúdo principal - esquerda */}
+                        <div className="flex-1 p-3"> {/* ✅ reduzido de p-4 para p-3 */}
+                            {/* LINHA 1 - Nome + Tag */}
+                            <div
+                                className="flex items-center justify-between gap-4 cursor-pointer"
+                                onClick={() => handleGameClick(game)}
+                            >
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <h3 className="font-semibold text-base">{game.name}</h3> {/* ✅ reduzido de text-lg para text-base */}
 
-                    {game.isLoaned && (
-                        <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded">
-                            ⚔️ Emprestado
-                        </span>
-                    )}
-                </div>
-            </div>
+                                    {game.isLoaned && (
+                                        <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs font-semibold rounded"> {/* ✅ reduzido py-1 para py-0.5 */}
+                                            ⚔️ Emprestado
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
 
-            {/* LINHA 2 - Checkbox */}
-            {isMonitor && (
-                <div className="flex items-center gap-2 text-left pt-2 border-t-2 border-gray-100 mt-2">
-                    <input
-                        type="checkbox"
-                        id={`teach-${game.id}`}
-                        checked={game.canTeach}
-                        onChange={() => toggleTeach(game.id, game.canTeach || false)}
-                        className="custom-check"
-                    />
-                    <label
-                        htmlFor={`teach-${game.id}`}
-                        className="text-sm cursor-pointer select-none"
-                    >
-                        Sei ensinar
-                    </label>
-                </div>
-            )}
-        </div>
-
-        {/* Botão - direita (ocupa altura toda) */}
-        {isMonitor && (
-            <div className="flex items-center pr-3">
-                {game.isLoaned ? (
-                    game.loanedBy === user?.id ? (
-                        <button
-                            onClick={() => handleReturn(game.id)}
-                            className="px-3 py-6 bg-green-50 text-green-700 border-l-2 border-green-300 hover:bg-green-100 text-xs font-medium flex flex-col items-center justify-center gap-1 min-w-[80px]"
-                        >
-                            <span className="text-xl"></span>
-                            <span>🫴 Devolver</span>
-                        </button>
-                    ) : (
-                        <div className="px-3 py-6 bg-gray-100 text-gray-500 border-l-2 border-gray-300 text-xs font-medium cursor-not-allowed flex flex-col items-center justify-center gap-1 min-w-[80px]">
-                            <span className="text-xl">⚔️</span>
-                            <span className="text-center">Indisponível</span>
+                            {/* LINHA 2 - Checkbox */}
+                            {isMonitor && (
+                                <div className="flex items-center gap-2 text-left pt-1.5 border-t-2 border-gray-100 mt-1.5"> {/* ✅ reduzido pt-2/mt-2 para pt-1.5/mt-1.5 */}
+                                    <input
+                                        type="checkbox"
+                                        id={`teach-${game.id}`}
+                                        checked={game.canTeach}
+                                        onChange={() => toggleTeach(game.id, game.canTeach || false)}
+                                        className="custom-check"
+                                    />
+                                    <label
+                                        htmlFor={`teach-${game.id}`}
+                                        className="text-sm cursor-pointer select-none"
+                                    >
+                                        Sei ensinar
+                                    </label>
+                                </div>
+                            )}
                         </div>
-                    )
-                ) : (
-                    <button
-                        onClick={() => handleBorrow(game.id)}
-                        className="px-3 py-6 bg-blue-50 text-sejoga-azul-oficial border-l-2 border-sejoga-azul-oficial hover:bg-blue-100 text-xs font-medium flex flex-col items-center justify-center gap-1 min-w-[80px]"
-                    >
-                        <span className="text-xl"></span>
-                        <span className="text-center leading-tight">🫳 Pegar<br/>Emprestado</span>
-                    </button>
-                )}
-            </div>
-        )}
-    </div>
-</div>
+
+                        {/* Botão - direita (ocupa altura toda) */}
+                        {isMonitor && (
+                            <div className="flex items-center">
+                                {game.isLoaned ? (
+                                    game.loanedBy === user?.id ? (
+                                        <button
+                                            onClick={() => handleReturn(game.id)}
+                                            className="w-20 py-4 bg-green-50 text-sejoga-verde-oficial border-l-2 border-sejoga-verde-oficial hover:bg-green-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg" /* ✅ reduzido de py-6 para py-4 */
+                                        >
+                                            <span className="text-base">⬅️</span> {/* ✅ reduzido de text-lg para text-base */}
+                                            <span>Devolver</span>
+                                        </button>
+                                    ) : (
+                                        <div className="w-20 py-4 bg-gray-100 text-gray-500 border-l-2 border-gray-300 text-xs font-medium cursor-not-allowed flex flex-col items-center justify-center gap-1 rounded-r-lg"> {/* ✅ reduzido de py-6 para py-4 */}
+                                            <span className="text-lg">⚔️</span>
+                                            <span className="text-center">Indisponível</span>
+                                        </div>
+                                    )
+                                ) : (
+                                    <button
+                                        onClick={() => handleBorrow(game.id)}
+                                        className="w-20 py-4 bg-blue-50 text-sejoga-azul-oficial border-l-2 border-sejoga-azul-oficial hover:bg-blue-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg" /* ✅ reduzido de py-6 para py-4 */
+                                    >
+                                        <span className="text-base">➡️</span> {/* ✅ reduzido de text-lg para text-base */}
+                                        <span className="text-center leading-tight">Pegar<br />Emprestado</span>
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
 
             ))}
 
@@ -509,8 +515,8 @@ export function BoardgameList() {
                             )}
 
                             <div>
-                                <h4 className="font-semibold mb-2">Informações do Jogo</h4>
-                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                <h4 className="font-semibold mb-2">Informações do Jogo:</h4>
+                                <div className="grid grid-cols-2 text-sm">
                                     {selectedGame.publisher && (
                                         <>
                                             <span className="text-gray-600">Editora:</span>
@@ -540,7 +546,7 @@ export function BoardgameList() {
                             </div>
 
                             <div className="bg-green-50 border  border-green-200 rounded-lg p-4">
-                                <h4 className="font-semibold mb-2">Quem sabe ensinar</h4>
+                                <h4 className="font-semibold mb-2">Quem sabe ensinar:</h4>
                                 {loadingTeachers ? (
                                     <p className="text-sm text-gray-600">Carregando...</p>
                                 ) : teachers.length > 0 ? (
