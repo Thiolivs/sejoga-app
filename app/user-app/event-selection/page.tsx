@@ -28,7 +28,6 @@ export default function EventSelectionPage() {
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
-                        <h1 className="text-2xl font-bold">Eventos</h1>
                     </div>
                 </div>
             </header>

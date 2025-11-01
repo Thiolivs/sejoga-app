@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import type { Event, TeachingSessionWithDetails } from '@/types/database';
+import { ArrowLeft } from 'lucide-react';
 
 export function StatisticsSession() {
     const [events, setEvents] = useState<Event[]>([]);
@@ -156,180 +157,16 @@ export function StatisticsSession() {
     }, {} as Record<string, TeachingSessionWithDetails[]>);
 
     return (
-        <div className="space-y-6">
+        <div className="min-h-screen">
 
-
-            {/* Formulário */}
-
-            <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
-                {/* Seletor de Evento */}
-                <h3 className="text-xl text-center font-bold">Registrar Jogo Ensinado</h3>
-
-                <div className="flex justify-between items-center">
-                    <div className="flex-1">
-                        <label className="block text-sm font-medium mb-2">Selecione o Evento:</label>
-                        <select
-                            value={selectedEvent}
-                            onChange={(e) => setSelectedEvent(e.target.value)}
-                            className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg"
-                        >
-                            {events.map((event) => (
-                                <option key={event.id} value={event.id}>
-                                    {event.name} - {new Date(event.event_date).toLocaleDateString('pt-BR')}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium mb-1">Jogo *</label>
-                    <select
-                        value={formData.boardgame_id}
-                        onChange={(e) => setFormData({ ...formData, boardgame_id: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                        required
-                    >
-                        <option value="">Selecione um jogo</option>
-                        {boardgames.map((game) => (
-                            <option key={game.id} value={game.id}>
-                                {game.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium mb-1">Número de Jogadores *</label>
-                    <Input
-                        type="number"
-                        min="1"
-                        value={formData.players_count}
-                        onChange={(e) =>
-                            setFormData({ ...formData, players_count: parseInt(e.target.value) })
-                        }
-                        required
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium mb-1">Observações</label>
-                    <Textarea
-                        value={formData.notes}
-                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                        placeholder=""
-                        rows={3}
-                    />
-                </div>
-
-                <div className="flex gap-2">
-                    <Button type="submit" className="bg-green-600 hover:bg-green-700">
-                        💾 Salvar
-                    </Button>
-                </div>
-            </form>
-
-            {/* Resumo do Evento */}
-            <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg shadow p-6">
-                <h3 className="text-2xl text-center font-bold mb-4">
-                    {events.find(e => e.id === selectedEvent)?.name}
-                </h3>
-                <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center">
-                        <p className="text-3xl font-bold">{Object.keys(sessionsByMonitor).length}</p>
-                        <p className="text-purple-100 text-sm">Monitores Ativos</p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-3xl font-bold">{sessions.length}</p>
-                        <p className="text-purple-100 text-sm">Jogos Ensinados</p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-3xl font-bold">
-                            {sessions.reduce((sum, s) => sum + s.players_count, 0)}
-                        </p>
-                        <p className="text-purple-100 text-sm">Total de Jogadores</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Lista por Monitor */}
-            <div className="space-y-6">
-                <h3 className="text-[20px] text-center font-bold">Registros por Monitor</h3>
-
-                {Object.keys(sessionsByMonitor).length === 0 ? (
-                    <div className="text-center py-12 bg-gray-50 rounded-lg">
-                        <p className="text-gray-600">Nenhum registro ainda para este evento</p>
-                    </div>
-                ) : (
-                    Object.entries(sessionsByMonitor).map(([monitorName, monitorSessions]) => (
-                        <div key={monitorName} className="bg-white rounded-lg shadow p-6">
-                            <div className="flex justify-between items-center mb-4">
-                                <h4 className="text-xl font-bold text-purple-700">
-                                    👨‍🏫 {monitorName}
-                                </h4>
-                                <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">
-                                    {monitorSessions.length} {monitorSessions.length === 1 ? 'jogo' : 'jogos'}
-                                </span>
-                            </div>
-
-                            <div className="space-y-3">
-                                {monitorSessions.map((session) => (
-                                    <div
-                                        key={session.id}
-                                        className="flex justify-between items-stretch p-4 bg-gray-50 rounded-lg"
-                                    >
-                                        {/* 🧩 Conteúdo principal */}
-                                        <div className="flex-1 pr-4">
-                                            <h5 className="font-semibold text-blue-800">
-                                                🎲 {session.boardgame?.name || 'Jogo desconhecido'}
-                                            </h5>
-
-                                            {/* 👇 jogadores à esquerda, data à direita */}
-                                            <div className="flex items-center justify-between mt-1">
-                                                <p className="text-xs text-gray-400">
-                                                    {session.players_count}{' '}
-                                                    {session.players_count === 1 ? 'jogador' : 'jogadores'}
-                                                </p>
-                                                <p className="text-[11px] text-gray-400 italic">
-                                                    {(() => {
-                                                        const d = new Date(session.created_at);
-                                                        const dia = String(d.getDate()).padStart(2, '0');
-                                                        const mes = String(d.getMonth() + 1).padStart(2, '0');
-                                                        const ano = String(d.getFullYear()).slice(-2);
-                                                        const hora = d.getHours().toString().padStart(2, '0');
-                                                        const minuto = d.getMinutes().toString().padStart(2, '0');
-                                                        return `${dia}/${mes}/${ano} • ${hora}:${minuto}`;
-                                                    })()}
-                                                </p>
-                                            </div>
-
-                                            {session.notes && (
-                                                <p className="text-sm text-gray-500 mt-2">
-                                                    <i>{session.notes}</i>
-                                                </p>
-                                            )}
-                                        </div>
-
-                                        {/* 🧱 Divisor vertical de altura total + botão à direita */}
-                                        <div className="flex flex-col justify-center items-center border-l border-gray-200 pl-1 ml-2">
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                onClick={() => handleDelete(session.id)}
-                                                className="text-red-600 hover:text-red-800 translate-x-1"
-                                            >
-                                                ❌
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-
-                        </div>
-                    ))
-                )}
-            </div>
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Seu componente de eventos aqui */}
+                                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+                                    <p className="text-yellow-800">
+                                        🚧 Em desenvolvimento - Em breve uma nova página para você!
+                                    </p>
+                                </div>
+            </main>
         </div>
     );
 }

@@ -82,7 +82,7 @@ export function TrainingSession() {
                 loadCycleData(cycle.id);
             });
         }
-    }, [cycles.length]); // só depende do LENGTH, não do array inteiro
+    }, [cycles.length]); 
 
     const handleCycleUnavailability = async (cycleId: string, isCurrentlyUnavailable: boolean) => {
         if (!user) return;
@@ -155,7 +155,7 @@ export function TrainingSession() {
         <div className="p-1 space-y-3">
             {/* Header */}
             <div className="flex flex-col items-center">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Treinamentos</h2>
+                        <h1 className="text-[22px] text-center font-bold text-blue-800 mt-4 flex-1 mb-5">✨<i>Treinamentos</i>✨</h1>
                 {isAdmin && (
                     <div className="flex gap-2">
                         <Button

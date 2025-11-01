@@ -16,7 +16,6 @@ export default function AddGamePage() {
                         <Button variant="ghost" size="icon" onClick={() => router.back()}>
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
-                        <h1 className="text-2xl font-bold text-red-600">Adicionar Jogo</h1>
                     </div>
                 </div>
             </header>

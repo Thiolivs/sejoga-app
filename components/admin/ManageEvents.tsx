@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import type { Event } from '@/types/database';
 import { Plus } from 'lucide-react';
 
-export function EventManagement() {
+export function ManageEvents() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -139,19 +139,20 @@ export function EventManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Gerenciar Eventos</h2>
+                  <h1 className="text-2xl text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Gerenciamento de Eventos</i>✨</h1>
+
+      <div className="flex justify-center items-center">
         <Button
           onClick={() => setShowForm(!showForm)} className="bg-sejoga-azul-oficial hover:bg-blue-400"
         >
           <Plus className="w-4 h-4" />
-          Novo Evento
+          Cadastrar Novo Evento
         </Button>
       </div>
 
       {/* Formulário */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white border-1 rounded-lg shadow p-6 space-y-4">
           <h3 className="text-xl font-bold">
             {editingEvent ? 'Editar Evento' : 'Novo Evento'}
           </h3>
@@ -224,7 +225,7 @@ export function EventManagement() {
           events.map((event) => (
             <div
               key={event.id}
-              className={`bg-white rounded-lg shadow p-6 ${!event.is_active ? 'opacity-60' : ''
+              className={`bg-white border-1 rounded-lg shadow p-6 ${!event.is_active ? 'opacity-60' : ''
                 }`}
             >
               <div className="flex flex-col gap-3">

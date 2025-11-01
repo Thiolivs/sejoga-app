@@ -28,14 +28,17 @@ export default function AdministrationPage() {
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
-                        <h1 className="text-2xl font-bold text-red-600">Administração</h1>
                     </div>
                 </div>
             </header>
 
             {/* Conteúdo - Botões de navegação */}
             <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                                    <h1 className="text-2xl text-center font-bold text-blue-800 flex-1">✨<i>Painel de Administração</i>✨</h1>
+
                 <div className="bg-white rounded-lg shadow p-6 space-y-4">
+
+
                     <h2 className="text-xl text-center font-semibold text-gray-800 mb-6">
                         <i>Selecione uma opção:</i>
                     </h2>
@@ -95,7 +98,7 @@ export default function AdministrationPage() {
                         
                     {/* Botão: Gerenciar Mecânicas*/}
                         <button
-                            onClick={() => router.push('/user-app/administration/manage-cycles')}
+                            onClick={() => router.push('/user-app/administration/manage-mechanics')}
                             className="bg-sejoga-azul-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
                         >
                                 <h3 className="text-lg font-bold mb-1">Gerenciar Mecânicas</h3>
@@ -105,7 +108,7 @@ export default function AdministrationPage() {
                         
                     {/* Botão: Gerenciar Editoras*/}
                         <button
-                            onClick={() => router.push('/user-app/administration/manage-cycles')}
+                            onClick={() => router.push('/user-app/administration/manage-publishers')}
                             className="bg-sejoga-rosa-oficial text-white rounded-lg shadow-lg p-3 transition-all hover:scale-105 text-center"
                         >
                                 <h3 className="text-lg font-bold mb-1">Gerenciar Editoras</h3>

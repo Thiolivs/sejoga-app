@@ -163,7 +163,7 @@ export function TeachingSessionLog() {
 
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
         {/* Seletor de Evento */}
-        <h3 className="text-xl text-center font-bold">Registrar Jogo Ensinado</h3>
+        <h1 className="text-[21px] text-center font-bold text-blue-800 flex-1 mb-5">✨<i>Registro de Jogos Ensinados</i>✨</h1>
 
         <div className="flex justify-between items-center">
           <div className="flex-1">
@@ -206,7 +206,7 @@ export function TeachingSessionLog() {
             min="1"
             value={formData.players_count}
             onChange={(e) =>
-              setFormData({ ...formData, players_count: parseInt(e.target.value)})
+              setFormData({ ...formData, players_count: parseInt(e.target.value) })
             }
             required
           />
@@ -222,9 +222,9 @@ export function TeachingSessionLog() {
           />
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex justify-center items-center gap-2">
           <Button type="submit" className="bg-sejoga-verde-oficial hover:bg-green-500">
-          Enviar
+            Registrar
           </Button>
         </div>
       </form>
@@ -254,7 +254,7 @@ export function TeachingSessionLog() {
 
       {/* Lista por Monitor */}
       <div className="space-y-6">
-        <h3 className="text-[20px] text-center font-bold">Registros por Monitor</h3>
+        <h1 className="text-[22px] text-center font-bold text-blue-800 flex-1 mb-5">✨<i>Registro por Monitor</i>✨</h1>
 
         {Object.keys(sessionsByMonitor).length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-lg">

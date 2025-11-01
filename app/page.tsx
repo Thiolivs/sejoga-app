@@ -30,7 +30,6 @@ export default async function Home() {
     if (loggedIn) redirect("/user-app", RedirectType.replace);
   }
 
-  // 👇 ENVOLVA TODO O CONTEÚDO COM HomeWithSplash
   return (
     <HomeWithSplash>
       <div className="flex flex-col h-screen w-full justify-center items-center">

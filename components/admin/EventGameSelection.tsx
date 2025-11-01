@@ -191,10 +191,12 @@ export function EventGameSelection() {
     }
 
     return (
+        
         <div className="space-y-6">
+                        <h1 className="text-[22px] text-center font-bold text-blue-800 flex-1 mb-1">✨<i>Seleção de Jogos para Eventos</i>✨</h1>
+
             {/* Header com estatísticas */}
             <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-[20px] text-center font-bold mb-4">Seleção de Jogos para o Evento</h2>
                 <div className="grid grid-cols-3 gap-4">
                     <div className="text-center">
                         <p className="text-3xl font-bold text-green-600">
@@ -223,7 +225,7 @@ export function EventGameSelection() {
                 <div className="bg-green-50 rounded-lg border-1 border-green-200 p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-xl text-center font-bold text-green-800">
-                            ✅ Jogos Disponíveis para o Evento
+                            ✅ Jogos Disponíveis
                         </h3>
                         <span className="px-3 py-1 bg-green-600 text-white rounded-full text-sm font-semibold">
                             {availableGames.length}
@@ -337,7 +339,7 @@ export function EventGameSelection() {
                                                     )}
                                                 </div>
                                                 <div className="flex gap-2">
-                                                                                                        {!game.active && (
+                                                    {!game.active && (
                                                         <span className="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">
                                                             🚫 Inativo
                                                         </span>

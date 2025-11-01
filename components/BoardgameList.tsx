@@ -446,7 +446,7 @@ export function BoardgameList() {
                                         onClick={() => handleBorrow(game.id)}
                                         className="px-4 py-2 bg-sejoga-azul-oficial text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
                                     >
-                                        🤝 Pegar Emprestado
+                                        🤏 Pegar Emprestado
                                     </button>
                                 )}
                             </div>

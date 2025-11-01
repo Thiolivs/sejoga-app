@@ -101,9 +101,9 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
             <div className="bg-white border-b">
                 <div className="max-w-7xl mx-auto px-4 flex flex-col items-center sm:px-6 lg:px-8">
                     <nav className="flex space-x-2 " aria-label="Tabs">
-                        
-                        
-                        
+
+
+
                         <button
                             onClick={() => setActiveTab('statistics')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'statistics'
@@ -174,6 +174,8 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                 {/* JOGOS */}
                 {activeTab === 'jogos' && (
                     <div>
+                        <h1 className="text-[22px] text-center font-bold text-blue-800 mt-4 flex-1 mb-5">✨<i>Lista de Jogos do SeJoga</i>✨</h1>
+
                         <div className="mb-6 px-1">
                             <p className="text-gray-600 mt-2">
                                 <i>&quot;Prepara, menina, é sua vez de brilhar!&quot;</i> 🌟
@@ -191,7 +193,8 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                     <div>
                         <div className="mb-6">
                             <h2 className="text-gray-600 text-center mb-6 text-2xl font-bold">
-                                Meu Perfil
+                                <h1 className="text-[22px] text-center font-bold text-blue-800 flex-1 mt-5 mb-5">✨<i>Minhas Informações</i>✨</h1>
+
                             </h2>
                             <p className="text-gray-600 mt-2">
                                 <i>&quot;It&apos;s me... {name}!&quot;</i> 🍄

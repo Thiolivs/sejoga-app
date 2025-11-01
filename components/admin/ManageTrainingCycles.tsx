@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Calendar, Edit2, Trash2, Save, X, ArrowLeft } from 'lucide-react';
+import { Plus, Calendar, ArrowLeft } from 'lucide-react';
 import type { TrainingCycle } from '@/types/database';
 
 export function ManageTrainingCycles() {
@@ -139,14 +139,19 @@ export function ManageTrainingCycles() {
                 >
                     <ArrowLeft className="w-5 h-5" />
                 </Button>
-                <h2 className="text-2xl font-bold text-gray-900 flex-1">Ciclos de Treinamento</h2>
-                {!showAddForm && (
+
+            </div>
+                        <h1 className="text-2xl text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Ciclos de Treinamentos</i>✨</h1>
+
+            {!showAddForm && (
+                <div className="flex justify-center">
                     <Button onClick={() => setShowAddForm(true)} className="bg-sejoga-azul-oficial flex items-center gap-2">
                         <Plus className="w-4 h-4" />
-                        Novo Ciclo
+                        Cadastrar Novo Ciclo
                     </Button>
-                )}
-            </div>
+                </div>
+            )}
+
 
             {/* Formulário */}
             {showAddForm && (
@@ -156,7 +161,7 @@ export function ManageTrainingCycles() {
                             {editingId ? 'Editar Ciclo' : 'Novo Ciclo'}
                         </h3>
                         <Button type="button" variant="ghost" size="icon" onClick={resetForm}>
-                            ❌ 
+                            ❌
                         </Button>
                     </div>
 

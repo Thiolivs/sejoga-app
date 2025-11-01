@@ -5,6 +5,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from '@/components/ui/button';
 import { EditGameForm } from './EditGameForm';
 import { useRouter } from 'next/navigation';
+import { Plus } from 'lucide-react';
 
 interface Game {
     id: string;
@@ -14,7 +15,7 @@ interface Game {
     copies: number;
 }
 
-export function AdminGamesList() {
+export function ManageGames() {
     const [games, setGames] = useState<Game[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingGameId, setEditingGameId] = useState<string | null>(null);
@@ -72,14 +73,35 @@ export function AdminGamesList() {
 
     return (
         <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Todos os Jogos ({games.length})</h2>
+            <h1 className="text-2xl text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Gerenciamento de Jogos</i>✨</h1>
 
-            <Button
-                onClick={() => router.push('/user-app/administration/add-game')}
-                className="flex items-center gap-2 bg-sejoga-verde-oficial hover:bg-green-500"
-            >
-                Adicionar Jogos
-            </Button>
+            <div className="flex flex-col items-center rounded-lg border-1 p-3 gap-4 mb-8">
+                <Button
+                    onClick={() => router.push('/user-app/administration/add-game')}
+                    className="flex items-center gap-2 bg-sejoga-azul-oficial hover:bg-blue-500"
+                >
+                    <Plus className="w-4 h-4" />
+                    Cadastrar Novo Jogo
+                </Button>
+
+                <div className='flex gap-5 justify-center'>
+                    <Button
+                        variant={"outline"}
+                        onClick={() => router.push('/user-app/administration/manage-publishers')}
+                        className="flex items-center gap-2"
+                    >
+                        Gerenciar Editoras
+                    </Button>
+                    <Button
+                        variant={"outline"}
+                        onClick={() => router.push('/user-app/administration/manage-mechanics')}
+                        className="flex items-center gap-2"
+                    >
+                        Gerenciar Mecânicas
+                    </Button>
+                </div>
+            </div>
+            <h2 className="text-1xl font-semibold">Todos os Jogos ({games.length})</h2>
 
             <div className="grid gap-2">
                 {games.map((game) => (

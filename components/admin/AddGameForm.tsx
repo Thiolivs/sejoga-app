@@ -328,7 +328,7 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                             {mechanicsByType.category.map((mechanic) => (
                                 <label
                                     key={mechanic.id}
-                                    className={`px-4 py-2 rounded-lg cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
+                                    className={`px-3 py-1.5 text-sm rounded cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
                                         ? 'bg-sejoga-azul-oficial text-white shadow-md scale-105'
                                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                         }`}
