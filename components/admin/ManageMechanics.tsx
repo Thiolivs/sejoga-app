@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react'; // ✅ adicionar useCallback
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from '@/components/ui/button';
@@ -25,11 +25,8 @@ export function ManageMechanics() {
         icon: ''
     });
 
-    useEffect(() => {
-        fetchMechanics();
-    }, []);
-
-    const fetchMechanics = async () => {
+    // ✅ CORREÇÃO 1: useCallback
+    const fetchMechanics = useCallback(async () => {
         try {
             const { data, error } = await supabase
                 .from('game_mechanics')
@@ -44,7 +41,11 @@ export function ManageMechanics() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [supabase]);
+
+    useEffect(() => {
+        fetchMechanics();
+    }, [fetchMechanics]);
 
     const generateSlug = (name: string) => {
         return name
@@ -260,26 +261,13 @@ export function ManageMechanics() {
                         />
                     </div>
 
-                    {/*<div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Slug *
-                        </label>
-                        <Input
-                            type="text"
-                            placeholder="construcao-de-baralho"
-                            value={formData.slug}
-                            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                        />
-                        <p className="text-xs text-gray-500 mt-1">Gerado automaticamente a partir do nome</p>
-                    </div>*/}
-
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Tipo *
                         </label>
                         <select
                             value={formData.type}
-                            onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
+                            onChange={(e) => setFormData({ ...formData, type: e.target.value as 'mechanic' | 'category' | 'mode' })} // ✅ CORREÇÃO 2
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         >
@@ -288,32 +276,6 @@ export function ManageMechanics() {
                             <option value="mode">Modo</option>
                         </select>
                     </div>
-
-                    {/*<div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Descrição
-                        </label>
-                        <textarea
-                            placeholder="Descrição opcional da mecânica..."
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            rows={3}
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Ícone (emoji)
-                        </label>
-                        <Input
-                            type="text"
-                            placeholder="🎲 🃏 ⚔️"
-                            value={formData.icon}
-                            onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                            maxLength={2}
-                        />
-                    </div>*/}
 
                     <div className="flex gap-3 pt-4">
                         <Button type="button" variant="outline" onClick={resetForm} className="flex-1">

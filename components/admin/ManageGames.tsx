@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react'; // ✅ adicionar useCallback
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from '@/components/ui/button';
 import { EditGameForm } from './EditGameForm';
@@ -22,11 +22,8 @@ export function ManageGames() {
     const supabase = createClientComponentClient();
     const router = useRouter();
 
-    useEffect(() => {
-        fetchGames();
-    }, []);
-
-    const fetchGames = async () => {
+    // ✅ CORREÇÃO: useCallback
+    const fetchGames = useCallback(async () => {
         const { data, error } = await supabase
             .from('boardgames')
             .select('id, name, publisher, active, copies')
@@ -36,7 +33,11 @@ export function ManageGames() {
             setGames(data);
         }
         setLoading(false);
-    };
+    }, [supabase]);
+
+    useEffect(() => {
+        fetchGames();
+    }, [fetchGames]); // ✅ adicionar fetchGames
 
     const handleDelete = async (gameId: string, gameName: string) => {
         if (!confirm(`Tem certeza que deseja deletar "${gameName}"?`)) return;
