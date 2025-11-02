@@ -13,12 +13,14 @@ export function PublisherAutocomplete({
     value,
     onChange,
     required = false,
-    reset = false
+    reset = false,
+    initialName = '' // ✅ nova prop
 }: {
     value: string;
     onChange: (publisherId: string, publisherName: string) => void;
     required?: boolean;
     reset?: boolean;
+    initialName?: string; // ✅ nova prop
 }) {
     const [search, setSearch] = useState('');
     const [publishers, setPublishers] = useState<Publisher[]>([]);
@@ -27,6 +29,25 @@ export function PublisherAutocomplete({
     const [selectedPublisher, setSelectedPublisher] = useState<string>('');
     const supabase = createClientComponentClient();
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const [isInitialized, setIsInitialized] = useState(false);
+
+    // ✅ Debug logs
+    console.log('PublisherAutocomplete render:', { 
+        initialName, 
+        selectedPublisher, 
+        value,
+        isInitialized 
+    });
+
+    // ✅ Atualizar quando o initialName mudar (para formulários de edição)
+    useEffect(() => {
+        console.log('useEffect initialName:', initialName);
+        if (initialName && !isInitialized) {
+            console.log('Setting selectedPublisher to:', initialName);
+            setSelectedPublisher(initialName);
+            setIsInitialized(true);
+        }
+    }, [initialName, isInitialized]);
 
     // Resetar quando o componente pai pedir
     useEffect(() => {
@@ -55,6 +76,8 @@ export function PublisherAutocomplete({
                 .order('name')
                 .limit(10);
 
+            console.log('🔍 Search results:', { search, data, error });
+
             if (!error && data) {
                 setPublishers(data);
                 setShowDropdown(data.length > 0);
@@ -79,10 +102,12 @@ export function PublisherAutocomplete({
     }, []);
 
     const handleSelect = (publisher: Publisher) => {
+        console.log('🎯 Publisher selected:', publisher);
         setSelectedPublisher(publisher.name);
         setSearch('');
         setPublishers([]);
         setShowDropdown(false);
+        console.log('📢 Calling onChange with:', { id: publisher.id, name: publisher.name });
         onChange(publisher.id, publisher.name);
     };
 

@@ -18,11 +18,14 @@ export function useBoardgames(userId?: string) {
         try {
             setLoading(true);
 
-            // Busca todos os jogos ativos COM suas mecânicas
+            // ✅ CORREÇÃO: Busca todos os jogos ativos COM suas mecânicas E editora
             const { data: games, error: gamesError } = await supabase
                 .from('boardgames')
                 .select(`
                     *,
+                    publishers (
+                        name
+                    ),
                     boardgame_mechanics(
                         mechanic_id,
                         game_mechanics(*)
@@ -71,8 +74,20 @@ export function useBoardgames(userId?: string) {
                 // Extrai as mecânicas do relacionamento
                 const mechanics = game.boardgame_mechanics?.map((bm: any) => bm.game_mechanics).filter(Boolean) || [];
 
+                // ✅ Pega o nome da editora (prioriza novo sistema com JOIN)
+                let publisherName = game.publisher; // Fallback para campo antigo
+                if (game.publishers) {
+                    // Supabase pode retornar array ou objeto
+                    if (Array.isArray(game.publishers) && game.publishers.length > 0) {
+                        publisherName = game.publishers[0].name;
+                    } else if (typeof game.publishers === 'object' && 'name' in game.publishers) {
+                        publisherName = game.publishers.name;
+                    }
+                }
+
                 return {
                     ...game,
+                    publisher: publisherName, // ✅ Sobrescreve com o nome correto
                     mechanics, // Adiciona as mecânicas ao jogo
                     canTeach: userTeaches.includes(game.id),
                     isLoaned: !!loan,
@@ -82,7 +97,7 @@ export function useBoardgames(userId?: string) {
                 };
             }) || [];
 
-            setBoardgames(gamesWithInfo);
+            setBoardgames(gamesWithInfo as any); // Type assertion necessária por causa do publishers
             setError(null);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Erro ao carregar jogos');

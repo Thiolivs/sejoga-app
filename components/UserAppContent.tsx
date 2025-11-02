@@ -174,7 +174,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                 {/* JOGOS */}
                 {activeTab === 'jogos' && (
                     <div>
-                        <h1 className="text-[22px] text-center font-bold text-blue-800 mt-4 flex-1 mb-5">✨<i>Lista de Jogos</i>✨</h1>
+                        <div className="text-[22px] text-center font-bold text-blue-800 mt-4 flex-1 mb-5">✨<i>Lista de Jogos</i>✨</div>
 
                         <div className="mb-5 border-b-1 border-t-1 p-1 ">
                             <p className="text-sejoga-laranja-oficial">

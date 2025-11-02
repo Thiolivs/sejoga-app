@@ -136,7 +136,6 @@ export function TeachingSessionLog() {
 
       if (error) throw error;
       fetchSessions();
-      alert('✅ Registro deletado com sucesso!');
     } catch (error) {
       console.error('Erro ao deletar:', error);
       alert('❌ Erro ao deletar');

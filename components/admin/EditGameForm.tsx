@@ -16,10 +16,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { PublisherAutocomplete } from '@/components/PublisherAutocomplete'; // ✅ importar
 
+// Schema corrigido
 const formSchema = z.object({
     name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-    publisher: z.string().optional(),
+    publisher_id: z.string().optional(), // ✅ mudado de publisher para publisher_id
     year_received: z.number().int().positive().optional(),
     year_release: z.number().int().positive().optional(),
     players_min: z.number().int().positive().optional(),
@@ -49,13 +51,14 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
     const [selectedMechanics, setSelectedMechanics] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(true);
+    const [publisherName, setPublisherName] = useState(''); // ✅ guardar nome da editora
     const supabase = createClientComponentClient();
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: '',
-            publisher: undefined,
+            publisher_id: undefined, // ✅ mudado
             year_received: undefined,
             year_release: undefined,
             players_min: undefined,
@@ -69,19 +72,34 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Buscar dados do jogo
+                // ✅ Buscar dados do jogo COM o nome da editora
                 const { data: game, error: gameError } = await supabase
                     .from('boardgames')
-                    .select('*')
+                    .select(`
+                        *,
+                        publishers (
+                            id,
+                            name
+                        )
+                    `)
                     .eq('id', gameId)
                     .single();
 
                 if (gameError) throw gameError;
 
+                // ✅ Extrair nome da editora se existir
+                const publisherData = game.publishers as { id: string; name: string } | null;
+                
+                console.log('Game data loaded:', {
+                    game,
+                    publisherData,
+                    publisher_id: game.publisher_id
+                });
+                
                 // Preencher formulário
                 form.reset({
                     name: game.name,
-                    publisher: game.publisher || undefined,
+                    publisher_id: game.publisher_id || undefined, // ✅ usar publisher_id
                     year_received: game.year_received || undefined,
                     year_release: game.year_release || undefined,
                     players_min: game.players_min || undefined,
@@ -90,6 +108,14 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                     expansion: game.expansion,
                     active: game.active,
                 });
+
+                // ✅ Setar o nome da editora para o autocomplete
+                if (publisherData) {
+                    console.log('Setting publisherName to:', publisherData.name);
+                    setPublisherName(publisherData.name);
+                } else {
+                    console.log('No publisher data found');
+                }
 
                 // Buscar todas as mecânicas
                 const { data: allMechanics, error: mechanicsError } = await supabase
@@ -136,7 +162,7 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                 .from('boardgames')
                 .update({
                     name: values.name,
-                    publisher: values.publisher || null,
+                    publisher_id: values.publisher_id || null, // ✅ salva o ID da editora
                     year_received: values.year_received || null,
                     year_release: values.year_release || null,
                     players_min: values.players_min || null,
@@ -198,72 +224,168 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-3xl font-bold">Editar Jogo</h2>
-                {onCancel && (
-                    <Button variant="ghost" onClick={onCancel}>
-                        ❌ 
-                    </Button>
-                )}
-            </div>
+        <div>
+            <h1 className="text-2xl text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Editar Jogo</i>✨</h1>
 
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    {/* Informações*/}
-                    <div className="space-y-4">
+            <div className="max-w-4xl mx-auto p-4 border-1 bg-white rounded-lg shadow-lg">
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        {/* Informações*/}
+                        <div className="space-y-4">
 
-                        {/* Nome */}
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Nome do Jogo *</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Ex: Catan" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Editora */}
-                        <FormField
-                            control={form.control}
-                            name="publisher"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Editora</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Ex: Devir"
-                                            {...field}
-                                            value={field.value || ''}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Anos */}
-                        <div className="grid grid-cols-2 gap-4">
+                            {/* Nome */}
                             <FormField
                                 control={form.control}
-                                name="year_release"
+                                name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Ano de Lançamento</FormLabel>
+                                        <FormLabel>Nome do Jogo *</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* ✅ Editora com Autocomplete */}
+                            <FormField
+                                control={form.control}
+                                name="publisher_id"
+                                render={({ field }) => {
+                                    console.log('Rendering PublisherAutocomplete with:', {
+                                        fieldValue: field.value,
+                                        publisherName
+                                    });
+                                    return (
+                                        <FormItem>
+                                            <FormControl>
+                                                <PublisherAutocomplete
+                                                    value={field.value || ''}
+                                                    onChange={(publisherId, name) => {
+                                                        console.log('Publisher changed:', { publisherId, name });
+                                                        field.onChange(publisherId);
+                                                        setPublisherName(name);
+                                                    }}
+                                                    reset={false}
+                                                    required={false}
+                                                    initialName={publisherName}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    );
+                                }}
+                            />
+
+                            {/* Anos */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="year_release"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Ano de Lançamento</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    value={field.value || ''}
+                                                    onChange={(e) =>
+                                                        field.onChange(
+                                                            e.target.value ? parseInt(e.target.value) : undefined
+                                                        )
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="year_received"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Ano de Recebimento</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    value={field.value || ''}
+                                                    onChange={(e) =>
+                                                        field.onChange(
+                                                            e.target.value ? parseInt(e.target.value) : undefined
+                                                        )
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            {/* Jogadores */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="players_min"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Mínimo de Jogadores</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    value={field.value || ''}
+                                                    onChange={(e) =>
+                                                        field.onChange(
+                                                            e.target.value ? parseInt(e.target.value) : undefined
+                                                        )
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="players_max"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Máximo de Jogadores</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    value={field.value || ''}
+                                                    onChange={(e) =>
+                                                        field.onChange(
+                                                            e.target.value ? parseInt(e.target.value) : undefined
+                                                        )
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            {/* Cópias */}
+                            <FormField
+                                control={form.control}
+                                name="copies"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Número de Cópias</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
-                                                placeholder="2020"
-                                                value={field.value || ''}
+                                                min="1"
+                                                value={field.value}
                                                 onChange={(e) =>
-                                                    field.onChange(
-                                                        e.target.value ? parseInt(e.target.value) : undefined
-                                                    )
+                                                    field.onChange(parseInt(e.target.value) || 1)
                                                 }
                                             />
                                         </FormControl>
@@ -272,107 +394,34 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                                 )}
                             />
 
-                            <FormField
-                                control={form.control}
-                                name="year_received"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Ano de Recebimento</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                placeholder="2024"
-                                                value={field.value || ''}
-                                                onChange={(e) =>
-                                                    field.onChange(
-                                                        e.target.value ? parseInt(e.target.value) : undefined
-                                                    )
-                                                }
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            {/* Tipo */}
+                            <div className="flex gap-6">
+                                <FormField
+                                    control={form.control}
+                                    name="expansion"
+                                    render={({ field }) => (
+                                        <FormItem className="flex items-center gap-2">
+                                            <FormControl>
+                                                <Checkbox
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                            <FormLabel className="!mt-0 cursor-pointer">
+                                                Expansão
+                                            </FormLabel>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                         </div>
 
-                        {/* Jogadores */}
-                        <div className="grid grid-cols-2 gap-4">
+                        {/* Status */}
+                        <div className="space-y-4">
+                            <h3 className="text-xl font-semibold border-b pb-2">Status</h3>
                             <FormField
                                 control={form.control}
-                                name="players_min"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Mínimo de Jogadores</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                placeholder="2"
-                                                value={field.value || ''}
-                                                onChange={(e) =>
-                                                    field.onChange(
-                                                        e.target.value ? parseInt(e.target.value) : undefined
-                                                    )
-                                                }
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="players_max"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Máximo de Jogadores</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                placeholder="4"
-                                                value={field.value || ''}
-                                                onChange={(e) =>
-                                                    field.onChange(
-                                                        e.target.value ? parseInt(e.target.value) : undefined
-                                                    )
-                                                }
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        {/* Cópias */}
-                        <FormField
-                            control={form.control}
-                            name="copies"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Número de Cópias</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="number"
-                                            min="1"
-                                            value={field.value}
-                                            onChange={(e) =>
-                                                field.onChange(parseInt(e.target.value) || 1)
-                                            }
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Tipo */}
-                        <div className="flex gap-6">
-
-                            <FormField
-                                control={form.control}
-                                name="expansion"
+                                name="active"
                                 render={({ field }) => (
                                     <FormItem className="flex items-center gap-2">
                                         <FormControl>
@@ -382,132 +431,110 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                                             />
                                         </FormControl>
                                         <FormLabel className="!mt-0 cursor-pointer">
-                                            Expansão
+                                            Jogo Ativo (visível para usuários)
                                         </FormLabel>
                                     </FormItem>
                                 )}
                             />
                         </div>
-                    </div>
 
-                    {/* Status */}
-                    <div className="space-y-4">
-                        <h3 className="text-xl font-semibold border-b pb-2">Status</h3>
-                        <FormField
-                            control={form.control}
-                            name="active"
-                            render={({ field }) => (
-                                <FormItem className="flex items-center gap-2">
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
+                        {/* Categorias */}
+                        <div className="space-y-4">
+                            <h3 className="text-xl font-semibold border-b pb-2">Categorias</h3>
+                            <div className="flex gap-2 flex-wrap">
+                                {mechanicsByType.category.map((mechanic) => (
+                                    <label
+                                        key={mechanic.id}
+                                        className={`px-3 py-1.5 text-sm rounded cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
+                                            ? 'bg-sejoga-azul-oficial text-white shadow-md scale-105'
+                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                            }`}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            className="hidden"
+                                            checked={selectedMechanics.includes(mechanic.id)}
+                                            onChange={() => toggleMechanic(mechanic.id)}
                                         />
-                                    </FormControl>
-                                    <FormLabel className="!mt-0 cursor-pointer">
-                                        Jogo Ativo (visível para usuários)
-                                    </FormLabel>
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-
-                    {/* Categorias */}
-                    <div className="space-y-4">
-                        <h3 className="text-xl font-semibold border-b pb-2">Categorias</h3>
-                        <div className="flex gap-2 flex-wrap">
-                            {mechanicsByType.category.map((mechanic) => (
-                                <label
-                                    key={mechanic.id}
-                                    className={`px-4 py-2 text-sm rounded-lg cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
-                                        ? 'bg-sejoga-azul-oficial text-white shadow-md scale-105'
-                                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                        }`}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        className="hidden"
-                                        checked={selectedMechanics.includes(mechanic.id)}
-                                        onChange={() => toggleMechanic(mechanic.id)}
-                                    />
-                                    {mechanic.name}
-                                </label>
-                            ))}
+                                        {mechanic.name}
+                                    </label>
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Mecânicas */}
-                    <div className="space-y-4">
-                        <h3 className="text-xl font-semibold border-b pb-2">
-                            Mecânicas de Jogo
-                        </h3>
-                        <div className="flex gap-2 flex-wrap">
-                            {mechanicsByType.mechanic.map((mechanic) => (
-                                <label
-                                    key={mechanic.id}
-                                    className={`px-3 py-1.5 rounded text-sm cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
-                                        ? 'bg-sejoga-rosa-oficial text-white shadow-md scale-105'
-                                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                        }`}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        className="hidden"
-                                        checked={selectedMechanics.includes(mechanic.id)}
-                                        onChange={() => toggleMechanic(mechanic.id)}
-                                    />
-                                    {mechanic.name}
-                                </label>
-                            ))}
+                        {/* Mecânicas */}
+                        <div className="space-y-4">
+                            <h3 className="text-xl font-semibold border-b pb-2">
+                                Mecânicas de Jogo
+                            </h3>
+                            <div className="flex gap-2 flex-wrap">
+                                {mechanicsByType.mechanic.map((mechanic) => (
+                                    <label
+                                        key={mechanic.id}
+                                        className={`px-3 py-1.5 rounded text-sm cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
+                                            ? 'bg-sejoga-rosa-oficial text-white shadow-md scale-105'
+                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                            }`}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            className="hidden"
+                                            checked={selectedMechanics.includes(mechanic.id)}
+                                            onChange={() => toggleMechanic(mechanic.id)}
+                                        />
+                                        {mechanic.name}
+                                    </label>
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Modos */}
-                    <div className="space-y-4">
-                        <h3 className="text-xl font-semibold border-b pb-2">Modos</h3>
-                        <div className="flex gap-2 flex-wrap">
-                            {mechanicsByType.mode.map((mechanic) => (
-                                <label
-                                    key={mechanic.id}
-                                    className={`px-3 py-1.5 rounded text-sm cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
-                                        ? 'bg-sejoga-laranja-oficial text-white shadow-md scale-105'
-                                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                        }`}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        className="hidden"
-                                        checked={selectedMechanics.includes(mechanic.id)}
-                                        onChange={() => toggleMechanic(mechanic.id)}
-                                    />
-                                    {mechanic.name}
-                                </label>
-                            ))}
+                        {/* Modos */}
+                        <div className="space-y-4">
+                            <h3 className="text-xl font-semibold border-b pb-2">Modos</h3>
+                            <div className="flex gap-2 flex-wrap">
+                                {mechanicsByType.mode.map((mechanic) => (
+                                    <label
+                                        key={mechanic.id}
+                                        className={`px-3 py-1.5 rounded text-sm cursor-pointer transition-all ${selectedMechanics.includes(mechanic.id)
+                                            ? 'bg-sejoga-laranja-oficial text-white shadow-md scale-105'
+                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                            }`}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            className="hidden"
+                                            checked={selectedMechanics.includes(mechanic.id)}
+                                            onChange={() => toggleMechanic(mechanic.id)}
+                                        />
+                                        {mechanic.name}
+                                    </label>
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Botões */}
-                    <div className="flex gap-4">
-                        <Button
-                            type="submit"
-                            disabled={loading}
-                            className="flex-1 bg-sejoga-verde-oficial hover:bg-green-500"
-                        >
-                            {loading ? 'Adicionando...' : 'Atualizar Jogo'}
-                        </Button>
-                        {onCancel && (
+                        {/* Botões */}
+                        <div className="flex gap-4">
                             <Button
-                                type="button"
-                                variant="outline"
-                                onClick={onCancel}
+                                type="submit"
                                 disabled={loading}
+                                className="flex-1 bg-sejoga-verde-oficial hover:bg-sejoga-verde-oficial"
                             >
-                                ❌  Cancelar
+                                {loading ? 'Atualizando...' : 'Atualizar Jogo'}
                             </Button>
-                        )}
-                    </div>
-                </form>
-            </Form>
+                            {onCancel && (
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={onCancel}
+                                    disabled={loading}
+                                >
+                                    ❌ Cancelar
+                                </Button>
+                            )}
+                        </div>
+                    </form>
+                </Form>
+            </div>
         </div>
     );
 }

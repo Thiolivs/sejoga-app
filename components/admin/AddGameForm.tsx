@@ -88,22 +88,43 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
         try {
             setLoading(true);
 
+            console.log('🚀 Submitting game with values:', values);
+            console.log('📝 Publisher info:', { 
+                publisher_id: values.publisher_id, 
+                publisherName 
+            });
+
             // 1. Inserir o jogo
+            const gameData = {
+                name: values.name,
+                publisher_id: values.publisher_id || null, // ✅ salva o ID da editora
+                year_received: values.year_received || null,
+                year_release: values.year_release || null,
+                players_min: values.players_min || null,
+                players_max: values.players_max || null,
+                copies: values.copies,
+                expansion: values.expansion,
+                active: true,
+            };
+
+            console.log('📤 Sending to database:', gameData);
+
             const { data: game, error: gameError } = await supabase
                 .from('boardgames')
-                .insert({
-                    name: values.name,
-                    publisher_id: values.publisher_id || null, // ✅ salva o ID da editora
-                    year_received: values.year_received || null,
-                    year_release: values.year_release || null,
-                    players_min: values.players_min || null,
-                    players_max: values.players_max || null,
-                    copies: values.copies,
-                    expansion: values.expansion,
-                    active: true,
-                })
+                .insert(gameData)
                 .select()
                 .single();
+
+            console.log('📊 Insert result:', { game, error: gameError });
+            
+            if (game) {
+                console.log('🔍 What was ACTUALLY saved in database:', {
+                    id: game.id,
+                    name: game.name,
+                    publisher_id: game.publisher_id,
+                    publisher: game.publisher
+                });
+            }
 
             if (gameError) throw gameError;
 
@@ -132,7 +153,7 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
 
             if (onSuccess) onSuccess();
         } catch (error) {
-            console.error('Erro ao adicionar jogo:', error);
+            console.error('❌ Erro ao adicionar jogo:', error);
             const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
             alert(`❌ Erro: ${errorMessage}`);
         } finally {
@@ -174,22 +195,32 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                             <FormField
                                 control={form.control}
                                 name="publisher_id"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormControl>
-                                            <PublisherAutocomplete
-                                                value={field.value || ''}
-                                                onChange={(publisherId, name) => {
-                                                    field.onChange(publisherId);
-                                                    setPublisherName(name);
-                                                }}
-                                                reset={resetPublisher}
-                                                required={false}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                                render={({ field }) => {
+                                    console.log('🎨 Rendering PublisherAutocomplete:', {
+                                        fieldValue: field.value,
+                                        publisherName
+                                    });
+                                    return (
+                                        <FormItem>
+                                            <FormControl>
+                                                <PublisherAutocomplete
+                                                    value={field.value || ''}
+                                                    onChange={(publisherId, name) => {
+                                                        console.log('✏️ Publisher changed:', { 
+                                                            publisherId, 
+                                                            name 
+                                                        });
+                                                        field.onChange(publisherId);
+                                                        setPublisherName(name);
+                                                    }}
+                                                    reset={resetPublisher}
+                                                    required={false}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    );
+                                }}
                             />
 
                             {/* Anos */}
