@@ -10,6 +10,13 @@ export default function AdministrationPage() {
     const router = useRouter();
     const { isAdmin, isMonitor } = useUserRole();
 
+    const buttonBaseStyle =
+        'relative cursor-pointer rounded-lg shadow-md p-3 flex items-center justify-center hover:shadow-lg hover:scale-105 transition-all overflow-hidden';
+
+    const textShadowStyle = {
+        textShadow: '1px 1px 2px rgba(0, 0, 0, 0.4)',
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
             {/* Header */}
@@ -38,79 +45,97 @@ export default function AdministrationPage() {
                         {/* Jogos */}
                         <div
                             onClick={() => router.push('/user-app/administration/manage-games')}
-                            className="cursor-pointer bg-sejoga-vermelho-oficial text-white rounded-lg shadow-md p-3 flex flex-col items-center justify-center text-center hover:shadow-lg hover:scale-105 transition-all"
-                            style={{
-                                textShadow:
-                                    '1px 1px 2px rgba(0, 0, 0, 0.4)',
-                            }}
+                            className={`${buttonBaseStyle} bg-sejoga-vermelho-oficial text-white`}
+                            style={textShadowStyle}
                         >
-                            <h3 className="text-lg font-bold mb-1">🎲 Gerenciar Jogos</h3>
-                            <p className="text-xs text-green-100">Cadastrar, editar ou remover jogos</p>
+                            <div className="flex items-center w-1/5 h-full">
+                                <span className="text-4xl">🎲</span>
+                            </div>
+                            <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
+                            <div className="flex flex-col items-center justify-center w-4/5 text-center">
+                                <h3 className="text-lg font-bold mb-1">Gerenciar Jogos</h3>
+                                <p className="text-xs text-green-100">Cadastrar, editar ou remover jogos</p>
+                            </div>
                         </div>
 
                         {/* Eventos */}
                         <div
                             onClick={() => router.push('/user-app/administration/manage-events')}
-                            className="cursor-pointer bg-sejoga-laranja-oficial text-white rounded-lg shadow-md p-3 flex flex-col items-center justify-center text-center hover:shadow-lg hover:scale-105 transition-all"
-                            style={{
-                                textShadow:
-                                    '1px 1px 2px rgba(0, 0, 0, 0.4)',
-                            }}
+                            className={`${buttonBaseStyle} bg-sejoga-laranja-oficial text-white`}
+                            style={textShadowStyle}
                         >
-                            <h3 className="text-lg font-bold mb-1">📅 Gerenciar Eventos</h3>
-                            <p className="text-xs text-purple-100">Criar e gerenciar eventos</p>
+                            <div className="flex items-center w-1/5 h-full">
+                                <span className="text-4xl">📅</span>
+                            </div>
+                            <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
+                            <div className="flex flex-col items-center justify-center w-4/5 text-center">
+                                <h3 className="text-lg font-bold mb-1">Gerenciar Eventos</h3>
+                                <p className="text-xs text-purple-100">Criar e gerenciar eventos</p>
+                            </div>
                         </div>
 
                         {/* Usuários */}
                         <div
                             onClick={() => router.push('/user-app/users')}
-                            className="cursor-pointer bg-yellow-300 rounded-lg shadow-lg p-3 flex flex-col items-center justify-center text-center hover:shadow-lg hover:scale-105 transition-all"
-                            style={{
-                                textShadow:
-                                    '1px 1px 2px rgba(0, 0, 0, 0.4)',
-                            }}
+                            className={`${buttonBaseStyle} bg-yellow-300 text-white`}
+                            style={textShadowStyle}
                         >
-                            <h3 className="text-lg font-bold text-white mb-1">👥 Gerenciar Usuários</h3>
-                            <p className="text-xs text-white font-medium">Ver, promover e gerenciar permissões</p>
+                            <div className="flex items-center w-1/5 h-full">
+                                <span className="text-4xl">👥</span>
+                            </div>
+                            <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
+                            <div className="flex flex-col items-center justify-center w-4/5 text-center">
+                                <h3 className="text-lg font-bold mb-1">Gerenciar Usuários</h3>
+                                <p className="text-xs font-medium">Ver, promover e gerenciar permissões</p>
+                            </div>
                         </div>
 
                         {/* Treinamentos */}
                         <div
                             onClick={() => router.push('/user-app/administration/manage-cycles')}
-                            className="cursor-pointer bg-sejoga-verde-oficial text-white rounded-lg shadow-md p-3 flex flex-col items-center justify-center text-center hover:shadow-lg hover:scale-105 transition-all"
-                            style={{
-                                textShadow:
-                                    '1px 1px 2px rgba(0, 0, 0, 0.4)',
-                            }}
+                            className={`${buttonBaseStyle} bg-sejoga-verde-oficial text-white`}
+                            style={textShadowStyle}
                         >
-                            <h3 className="text-lg font-bold mb-1">📖 Gerenciar Treinamentos</h3>
-                            <p className="text-xs text-purple-100">Criar e gerenciar ciclos</p>
+                            <div className="flex items-center w-1/5 h-full">
+                                <span className="text-4xl">📖</span>
+                            </div>
+                            <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
+                            <div className="flex flex-col items-center justify-center w-4/5 text-center">
+                                <h3 className="text-lg font-bold mb-1">Gerenciar Treinamentos</h3>
+                                <p className="text-xs text-purple-100">Criar e gerenciar ciclos</p>
+                            </div>
                         </div>
 
                         {/* Mecânicas */}
                         <div
                             onClick={() => router.push('/user-app/administration/manage-mechanics')}
-                            className="cursor-pointer bg-sejoga-azul-oficial text-white rounded-lg shadow-md p-3 flex flex-col items-center justify-center text-center hover:shadow-lg hover:scale-105 transition-all"
-                            style={{
-                                textShadow:
-                                    '1px 1px 2px rgba(0, 0, 0, 0.4)',
-                            }}
+                            className={`${buttonBaseStyle} bg-sejoga-azul-oficial text-white`}
+                            style={textShadowStyle}
                         >
-                            <h3 className="text-lg font-bold mb-1">⚙️ Gerenciar Mecânicas</h3>
-                            <p className="text-xs text-purple-100">Criar e gerenciar mecânicas</p>
+                            <div className="flex items-center w-1/5 h-full">
+                                <span className="text-4xl">⚙️</span>
+                            </div>
+                            <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
+                            <div className="flex flex-col items-center justify-center w-4/5 text-center">
+                                <h3 className="text-lg font-bold mb-1">Gerenciar Mecânicas</h3>
+                                <p className="text-xs text-purple-100">Criar e gerenciar mecânicas</p>
+                            </div>
                         </div>
 
                         {/* Editoras */}
                         <div
                             onClick={() => router.push('/user-app/administration/manage-publishers')}
-                            className="cursor-pointer bg-sejoga-rosa-oficial text-white rounded-lg shadow-md p-3 flex flex-col items-center justify-center text-center hover:shadow-lg hover:scale-105 transition-all"
-                            style={{
-                                textShadow:
-                                    '1px 1px 2px rgba(0, 0, 0, 0.4)',
-                            }}
+                            className={`${buttonBaseStyle} bg-sejoga-rosa-oficial text-white`}
+                            style={textShadowStyle}
                         >
-                            <h3 className="text-lg font-bold mb-1">🏢 Gerenciar Editoras</h3>
-                            <p className="text-xs text-purple-100">Criar e gerenciar editoras</p>
+                            <div className="flex items-center  w-1/5 h-full">
+                                <span className="text-4xl">🏢</span>
+                            </div>
+                            <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
+                            <div className="flex flex-col items-center justify-center w-4/5 text-center">
+                                <h3 className="text-lg font-bold mb-1">Gerenciar Editoras</h3>
+                                <p className="text-xs text-purple-100">Criar e gerenciar editoras</p>
+                            </div>
                         </div>
                     </div>
                 </div>
