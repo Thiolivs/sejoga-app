@@ -54,7 +54,7 @@ export function ManageUsers() {
             
             // Mostrar erro mais detalhado
             if (error && typeof error === 'object' && 'message' in error) {
-                alert(`❌ Erro ao carregar usuários: ${(error as any).message}`);
+                alert(`❌ Erro ao carregar usuários: ${(error as { message: string }).message}`);
             } else {
                 alert('❌ Erro ao carregar usuários. Verifique as permissões RLS no Supabase.');
             }
@@ -73,7 +73,7 @@ export function ManageUsers() {
 
             console.log('🔄 Tentando atualizar role:', { userId, newRole });
 
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from('profiles')
                 .update({ role: newRole }) // ✅ Removido updated_at
                 .eq('id', userId);
@@ -95,7 +95,7 @@ export function ManageUsers() {
             
             // Mostrar erro mais detalhado
             if (error && typeof error === 'object' && 'message' in error) {
-                alert(`❌ Erro ao atualizar permissão: ${(error as any).message}`);
+                alert(`❌ Erro ao atualizar permissão: ${(error as { message: string }).message}`);
             } else {
                 alert('❌ Erro ao atualizar permissão. Verifique as permissões RLS no Supabase.');
             }
