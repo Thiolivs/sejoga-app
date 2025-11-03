@@ -88,12 +88,6 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
         try {
             setLoading(true);
 
-            console.log('🚀 Submitting game with values:', values);
-            console.log('📝 Publisher info:', { 
-                publisher_id: values.publisher_id, 
-                publisherName 
-            });
-
             // 1. Inserir o jogo
             const gameData = {
                 name: values.name,
@@ -107,24 +101,12 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                 active: true,
             };
 
-            console.log('📤 Sending to database:', gameData);
-
             const { data: game, error: gameError } = await supabase
                 .from('boardgames')
                 .insert(gameData)
                 .select()
                 .single();
 
-            console.log('📊 Insert result:', { game, error: gameError });
-            
-            if (game) {
-                console.log('🔍 What was ACTUALLY saved in database:', {
-                    id: game.id,
-                    name: game.name,
-                    publisher_id: game.publisher_id,
-                    publisher: game.publisher
-                });
-            }
 
             if (gameError) throw gameError;
 
@@ -196,20 +178,14 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
                                 control={form.control}
                                 name="publisher_id"
                                 render={({ field }) => {
-                                    console.log('🎨 Rendering PublisherAutocomplete:', {
-                                        fieldValue: field.value,
-                                        publisherName
-                                    });
+
                                     return (
                                         <FormItem>
                                             <FormControl>
                                                 <PublisherAutocomplete
                                                     value={field.value || ''}
                                                     onChange={(publisherId, name) => {
-                                                        console.log('✏️ Publisher changed:', { 
-                                                            publisherId, 
-                                                            name 
-                                                        });
+
                                                         field.onChange(publisherId);
                                                         setPublisherName(name);
                                                     }}

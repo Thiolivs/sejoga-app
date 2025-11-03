@@ -90,11 +90,6 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                 // ✅ Extrair nome da editora se existir
                 const publisherData = game.publishers as { id: string; name: string } | null;
                 
-                console.log('Game data loaded:', {
-                    game,
-                    publisherData,
-                    publisher_id: game.publisher_id
-                });
                 
                 // Preencher formulário
                 form.reset({
@@ -111,7 +106,6 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
 
                 // ✅ Setar o nome da editora para o autocomplete
                 if (publisherData) {
-                    console.log('Setting publisherName to:', publisherData.name);
                     setPublisherName(publisherData.name);
                 } else {
                     console.log('No publisher data found');
@@ -253,17 +247,12 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
                                 control={form.control}
                                 name="publisher_id"
                                 render={({ field }) => {
-                                    console.log('Rendering PublisherAutocomplete with:', {
-                                        fieldValue: field.value,
-                                        publisherName
-                                    });
                                     return (
                                         <FormItem>
                                             <FormControl>
                                                 <PublisherAutocomplete
                                                     value={field.value || ''}
                                                     onChange={(publisherId, name) => {
-                                                        console.log('Publisher changed:', { publisherId, name });
                                                         field.onChange(publisherId);
                                                         setPublisherName(name);
                                                     }}

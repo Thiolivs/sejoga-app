@@ -31,19 +31,10 @@ export function PublisherAutocomplete({
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [isInitialized, setIsInitialized] = useState(false);
 
-    // ✅ Debug logs
-    console.log('PublisherAutocomplete render:', { 
-        initialName, 
-        selectedPublisher, 
-        value,
-        isInitialized 
-    });
 
     // ✅ Atualizar quando o initialName mudar (para formulários de edição)
     useEffect(() => {
-        console.log('useEffect initialName:', initialName);
         if (initialName && !isInitialized) {
-            console.log('Setting selectedPublisher to:', initialName);
             setSelectedPublisher(initialName);
             setIsInitialized(true);
         }
@@ -76,8 +67,6 @@ export function PublisherAutocomplete({
                 .order('name')
                 .limit(10);
 
-            console.log('🔍 Search results:', { search, data, error });
-
             if (!error && data) {
                 setPublishers(data);
                 setShowDropdown(data.length > 0);
@@ -102,12 +91,10 @@ export function PublisherAutocomplete({
     }, []);
 
     const handleSelect = (publisher: Publisher) => {
-        console.log('🎯 Publisher selected:', publisher);
         setSelectedPublisher(publisher.name);
         setSearch('');
         setPublishers([]);
         setShowDropdown(false);
-        console.log('📢 Calling onChange with:', { id: publisher.id, name: publisher.name });
         onChange(publisher.id, publisher.name);
     };
 
