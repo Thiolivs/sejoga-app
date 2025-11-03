@@ -32,16 +32,12 @@ export function useUserRole() {
         if (error) throw error;
 
         const fetchedRole = data?.role || 'user';
-        console.log('📊 Role do banco:', fetchedRole); 
         setRole(fetchedRole);
-        console.log('✅ Role atualizado para:', fetchedRole);
-        console.log('🎯 isAdmin será:', fetchedRole === 'admin');
     } catch (err) {
         console.error('Erro ao buscar role:', err instanceof Error ? err.message : 'Erro desconhecido');
         setRole('user'); // Default if error
     } finally {
         setLoading(false);
-        console.log('⏹️ Loading finalizado');
     }
 };
 
