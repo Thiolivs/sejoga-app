@@ -193,7 +193,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                     <div>
                         <div className="mb-6">
                             <h2 className="text-gray-600 text-center mb-6 text-2xl font-bold">
-                                <h1 className="text-[22px] text-center font-bold text-blue-800 flex-1 mt-5 mb-5">✨<i>Minhas Informações</i>✨</h1>
+                                <div className="text-[22px] text-center font-bold text-blue-800 flex-1 mt-5 mb-5">✨<i>Minhas Informações</i>✨</div>
 
                             </h2>
                             <p className="text-gray-600 mt-2">

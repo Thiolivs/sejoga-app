@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: "#35588C",
 };
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
@@ -22,7 +23,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#35588C" />
       </head>
-      <body>{children}</body>
+      <body 
+        style={{
+          backgroundImage: 'url(/images/sejoga-bg.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          minHeight: '100vh'
+        }}
+      >
+        {children}
+      </body>
     </html>
   );
 }
+
+
