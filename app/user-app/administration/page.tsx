@@ -30,9 +30,9 @@ export default function AdministrationPage() {
             </header>
 
             {/* Conteúdo */}
-            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
                 <h1 className="text-2xl font-bold text-center text-blue-800 mb-4">
-                    <i>✨ Painel de Administração ✨</i>
+                    ✨ <i>Painel de Administração </i>✨
                 </h1>
 
                 <div className="bg-white rounded-xl shadow-md p-6">
@@ -40,7 +40,7 @@ export default function AdministrationPage() {
                         Selecione uma opção:
                     </h2>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 
                         {/* Jogos */}
                         <div
@@ -48,13 +48,13 @@ export default function AdministrationPage() {
                             className={`${buttonBaseStyle} bg-sejoga-vermelho-oficial text-white`}
                             style={textShadowStyle}
                         >
-                            <div className="flex items-center w-1/5 h-full">
-                                <span className="text-4xl">🎲</span>
+                            <div className="flex items-center justify-center w-1/5 h-full">
+                                <span className="text-3xl">🎲</span>
                             </div>
                             <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
                             <div className="flex flex-col items-center justify-center w-4/5 text-center">
                                 <h3 className="text-lg font-bold mb-1">Gerenciar Jogos</h3>
-                                <p className="text-xs text-green-100">Cadastrar, editar ou remover jogos</p>
+                                <p className="text-xs text-white">Cadastrar, editar ou remover jogos</p>
                             </div>
                         </div>
 
@@ -64,13 +64,13 @@ export default function AdministrationPage() {
                             className={`${buttonBaseStyle} bg-sejoga-laranja-oficial text-white`}
                             style={textShadowStyle}
                         >
-                            <div className="flex items-center w-1/5 h-full">
-                                <span className="text-4xl">📅</span>
+                            <div className="flex items-center justify-center w-1/5 h-full">
+                                <span className="text-3xl">🎉</span>
                             </div>
                             <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
                             <div className="flex flex-col items-center justify-center w-4/5 text-center">
                                 <h3 className="text-lg font-bold mb-1">Gerenciar Eventos</h3>
-                                <p className="text-xs text-purple-100">Criar e gerenciar eventos</p>
+                                <p className="text-xs text-white">Criar e gerenciar eventos</p>
                             </div>
                         </div>
 
@@ -80,8 +80,8 @@ export default function AdministrationPage() {
                             className={`${buttonBaseStyle} bg-yellow-300 text-white`}
                             style={textShadowStyle}
                         >
-                            <div className="flex items-center w-1/5 h-full">
-                                <span className="text-4xl">👥</span>
+                            <div className="flex items-center justify-center w-1/5 h-full">
+                                <span className="text-3xl">👩🏽‍💻</span>
                             </div>
                             <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
                             <div className="flex flex-col items-center justify-center w-4/5 text-center">
@@ -96,13 +96,13 @@ export default function AdministrationPage() {
                             className={`${buttonBaseStyle} bg-sejoga-verde-oficial text-white`}
                             style={textShadowStyle}
                         >
-                            <div className="flex items-center w-1/5 h-full">
-                                <span className="text-4xl">📖</span>
+                            <div className="flex items-center justify-center w-1/5 h-full">
+                                <span className="text-3xl">📙</span>
                             </div>
                             <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
                             <div className="flex flex-col items-center justify-center w-4/5 text-center">
                                 <h3 className="text-lg font-bold mb-1">Gerenciar Treinamentos</h3>
-                                <p className="text-xs text-purple-100">Criar e gerenciar ciclos</p>
+                                <p className="text-xs text-green-100">Criar e gerenciar ciclos</p>
                             </div>
                         </div>
 
@@ -112,13 +112,13 @@ export default function AdministrationPage() {
                             className={`${buttonBaseStyle} bg-sejoga-azul-oficial text-white`}
                             style={textShadowStyle}
                         >
-                            <div className="flex items-center w-1/5 h-full">
-                                <span className="text-4xl">⚙️</span>
+                            <div className="flex items-center justify-center w-1/5 h-full">
+                                <span className="text-3xl">⚙️</span>
                             </div>
                             <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
                             <div className="flex flex-col items-center justify-center w-4/5 text-center">
                                 <h3 className="text-lg font-bold mb-1">Gerenciar Mecânicas</h3>
-                                <p className="text-xs text-purple-100">Criar e gerenciar mecânicas</p>
+                                <p className="text-xs text-blue-100">Criar e gerenciar mecânicas</p>
                             </div>
                         </div>
 
@@ -128,8 +128,8 @@ export default function AdministrationPage() {
                             className={`${buttonBaseStyle} bg-sejoga-rosa-oficial text-white`}
                             style={textShadowStyle}
                         >
-                            <div className="flex items-center  w-1/5 h-full">
-                                <span className="text-4xl">🏢</span>
+                            <div className="flex items-center justify-center w-1/5 h-full">
+                                <span className="text-3xl">🏢</span>
                             </div>
                             <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
                             <div className="flex flex-col items-center justify-center w-4/5 text-center">
