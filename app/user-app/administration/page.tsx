@@ -51,7 +51,7 @@ export default function AdministrationPage() {
                             <div className="flex items-center justify-center w-1/5 h-full">
                                 <span className="text-3xl">🎲</span>
                             </div>
-                            <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
+                            <div className="h-12 w-[1px] bg-gray-300 opacity-60" />
                             <div className="flex flex-col items-center justify-center w-4/5 text-center">
                                 <h3 className="text-lg font-bold mb-1">Gerenciar Jogos</h3>
                                 <p className="text-xs text-white">Cadastrar, editar ou remover jogos</p>
@@ -67,7 +67,7 @@ export default function AdministrationPage() {
                             <div className="flex items-center justify-center w-1/5 h-full">
                                 <span className="text-3xl">🎉</span>
                             </div>
-                            <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
+                            <div className="h-12 w-[1px] bg-gray-300 opacity-60" />
                             <div className="flex flex-col items-center justify-center w-4/5 text-center">
                                 <h3 className="text-lg font-bold mb-1">Gerenciar Eventos</h3>
                                 <p className="text-xs text-white">Criar e gerenciar eventos</p>
@@ -83,7 +83,7 @@ export default function AdministrationPage() {
                             <div className="flex items-center justify-center w-1/5 h-full">
                                 <span className="text-3xl">👩🏽‍💻</span>
                             </div>
-                            <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
+                            <div className="h-12 w-[1px] bg-gray-300 opacity-60" />
                             <div className="flex flex-col items-center justify-center w-4/5 text-center">
                                 <h3 className="text-lg font-bold mb-1">Gerenciar Usuários</h3>
                                 <p className="text-xs font-medium">Ver, promover e gerenciar permissões</p>
@@ -99,7 +99,7 @@ export default function AdministrationPage() {
                             <div className="flex items-center justify-center w-1/5 h-full">
                                 <span className="text-3xl">📙</span>
                             </div>
-                            <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
+                            <div className="h-12 w-[1px] bg-gray-300 opacity-60" />
                             <div className="flex flex-col items-center justify-center w-4/5 text-center">
                                 <h3 className="text-lg font-bold mb-1">Gerenciar Treinamentos</h3>
                                 <p className="text-xs text-green-100">Criar e gerenciar ciclos</p>
@@ -115,7 +115,7 @@ export default function AdministrationPage() {
                             <div className="flex items-center justify-center w-1/5 h-full">
                                 <span className="text-3xl">⚙️</span>
                             </div>
-                            <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
+                            <div className="h-12 w-[1px] bg-gray-300 opacity-60" />
                             <div className="flex flex-col items-center justify-center w-4/5 text-center">
                                 <h3 className="text-lg font-bold mb-1">Gerenciar Mecânicas</h3>
                                 <p className="text-xs text-blue-100">Criar e gerenciar mecânicas</p>
@@ -131,7 +131,7 @@ export default function AdministrationPage() {
                             <div className="flex items-center justify-center w-1/5 h-full">
                                 <span className="text-3xl">🏢</span>
                             </div>
-                            <div className="h-14 w-[1px] bg-gray-300 opacity-60" />
+                            <div className="h-12 w-[1px] bg-gray-300 opacity-60" />
                             <div className="flex flex-col items-center justify-center w-4/5 text-center">
                                 <h3 className="text-lg font-bold mb-1">Gerenciar Editoras</h3>
                                 <p className="text-xs text-purple-100">Criar e gerenciar editoras</p>
