@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body 
         style={{
-          backgroundImage: 'url(/images/sejoga.png)',
+          backgroundImage: 'url(/images/rainbow/13.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed',
