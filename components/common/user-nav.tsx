@@ -23,10 +23,10 @@ export function UserNav() {
     const [user, setUser] = useState<User | null>(null);
     const [name, setName] = useState<string | null>(null);
     const [role, setRole] = useState<string | null>(null);
+    const [avatar, setAvatar] = useState<string>('/avatars/MeepleColorido.png');
     const supabase = createClientComponentClient();
     const router = useRouter();
 
-    // Busca o usuário autenticado e o nome no perfil
     useEffect(() => {
         const fetchUserAndProfile = async () => {
             const {
@@ -41,23 +41,59 @@ export function UserNav() {
 
             setUser(user);
 
-            // Busca o nome do perfil na tabela "profiles"
             const { data: profile, error: profileError } = await supabase
                 .from("profiles")
-                .select("first_name, role")
+                .select("first_name, role, avatar")
                 .eq("id", user.id)
                 .single();
 
             if (profileError) {
                 console.log("Erro ao buscar perfil:", profileError);
             } else if (profile) {
-                setName(profile.first_name)
+                setName(profile.first_name);
                 setRole(profile.role);
+                setAvatar(profile.avatar || '/avatars/MeepleColorido.png');
             }
         };
 
         fetchUserAndProfile();
-    }, [supabase]); // roda apenas uma vez
+
+        // Configurar listener para mudanças em tempo real
+        const setupRealtimeListener = async () => {
+            const { data: { user: currentUser } } = await supabase.auth.getUser();
+            
+            if (!currentUser) return;
+
+            const channel = supabase
+                .channel('profile-changes')
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'UPDATE',
+                        schema: 'public',
+                        table: 'profiles',
+                        filter: `id=eq.${currentUser.id}`
+                    },
+                    (payload) => {
+                        console.log('Perfil atualizado:', payload);
+                        // Atualiza o estado com os novos dados
+                        if (payload.new) {
+                            setName(payload.new.first_name);
+                            setRole(payload.new.role);
+                            setAvatar(payload.new.avatar || '/avatars/MeepleColorido.png');
+                        }
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                supabase.removeChannel(channel);
+            };
+        };
+
+        setupRealtimeListener();
+
+    }, [supabase]);
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
@@ -71,9 +107,9 @@ export function UserNav() {
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                             <Avatar className="h-9 w-9">
-                                <AvatarImage src="/avatars/MeepleColorido.png" alt="User avatar" />
+                                <AvatarImage src={avatar} alt="User avatar" />
                                 <AvatarFallback>
-                                    {name ? name[0]?.toUpperCase() : name?.charAt(0)}
+                                    {name ? name[0]?.toUpperCase() : '?'}
                                 </AvatarFallback>
                             </Avatar>
                         </Button>

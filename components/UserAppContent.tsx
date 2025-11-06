@@ -1,6 +1,7 @@
 'use client';
 
 import { TeachingSessionLog } from '@/components/TeachingSessionLog';
+import { MySeJogaSession } from '@/components/MySeJogaSession';
 import { TrainingSession } from '@/components/TrainingSession';
 import { StatisticsSession } from '@/components/StatisticsSession';
 
@@ -124,7 +125,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                                 }`}
                         >
                             <CircleUser className="w-4 h-4" />
-                            Perfil
+                            Meu SeJoga
                         </button>
 
 
@@ -191,33 +192,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                 {/* PERFIL */}
                 {activeTab === 'profile' && (
                     <div>
-                        <div className="mb-6">
-                            <h2 className="text-gray-600 text-center mb-6 text-2xl font-bold">
-                                <div className="text-[22px] text-center font-bold text-blue-800 flex-1 mt-5 mb-5">✨<i>Minhas Informações</i>✨</div>
-
-                            </h2>
-                            <p className="text-gray-600 mt-2">
-                                <i>&quot;It&apos;s me... {name}!&quot;</i> 🍄
-                            </p>
-                            <p className="text-gray-600 ml-5 text-md">
-                                <b>Aqui estão suas informações pessoais 💁🏽‍♀️</b>
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="bg-white rounded-lg shadow p-6">
-                                <h3 className="text-sm font-medium text-gray-500">
-                                    <p>Nome: {name}</p>
-                                    <p>Email: {userEmail}</p>
-                                </h3>
-                            </div>
-                            <div className="bg-white rounded-lg shadow p-6">
-                                <h3 className="text-sm font-medium text-gray-500">
-                                    Sei ensinar {teachCount ?? 0} jogo{teachCount === 1 ? '' : 's'} dentre os {totalGames} jogos no Acervo. Um total de{' '}
-                                    {totalGames > 0 ? ((teachCount / totalGames) * 100).toFixed(0) : 0}%!
-                                </h3>
-                            </div>
-                        </div>
+                        <MySeJogaSession />
                     </div>
                 )}
 
