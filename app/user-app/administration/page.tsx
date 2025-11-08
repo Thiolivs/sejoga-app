@@ -18,9 +18,9 @@ export default function AdministrationPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="min-h-screen ">
             {/* Header */}
-            <header className="bg-white shadow-sm">
+            <header className="bg-white/95 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
                     <SidebarMenu isAdmin={isAdmin} isMonitor={isMonitor} currentPage="gerenciar" />
                     <Button variant="ghost" size="icon" onClick={() => router.back()}>
@@ -31,16 +31,15 @@ export default function AdministrationPage() {
 
             {/* Conteúdo */}
             <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-                <h1 className="text-2xl font-bold text-center text-blue-800 mb-4">
-                    ✨ <i>Painel de Administração </i>✨
-                </h1>
 
-                <div className="bg-white rounded-xl shadow-md p-6">
-                    <h2 className="text-lg text-center font-semibold text-gray-700 mb-4 border-b pb-3">
-                        Selecione uma opção:
-                    </h2>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="bg-white/90 rounded-xl shadow-md p-6">
+                    <h1 className="text-[23px] font-bold text-center text-blue-800 mb-4">
+                        ✨ <i>Painel de Administração </i>✨
+                    </h1>
+
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 pt-4 lg:grid-cols-3 gap-3">
 
                         {/* Jogos */}
                         <div

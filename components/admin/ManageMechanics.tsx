@@ -169,20 +169,8 @@ export function ManageMechanics() {
     }
 
     return (
-        <div className="space-y-6">
-            {/* Header com botão voltar */}
-            <div className="flex items-center gap-4 mb-6">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => router.back()}
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                </Button>
+        <div className="space-y-6 bg-white/95 rounded-xl p-6">
 
-
-
-            </div>
             <h1 className="text-2xl text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Gerenciar Classificações</i>✨</h1>
             {!showAddForm && (
                 <div className="flex justify-center items-center">
@@ -195,41 +183,45 @@ export function ManageMechanics() {
             )}
             {/* Filtros */}
             {!showAddForm && (
-                <div className="border-1 rounded-lg p-1 inline-flex gap-2">
-                    <Button
-                        variant={filterType === 'all' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setFilterType('all')}
-                        className={`text-[12px] px-2 py-1 whitespace-nowrap ${filterType === 'all' ? 'bg-sejoga-verde-oficial' : ''}`}
-                    >
-                        Todas ({mechanics.length})
-                    </Button>
-                    <Button
-                        variant={filterType === 'category' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setFilterType('category')}
-                        className={`text-[12px] px-2 py-1 whitespace-nowrap ${filterType === 'category' ? 'bg-sejoga-verde-oficial' : ''}`}
-                    >
-                        Categorias ({mechanics.filter(m => m.type === 'category').length})
-                    </Button>
-                    <Button
-                        variant={filterType === 'mechanic' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setFilterType('mechanic')}
-                        className={`text-[12px] px-2 py-1  ${filterType === 'mechanic' ? 'bg-sejoga-verde-oficial' : ''}`}
-                    >
-                        Mecânicas ({mechanics.filter(m => m.type === 'mechanic').length})
-                    </Button>
-                    <Button
-                        variant={filterType === 'mode' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setFilterType('mode')}
-                        className={`text-[12px] px-2 py-1 whitespace-nowrap ${filterType === 'mode' ? 'bg-sejoga-verde-oficial' : ''}`}
-                    >
-                        Modos ({mechanics.filter(m => m.type === 'mode').length})
-                    </Button>
-                </div>
-            )}
+    <div className="border rounded-lg p-2 flex gap-2 w-full">
+        <Button
+            variant={filterType === 'all' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilterType('all')}
+            className={`text-[12px] px-3 py-5 flex-1 flex flex-col items-center gap-0.5 ${filterType === 'all' ? 'bg-sejoga-verde-oficial' : ''}`}
+        >
+            <span>Todas</span>
+            <span className="text-[10px]">({mechanics.length})</span>
+        </Button>
+        <Button
+            variant={filterType === 'category' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilterType('category')}
+            className={`text-[12px] px-3 py-5 flex-1 flex flex-col items-center gap-0.5 ${filterType === 'category' ? 'bg-sejoga-verde-oficial' : ''}`}
+        >
+            <span>Categorias</span>
+            <span className="text-[10px]">({mechanics.filter(m => m.type === 'category').length})</span>
+        </Button>
+        <Button
+            variant={filterType === 'mechanic' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilterType('mechanic')}
+            className={`text-[12px] px-3 py-5 flex-1 flex flex-col items-center gap-0.5 ${filterType === 'mechanic' ? 'bg-sejoga-verde-oficial' : ''}`}
+        >
+            <span>Mecânicas</span>
+            <span className="text-[10px]">({mechanics.filter(m => m.type === 'mechanic').length})</span>
+        </Button>
+        <Button
+            variant={filterType === 'mode' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilterType('mode')}
+            className={`text-[12px] px-3 py-5 flex-1 flex flex-col items-center gap-0.5 ${filterType === 'mode' ? 'bg-sejoga-verde-oficial' : ''}`}
+        >
+            <span>Modos</span>
+            <span className="text-[10px]">({mechanics.filter(m => m.type === 'mode').length})</span>
+        </Button>
+    </div>
+)}
 
             {/* Formulário */}
             {showAddForm && (

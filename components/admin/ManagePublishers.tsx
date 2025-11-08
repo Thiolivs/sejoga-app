@@ -132,141 +132,132 @@ export function ManagePublishers() {
 
     return (
         <div className="space-y-6">
-            {/* Header com botão voltar */}
-            <div className="flex items-center gap-4 mb-6">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => router.back()}
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                </Button>
 
+            <div className='bg-white/95 rounded-xl pt-6 p-3'>
+                <h1 className="text-[23px] text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Gerenciamento de Editoras</i>✨</h1>
+                {!showAddForm && (
+                    <div className="flex justify-center items-center pb-6">
 
-            </div>
-            <h1 className="text-2xl text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Gerenciamento de Editoras</i>✨</h1>
-            {!showAddForm && (
-                <div className="flex justify-center items-center">
-
-                <Button onClick={() => setShowAddForm(true)} className="bg-sejoga-azul-oficial flex items-center gap-2">
-                    <Plus className="w-4 h-4" />
-                    Cadastrar Nova Editora
-                </Button>
-                </div>
-            )}
-            {/* Formulário */}
-            {showAddForm && (
-                <form onSubmit={handleSubmit} className="bg-white border-2 border-blue-200 rounded-lg p-6 space-y-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold">
-                            {editingId ? 'Editar Editora' : 'Nova Editora'}
-                        </h3>
-                        <Button type="button" variant="ghost" size="icon" onClick={resetForm}>
-                            ❌
-                        </Button>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Nome *
-                        </label>
-                        <Input
-                            type="text"
-                            placeholder="Ex: Devir, Galápagos, Papergames"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Telefone
-                        </label>
-                        <Input
-                            type="text"
-                            placeholder="(11) 98765-4321"
-                            value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Email
-                        </label>
-                        <Input
-                            type="email"
-                            placeholder="contato@editora.com"
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        />
-                    </div>
-
-                    <div className="flex gap-3 pt-4">
-                        <Button type="button" variant="outline" onClick={resetForm} className="flex-1">
-                            Cancelar
-                        </Button>
-                        <Button type="submit" disabled={loading} className="bg-sejoga-verde-oficial flex-1">
-                            {editingId ? 'Atualizar' : 'Criar'}
-                        </Button>
-                    </div>
-                </form>
-            )}
-
-            {/* Lista de editoras */}
-            <div className="space-y-3">
-                {publishers.map((publisher) => (
-                    <div
-                        key={publisher.id}
-                        className="bg-white border rounded-lg p-3"
-                    >
-                        <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Building2 className="w-5 h-5 text-gray-600" />
-                                    <h3 className="font-semibold text-lg">{publisher.name}</h3>
-                                </div>
-                                {publisher.phone && (
-                                    <p className="text-sm text-gray-600">📞 {publisher.phone}</p>
-                                )}
-                                {publisher.email && (
-                                    <p className="text-sm text-gray-600">✉️ {publisher.email}</p>
-                                )}
-                            </div>
-                            <div className="flex gap-2">
-                                <Button
-                                    className='p-3'
-                                    variant="outline"
-                                    onClick={() => handleEdit(publisher)}
-                                >
-                                    ✏️ Editar
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={() => handleDelete(publisher.id, publisher.name)}
-                                    className="text-red-600 hover:bg-red-50"
-                                >
-                                    ❌
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-
-                {publishers.length === 0 && !showAddForm && (
-                    <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                        <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-600 mb-4">
-                            Nenhuma editora cadastrada ainda.
-                        </p>
-                        <Button onClick={() => setShowAddForm(true)} className="mx-auto">
-                            <Plus className="w-4 h-4 mr-2" />
-                            Criar Primeira Editora
+                        <Button onClick={() => setShowAddForm(true)} className="bg-sejoga-azul-oficial flex items-center gap-2">
+                            <Plus className="w-4 h-4" />
+                            Cadastrar Nova Editora
                         </Button>
                     </div>
                 )}
+                {/* Formulário */}
+                {showAddForm && (
+                    <form onSubmit={handleSubmit} className="bg-white border-2 border-blue-200 rounded-lg p-6 space-y-4">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">
+                                {editingId ? 'Editar Editora' : 'Nova Editora'}
+                            </h3>
+                            <Button type="button" variant="ghost" size="icon" onClick={resetForm}>
+                                ❌
+                            </Button>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Nome *
+                            </label>
+                            <Input
+                                type="text"
+                                placeholder="Ex: Devir, Galápagos, Papergames"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Telefone
+                            </label>
+                            <Input
+                                type="text"
+                                placeholder="(11) 98765-4321"
+                                value={formData.phone}
+                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Email
+                            </label>
+                            <Input
+                                type="email"
+                                placeholder="contato@editora.com"
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            />
+                        </div>
+
+                        <div className="flex gap-3 pt-4">
+                            <Button type="button" variant="outline" onClick={resetForm} className="flex-1">
+                                Cancelar
+                            </Button>
+                            <Button type="submit" disabled={loading} className="bg-sejoga-verde-oficial flex-1">
+                                {editingId ? 'Atualizar' : 'Criar'}
+                            </Button>
+                        </div>
+                    </form>
+                )}
+
+                {/* Lista de editoras */}
+                <div className="space-y-3">
+                    {publishers.map((publisher) => (
+                        <div
+                            key={publisher.id}
+                            className="bg-white border rounded-lg p-3"
+                        >
+                            <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <Building2 className="w-5 h-5 text-gray-600" />
+                                        <h3 className="font-semibold text-lg">{publisher.name}</h3>
+                                    </div>
+                                    {publisher.phone && (
+                                        <p className="text-sm text-gray-600">📞 {publisher.phone}</p>
+                                    )}
+                                    {publisher.email && (
+                                        <p className="text-sm text-gray-600">✉️ {publisher.email}</p>
+                                    )}
+                                </div>
+                                <div className="flex gap-2">
+                                    <Button
+                                        className='p-3'
+                                        variant="outline"
+                                        onClick={() => handleEdit(publisher)}
+                                    >
+                                        ✏️ Editar
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={() => handleDelete(publisher.id, publisher.name)}
+                                        className="text-red-600 hover:bg-red-50"
+                                    >
+                                        ❌
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+
+                    {publishers.length === 0 && !showAddForm && (
+                        <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                            <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                            <p className="text-gray-600 mb-4">
+                                Nenhuma editora cadastrada ainda.
+                            </p>
+                            <Button onClick={() => setShowAddForm(true)} className="mx-auto">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Criar Primeira Editora
+                            </Button>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

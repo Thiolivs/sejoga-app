@@ -105,7 +105,7 @@ export function ManageGames() {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 bg-white/95 rounded-lg p-4">
             <h1 className="text-2xl text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Gerenciamento de Jogos</i>✨</h1>
 
             <div className="flex flex-col items-center rounded-lg border-1 p-3 gap-4 mb-8">
@@ -130,67 +130,64 @@ export function ManageGames() {
                         onClick={() => router.push('/user-app/administration/manage-mechanics')}
                         className="flex items-center gap-2"
                     >
-                        Gerenciar Mecânicas
+                        Gerenciar Tags
                     </Button>
                 </div>
             </div>
             <h2 className="text-1xl font-semibold">Todos os Jogos ({games.length})</h2>
 
             <div className="grid gap-2">
-                {games.map((game) => {
-                    const publisherName = getPublisherName(game); // ✅ Usar função auxiliar
-                    
-                    return (
-                        <div
-                            key={game.id}
-                            className={`p-3 rounded-lg border ${game.active ? 'bg-white' : 'bg-gray-100'
-                                }`}
-                        >
-                            <div className="flex justify-between items-center">
-                                <div>
-                                    <div className="flex items-baseline gap-2">
-                                        <h3 className="font-semibold text-md">{game.name}</h3>
-                                        {publisherName && (
-                                            <>
-                                                <span className="text-gray-400">•</span>
-                                                <p className="text-sm text-gray-500 italic">{publisherName}</p>
-                                            </>
-                                        )}
-                                    </div>
-                                    <div className="flex gap-2 mt-1">
-                                        {!game.active && (
-                                            <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs rounded">
-                                                Inativo
-                                            </span>
-                                        )}
-                                    </div>
+    {games.map((game) => {
+        const publisherName = getPublisherName(game);
+        
+        return (
+            <div
+                key={game.id}
+                className={`p-3 text-sm rounded-lg border ${game.active ? 'bg-white' : 'bg-gray-100'}`}
+            >
+                <div className="flex justify-between items-start gap-3">
+                    <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-baseline gap-x-2">
+                            <h3 className="font-semibold text-md">{game.name}</h3>
+                            {publisherName && (
+                                <div className="flex items-baseline gap-2">
+                                    <span className="text-gray-400">•</span>
+                                    <p className="text-sm text-gray-500 italic">{publisherName}</p>
                                 </div>
-
-                                <div className="flex gap-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => setEditingGameId(game.id)}
-                                    >
-                                        ✏️ Editar
-                                    </Button>
-
-                                    <div className="flex flex-col justify-center items-center border-l border-gray-200 pl-1 ml-2">
-                                        <Button
-                                            size="sm"
-                                            variant="ghost"
-                                            onClick={() => handleDelete(game.id, game.name)}
-                                            className="text-red-600 hover:text-red-800 translate-x-1"
-                                        >
-                                            ❌
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
+                            )}
                         </div>
-                    );
-                })}
+                        <div className="flex gap-2 mt-1">
+                            {!game.active && (
+                                <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs rounded">
+                                    Inativo
+                                </span>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="flex gap-1 flex-shrink-0">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingGameId(game.id)}
+                        >
+                            ✏️ Editar
+                        </Button>
+
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleDelete(game.id, game.name)}
+                            className="text-red-600 hover:text-red-800 px-2"
+                        >
+                            ❌
+                        </Button>
+                    </div>
+                </div>
             </div>
+        );
+    })}
+</div>
         </div>
     );
 }
