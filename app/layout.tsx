@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-
+import { BackgroundManager } from "@/components/BackgroundManager";
 
 export const metadata: Metadata = {
   title: "SeJoga",
@@ -25,17 +25,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body 
         style={{
-          backgroundImage: 'url(/images/rainbow/jpg/5.jpg)',
+          backgroundImage: 'url(/images/backgrounds/rainbow.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed',
           minHeight: '100vh'
         }}
       >
+        <BackgroundManager />
         {children}
       </body>
     </html>
   );
 }
-
-

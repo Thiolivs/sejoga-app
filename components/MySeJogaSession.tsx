@@ -11,6 +11,7 @@ interface ProfileData {
     first_name: string;
     last_name: string;
     avatar: string;
+    background: string;
 }
 
 const AVATAR_OPTIONS = [
@@ -20,16 +21,25 @@ const AVATAR_OPTIONS = [
     '/avatars/MeepleVerde.png',
 ];
 
+const BACKGROUND_OPTIONS = [
+    '/images/backgrounds/rainbow.png',
+    '/images/backgrounds/gay.png',
+    '/images/backgrounds/bi.png',
+    '/images/backgrounds/trans.png',
+];
+
 export function MySeJogaSession() {
     const [user, setUser] = useState<User | null>(null);
     const [profile, setProfile] = useState<ProfileData>({
         first_name: '',
         last_name: '',
-        avatar: '/avatars/MeepleColorido.png'
+        avatar: '/avatars/MeepleColorido.png',
+        background: '/images/backgrounds/rainbow.png'
     });
     const [email, setEmail] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [showAvatarSelector, setShowAvatarSelector] = useState(false);
+    const [showBgSelector, setShowBgSelector] = useState(false);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -61,7 +71,7 @@ export function MySeJogaSession() {
 
             const { data, error: profileError } = await supabase
                 .from('profiles')
-                .select('first_name, last_name, avatar')
+                .select('first_name, last_name, avatar, background')
                 .eq('id', currentUser.id)
                 .single();
 
@@ -73,7 +83,8 @@ export function MySeJogaSession() {
             setProfile({
                 first_name: data?.first_name || '',
                 last_name: data?.last_name || '',
-                avatar: data?.avatar || '/avatars/MeepleColorido.png'
+                avatar: data?.avatar || '/avatars/MeepleColorido.png',
+                background: data?.background || '/images/backgrounds/rainbow.png'
             });
 
         } catch (err) {
@@ -97,7 +108,8 @@ export function MySeJogaSession() {
                 .update({
                     first_name: profile.first_name,
                     last_name: profile.last_name,
-                    avatar: profile.avatar
+                    avatar: profile.avatar,
+                    background: profile.background
                 })
                 .eq('id', user.id);
 
@@ -129,6 +141,7 @@ export function MySeJogaSession() {
         loadUserProfile();
         setIsEditing(false);
         setShowAvatarSelector(false);
+        setShowBgSelector(false);
         setError(null);
     }
 
@@ -138,7 +151,6 @@ export function MySeJogaSession() {
         setProfile({ ...profile, avatar: avatarPath });
         setShowAvatarSelector(false);
 
-        // Salva imediatamente
         try {
             await supabase
                 .from('profiles')
@@ -148,6 +160,24 @@ export function MySeJogaSession() {
             router.refresh();
         } catch (err) {
             console.error('Erro ao salvar avatar:', err);
+        }
+    }
+
+    async function handleBackgroundSelect(bgPath: string) {
+        if (!user) return;
+
+        setProfile({ ...profile, background: bgPath });
+        setShowBgSelector(false);
+
+        try {
+            await supabase
+                .from('profiles')
+                .update({ background: bgPath })
+                .eq('id', user.id);
+
+            document.body.style.backgroundImage = `url(${bgPath})`;
+        } catch (err) {
+            console.error('Erro ao salvar background:', err);
         }
     }
 
@@ -198,41 +228,84 @@ export function MySeJogaSession() {
                 )}
 
                 <div className="space-y-4">
-                    {/* Avatar Section */}
-                    <div className="flex flex-col items-center pb-3 border-b">
-                        <Avatar className=" h-20 w-20">
-                            <AvatarImage src={profile.avatar} alt="Avatar" />
-                            <AvatarFallback>
-                                {profile.first_name ? profile.first_name[0]?.toUpperCase() : '?'}
-                            </AvatarFallback>
-                        </Avatar>
+                    {/* Avatar e Background Section - Lado a Lado */}
+                    <div className="grid grid-cols-2 gap-4 pb-3 border-b">
+                        {/* Avatar */}
+                        <div className="flex flex-col items-center gap-2">
+                            <Avatar className="h-23 w-23">
+                                <AvatarImage src={profile.avatar} alt="Avatar" />
+                                <AvatarFallback>
+                                    {profile.first_name ? profile.first_name[0]?.toUpperCase() : '?'}
+                                </AvatarFallback>
+                            </Avatar>
 
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowAvatarSelector(!showAvatarSelector)}
-                            className="text-xs h-7"
-                        >
-                            Alterar Avatar
-                        </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                    setShowAvatarSelector(!showAvatarSelector);
+                                    setShowBgSelector(false);
+                                }}
+                                className="text-xs h-1"
+                            >
+                                Alterar Avatar
+                            </Button>
+                        </div>
 
-                        {showAvatarSelector && (
-                            <div className="flex gap-2 p-3 bg-gray-50 rounded-lg">
-                                {AVATAR_OPTIONS.map((avatarPath) => (
-                                    <button
-                                        key={avatarPath}
-                                        onClick={() => handleAvatarSelect(avatarPath)}
-                                        className={`relative h-12 w-12 rounded-full overflow-hidden border-2 transition-all hover:scale-110 ${profile.avatar === avatarPath
-                                                ? 'border-blue-600 ring-2 ring-blue-200'
-                                                : 'border-gray-300 hover:border-blue-400'
-                                            }`}
-                                    >
-                                        <Image src={avatarPath} alt="Avatar" fill className="object-cover" />
-                                    </button>
-                                ))}
+                        {/* Background */}
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="relative h-20 w-32 rounded overflow-hidden border-2 border-gray-300">
+                                <Image src={profile.background} alt="Background" fill className="object-cover" />
                             </div>
-                        )}
+
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                    setShowBgSelector(!showBgSelector);
+                                    setShowAvatarSelector(false);
+                                }}
+                                className="text-xs h-7"
+                            >
+                                Alterar Fundo
+                            </Button>
+                        </div>
                     </div>
+
+                    {/* Seletores - Aparecem abaixo */}
+                    {showAvatarSelector && (
+                        <div className="flex gap-2 p-3 bg-gray-50 rounded-lg justify-center border-b">
+                            {AVATAR_OPTIONS.map((avatarPath) => (
+                                <button
+                                    key={avatarPath}
+                                    onClick={() => handleAvatarSelect(avatarPath)}
+                                    className={`relative h-12 w-12 rounded-full overflow-hidden border-2 transition-all hover:scale-110 ${profile.avatar === avatarPath
+                                            ? 'border-blue-600 ring-2 ring-blue-200'
+                                            : 'border-gray-300 hover:border-blue-400'
+                                        }`}
+                                >
+                                    <Image src={avatarPath} alt="Avatar" fill className="object-cover" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {showBgSelector && (
+                        <div className="grid grid-cols-2 gap-2 p-3 bg-gray-50 rounded-lg border-b">
+                            {BACKGROUND_OPTIONS.map((bgPath) => (
+                                <button
+                                    key={bgPath}
+                                    onClick={() => handleBackgroundSelect(bgPath)}
+                                    className={`relative h-20 rounded overflow-hidden border-2 transition-all hover:scale-105 ${profile.background === bgPath
+                                            ? 'border-blue-600 ring-2 ring-blue-200'
+                                            : 'border-gray-300 hover:border-blue-400'
+                                        }`}
+                                >
+                                    <Image src={bgPath} alt="Background" fill className="object-cover" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
 
                     {/* Nome e Sobrenome */}
                     <div className="grid grid-cols-2 gap-3">
