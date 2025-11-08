@@ -95,7 +95,7 @@ export function LoginAccountForm() {
                     )}
                 />
 
-                <Button type ="submit" className="flex flex-col justify-center items-center mt-5"> SeJoga! </Button>
+                <Button type ="submit" className="flex flex-col bg-sejoga-azul-oficial justify-center items-center mt-5"> SeJoga! </Button>
 
 
             </form>

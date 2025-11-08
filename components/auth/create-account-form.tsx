@@ -191,7 +191,7 @@ export function CreateAccountForm() {
 
                     <Button 
                         type="submit" 
-                        className="w-full mt-6"
+                        className="w-full mt-6 bg-sejoga-verde-oficial"
                     >
                         SeJoga!
                     </Button>

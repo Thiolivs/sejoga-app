@@ -32,7 +32,7 @@ export function BackgroundManager() {
                 schema: 'public',
                 table: 'profiles',
                 filter: `id=eq.${supabase.auth.getUser().then(r => r.data.user?.id)}`
-            }, (payload: any) => {
+            }, (payload: { new?: { background?: string } }) => {
                 if (payload.new?.background) {
                     document.body.style.backgroundImage = `url(${payload.new.background})`;
                 }

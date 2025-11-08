@@ -42,7 +42,7 @@ export default async function Home() {
           className="mb-4"
         />
 
-        <Tabs defaultValue="login" className="w-[300px] border rounded-md pb-4 shadow-2xl">
+        <Tabs defaultValue="login" className="w-[300px] bg-white/95 border rounded-md pb-4 shadow-2xl">
 
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Login</TabsTrigger>
