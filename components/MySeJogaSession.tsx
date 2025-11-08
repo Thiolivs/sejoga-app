@@ -152,14 +152,21 @@ export function MySeJogaSession() {
         setShowAvatarSelector(false);
 
         try {
-            await supabase
+            const { error } = await supabase
                 .from('profiles')
                 .update({ avatar: avatarPath })
                 .eq('id', user.id);
 
+            if (error) throw error;
+
+            // Força atualização
             router.refresh();
+
+            // Recarrega perfil para garantir
+            await loadUserProfile();
         } catch (err) {
             console.error('Erro ao salvar avatar:', err);
+            setError('Erro ao salvar avatar');
         }
     }
 
@@ -280,8 +287,8 @@ export function MySeJogaSession() {
                                     key={avatarPath}
                                     onClick={() => handleAvatarSelect(avatarPath)}
                                     className={`relative h-12 w-12 rounded-full overflow-hidden border-2 transition-all hover:scale-110 ${profile.avatar === avatarPath
-                                            ? 'border-blue-600 ring-2 ring-blue-200'
-                                            : 'border-gray-300 hover:border-blue-400'
+                                        ? 'border-blue-600 ring-2 ring-blue-200'
+                                        : 'border-gray-300 hover:border-blue-400'
                                         }`}
                                 >
                                     <Image src={avatarPath} alt="Avatar" fill className="object-cover" />
@@ -297,8 +304,8 @@ export function MySeJogaSession() {
                                     key={bgPath}
                                     onClick={() => handleBackgroundSelect(bgPath)}
                                     className={`relative h-20 rounded overflow-hidden border-2 transition-all hover:scale-105 ${profile.background === bgPath
-                                            ? 'border-blue-600 ring-2 ring-blue-200'
-                                            : 'border-gray-300 hover:border-blue-400'
+                                        ? 'border-blue-600 ring-2 ring-blue-200'
+                                        : 'border-gray-300 hover:border-blue-400'
                                         }`}
                                 >
                                     <Image src={bgPath} alt="Background" fill className="object-cover" />
