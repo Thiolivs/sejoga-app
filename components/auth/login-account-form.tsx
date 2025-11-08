@@ -56,8 +56,8 @@ export function LoginAccountForm() {
         
     }
 
-    return <div className = "flex flex-col justify-center text-center w-full space-y-4 p-6">
-        <span className="text-lg mb-10 "><i>Entra, vai ter Boardgame!</i></span>
+    return <div className = "flex flex-col justify-center text-center pl-6 pb-6 pr-6 pt-3">
+        <span className="text-lg mb-6 "><i>Entra, vai ter Boardgame!</i></span>
         
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} 

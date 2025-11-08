@@ -35,14 +35,14 @@ export default async function Home() {
       <div className="flex flex-col h-screen w-full justify-center items-center">
 
         <Image
-          src="/sejoga-id/MeepleColorido.png"
-          alt="Meeple Colorido"
-          width={160}
-          height={160}
-          className="mb-4"
+          src="/sejoga-id/LogoHshadow.png"
+          alt="Logo Horizontal"
+          width={360}
+          height={360}
+          className=""
         />
 
-        <Tabs defaultValue="login" className="w-[300px] bg-white/95 border rounded-md pb-4 shadow-2xl">
+        <Tabs defaultValue="login" className="w-[300px] bg-white/95 border rounded-xl pb-4 shadow-2xl">
 
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Login</TabsTrigger>
