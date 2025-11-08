@@ -105,8 +105,8 @@ export function UserNav() {
             {user && (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                            <Avatar className="h-9 w-9">
+                        <Button variant="ghost" className="relative h-13 w-15 rounded-full">
+                            <Avatar className="h-13 w-13">
                                 <AvatarImage src={avatar} alt="User avatar" />
                                 <AvatarFallback>
                                     {name ? name[0]?.toUpperCase() : '?'}

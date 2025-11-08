@@ -152,7 +152,7 @@ export function TrainingSession() {
     }
 
     return (
-        <div className="p-1 space-y-3">
+        <div className="p-3 bg-white/90 rounded-lg space-y-3">
             {/* Header */}
             <div className="flex flex-col items-center">
                         <h1 className="text-[22px] text-center font-bold text-blue-800 mt-4 flex-1 mb-5">✨<i>Treinamentos</i>✨</h1>

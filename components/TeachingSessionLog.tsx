@@ -167,7 +167,7 @@ export function TeachingSessionLog() {
   return (
     <div className="space-y-6">
       {/* Formulário */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white/95 rounded-lg shadow p-6 space-y-4">
         <h1 className="text-[21px] text-center font-bold text-blue-800 flex-1 mb-5">
           ✨<i>Registro de Jogos Ensinados</i>✨
         </h1>

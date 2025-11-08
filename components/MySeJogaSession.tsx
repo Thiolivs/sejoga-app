@@ -199,8 +199,8 @@ export function MySeJogaSession() {
 
                 <div className="space-y-4">
                     {/* Avatar Section */}
-                    <div className="flex flex-col items-center gap-2 pb-3 border-b">
-                        <Avatar className="h-20 w-20">
+                    <div className="flex flex-col items-center pb-3 border-b">
+                        <Avatar className=" h-20 w-20">
                             <AvatarImage src={profile.avatar} alt="Avatar" />
                             <AvatarFallback>
                                 {profile.first_name ? profile.first_name[0]?.toUpperCase() : '?'}

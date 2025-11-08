@@ -129,7 +129,7 @@ export function ManageTrainingCycles() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 ">
             {/* Header com botão voltar */}
             <div className="flex items-center gap-4 mb-6">
                 <Button
@@ -139,156 +139,159 @@ export function ManageTrainingCycles() {
                 >
                     <ArrowLeft className="w-5 h-5" />
                 </Button>
-
             </div>
-                        <h1 className="text-2xl text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Ciclos de Treinamentos</i>✨</h1>
 
-            {!showAddForm && (
-                <div className="flex justify-center">
-                    <Button onClick={() => setShowAddForm(true)} className="bg-sejoga-azul-oficial flex items-center gap-2">
-                        <Plus className="w-4 h-4" />
-                        Cadastrar Novo Ciclo
-                    </Button>
-                </div>
-            )}
+            <div className='bg-white/95 p-3 rounded-lg g'>
 
+                <h1 className="text-[25px] text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Ciclos de Treinamentos</i>✨</h1>
 
-            {/* Formulário */}
-            {showAddForm && (
-                <form onSubmit={handleSubmit} className="bg-white border-2 border-blue-200 rounded-lg p-6 space-y-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold">
-                            {editingId ? 'Editar Ciclo' : 'Novo Ciclo'}
-                        </h3>
-                        <Button type="button" variant="ghost" size="icon" onClick={resetForm}>
-                            ❌
-                        </Button>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Nome do Ciclo *
-                        </label>
-                        <Input
-                            type="text"
-                            placeholder="Ex: Treinamentos de Novembro"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            required
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Data Início *
-                            </label>
-                            <Input
-                                type="date"
-                                value={formData.start_date}
-                                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Data Fim *
-                            </label>
-                            <Input
-                                type="date"
-                                value={formData.end_date}
-                                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <input
-                            type="checkbox"
-                            id="is_active_cycle"
-                            checked={formData.is_active}
-                            onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                            className="w-5 h-5 rounded"
-                        />
-                        <label htmlFor="is_active_cycle" className="text-sm font-medium text-gray-700 cursor-pointer">
-                            Ciclo ativo (visível para os monitores)
-                        </label>
-                    </div>
-
-                    <div className="flex gap-3 pt-4">
-                        <Button type="button" variant="outline" onClick={resetForm} className="flex-1">
-                            Cancelar
-                        </Button>
-                        <Button type="submit" disabled={loading} className="bg-sejoga-verde-oficial flex-1">
-                            {editingId ? 'Atualizar' : 'Criar Ciclo'}
-                        </Button>
-                    </div>
-                </form>
-            )}
-
-            {/* Lista de ciclos */}
-            <div className="space-y-3">
-                {cycles.map((cycle) => (
-                    <div
-                        key={cycle.id}
-                        className={`bg-white border rounded-lg p-3 ${cycle.is_active ? 'border-gray-200' : 'border-gray-300 bg-gray-50'
-                            }`}
-                    >
-                        <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <h3 className="font-semibold text-lg">{cycle.name}</h3>
-                                    {!cycle.is_active && (
-                                        <span className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded">
-                                            Inativo
-                                        </span>
-                                    )}
-                                </div>
-                                {cycle.description && (
-                                    <p className="text-sm text-gray-600 mb-2">{cycle.description}</p>
-                                )}
-                                <div className="flex items-center gap-2 text-sm text-gray-500">
-                                    <Calendar className="w-4 h-4" />
-                                    <span>
-                                        {new Date(cycle.start_date).toLocaleDateString('pt-BR')} - {' '}
-                                        {new Date(cycle.end_date).toLocaleDateString('pt-BR')}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="flex gap-2">
-                                <Button
-                                    className='p-3'
-                                    variant="outline"
-                                    onClick={() => handleEdit(cycle)}
-                                >
-                                    ✏️ Editar
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={() => handleDelete(cycle.id)}
-                                    className="text-red-600 hover:bg-red-50"
-                                >
-                                    ❌
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-
-                {cycles.length === 0 && !showAddForm && (
-                    <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                        <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-600 mb-4">
-                            Nenhum ciclo cadastrado ainda.
-                        </p>
-                        <Button onClick={() => setShowAddForm(true)} className="mx-auto">
-                            <Plus className="w-4 h-4 mr-2" />
-                            Criar Primeiro Ciclo
+                {!showAddForm && (
+                    <div className="flex justify-center mb-4">
+                        <Button onClick={() => setShowAddForm(true)} className="bg-sejoga-azul-oficial flex items-center gap-2">
+                            <Plus className="w-4 h-4" />
+                            Cadastrar Novo Ciclo
                         </Button>
                     </div>
                 )}
+
+
+                {/* Formulário */}
+                {showAddForm && (
+                    <form onSubmit={handleSubmit} className="bg-white border-2 border-blue-200 mb-3 rounded-lg p-6 space-y-4">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">
+                                {editingId ? 'Editar Ciclo' : 'Novo Ciclo'}
+                            </h3>
+                            <Button type="button" variant="ghost" size="icon" onClick={resetForm}>
+                                ❌
+                            </Button>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Nome do Ciclo *
+                            </label>
+                            <Input
+                                type="text"
+                                placeholder="Ex: Treinamentos de Novembro"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                required
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Data Início *
+                                </label>
+                                <Input
+                                    type="date"
+                                    value={formData.start_date}
+                                    onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Data Fim *
+                                </label>
+                                <Input
+                                    type="date"
+                                    value={formData.end_date}
+                                    onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <input
+                                type="checkbox"
+                                id="is_active_cycle"
+                                checked={formData.is_active}
+                                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                                className="w-5 h-5 rounded"
+                            />
+                            <label htmlFor="is_active_cycle" className="text-sm font-medium text-gray-700 cursor-pointer">
+                                Ciclo ativo (visível para os monitores)
+                            </label>
+                        </div>
+
+                        <div className="flex gap-3 pt-4">
+                            <Button type="button" variant="outline" onClick={resetForm} className="flex-1">
+                                Cancelar
+                            </Button>
+                            <Button type="submit" disabled={loading} className="bg-sejoga-verde-oficial flex-1">
+                                {editingId ? 'Atualizar' : 'Criar Ciclo'}
+                            </Button>
+                        </div>
+                    </form>
+                )}
+
+                {/* Lista de ciclos */}
+                <div className="space-y-3">
+                    {cycles.map((cycle) => (
+                        <div
+                            key={cycle.id}
+                            className={`bg-white border rounded-lg p-3 ${cycle.is_active ? 'border-gray-200' : 'border-gray-300 bg-gray-50'
+                                }`}
+                        >
+                            <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <h3 className="font-semibold text-lg">{cycle.name}</h3>
+                                        {!cycle.is_active && (
+                                            <span className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded">
+                                                Inativo
+                                            </span>
+                                        )}
+                                    </div>
+                                    {cycle.description && (
+                                        <p className="text-sm text-gray-600 mb-2">{cycle.description}</p>
+                                    )}
+                                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                                        <Calendar className="w-4 h-4" />
+                                        <span>
+                                            {new Date(cycle.start_date).toLocaleDateString('pt-BR')} - {' '}
+                                            {new Date(cycle.end_date).toLocaleDateString('pt-BR')}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Button
+                                        className='p-3'
+                                        variant="outline"
+                                        onClick={() => handleEdit(cycle)}
+                                    >
+                                        ✏️ Editar
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={() => handleDelete(cycle.id)}
+                                        className="text-red-600 hover:bg-red-50"
+                                    >
+                                        ❌
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+
+                    {cycles.length === 0 && !showAddForm && (
+                        <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                            <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                            <p className="text-gray-600 mb-4">
+                                Nenhum ciclo cadastrado ainda.
+                            </p>
+                            <Button onClick={() => setShowAddForm(true)} className="mx-auto">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Criar Primeiro Ciclo
+                            </Button>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

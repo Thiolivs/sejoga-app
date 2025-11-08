@@ -11,7 +11,7 @@ import type { TrainingCycle } from '@/types/database';
 export function AddTraining() {
     const router = useRouter();
     const supabase = createClientComponentClient();
-    
+
     const [cycles, setCycles] = useState<TrainingCycle[]>([]);
     const [formData, setFormData] = useState({
         cycle_id: '',
@@ -19,7 +19,7 @@ export function AddTraining() {
         location: '',
         is_active: true
     });
-    
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
@@ -76,7 +76,7 @@ export function AddTraining() {
             if (insertError) throw insertError;
 
             setSuccess(true);
-            
+
             // Limpa o formulário
             setFormData({
                 cycle_id: '',
@@ -109,7 +109,6 @@ export function AddTraining() {
                 >
                     <ArrowLeft className="w-5 h-5" />
                 </Button>
-                <h1 className="text-2xl font-bold text-red-600">Nova Data de Treinamento</h1>
             </div>
 
             {/* Aviso se não houver ciclos */}
@@ -130,6 +129,9 @@ export function AddTraining() {
 
             {/* Formulário */}
             <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
+                <h1 className="text-[21px] text-center font-bold text-blue-800 flex-1 mb-5">
+                    ✨<i>Novo Treinamento</i>✨
+                </h1>
                 {/* Seleção de Ciclo */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -206,8 +208,8 @@ export function AddTraining() {
                 {/* Informação sobre turnos */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <p className="text-sm text-blue-800">
-                        <strong>ℹ️ Sobre os turnos:</strong> Os três turnos (Manhã, Tarde e Noite) 
-                        estarão disponíveis automaticamente para esta data. Os monitores poderão 
+                        <strong>ℹ️ Sobre os turnos:</strong> Os três turnos (Manhã, Tarde e Noite)
+                        estarão disponíveis automaticamente para esta data. Os monitores poderão
                         marcar sua disponibilidade para cada turno.
                     </p>
                 </div>
