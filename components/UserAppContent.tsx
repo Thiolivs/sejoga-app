@@ -11,7 +11,7 @@ import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
 
 
-import { CircleUser, ClipboardList, Calendar, BarChart, Dices } from "lucide-react"
+import { CircleUser, ClipboardList, Calendar, BarChart, Dices, Heart, Star } from "lucide-react"
 
 
 type Tab = 'training' | 'profile' | 'jogos' | 'register' | 'statistics';
@@ -99,10 +99,54 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
     return (
         <>
             {/* Tabs */}
-            <div className="bg-white border-b">
-                <div className="max-w-7xl mx-auto px-4 flex flex-col items-center sm:px-6 lg:px-8">
-                    <nav className="flex space-x-2 " aria-label="Tabs">
+            <div className="bg-white border-4 border-red-500 border-b">
+                <div className="max-w-2xl mx-auto px-4 flex flex-col items-center sm:px-6 lg:px-8">
+                    <nav className="flex space-x-1 " aria-label="Tabs">
 
+
+                        <button
+                            onClick={() => setActiveTab('profile')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'profile'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                        >
+                            <Star className="w-4 h-4" />
+                            Meu SeJoga
+                        </button>
+
+                                                <button
+                            onClick={() => setActiveTab('register')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'register'
+                                ? 'border-orange-500 text-orange-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                        >
+                            <ClipboardList className="w-4 h-4" />
+                            Registro
+                        </button>
+
+                        <button
+                            onClick={() => setActiveTab('jogos')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${activeTab === 'jogos'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                        >
+                            <Dices className="w-4 h-4" />
+                            Acervo
+                        </button>
+
+                        <button
+                            onClick={() => setActiveTab('training')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'training'
+                                ? 'border-orange-500 text-orange-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                        >
+                            <Calendar className="w-4 h-4" />
+                            Treinamentos
+                        </button>
 
 
                         <button
@@ -117,54 +161,6 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                         </button>
 
 
-                        <button
-                            onClick={() => setActiveTab('profile')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'profile'
-                                ? 'border-blue-500 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
-                        >
-                            <CircleUser className="w-4 h-4" />
-                            Meu SeJoga
-                        </button>
-
-
-
-                        <button
-                            onClick={() => setActiveTab('jogos')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${activeTab === 'jogos'
-                                ? 'border-blue-500 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
-                        >
-                            <Dices className="w-4 h-4" />
-                            Acervo
-                        </button>
-
-
-                        <button
-                            onClick={() => setActiveTab('register')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'register'
-                                ? 'border-orange-500 text-orange-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
-                        >
-                            <ClipboardList className="w-4 h-4" />
-                            Registro
-                        </button>
-
-
-
-                        <button
-                            onClick={() => setActiveTab('training')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'training'
-                                ? 'border-orange-500 text-orange-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
-                        >
-                            <Calendar className="w-4 h-4" />
-                            Treinamentos
-                        </button>
                     </nav>
                 </div>
             </div>
