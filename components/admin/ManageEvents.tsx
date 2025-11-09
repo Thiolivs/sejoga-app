@@ -138,7 +138,7 @@ export function ManageEvents() {
   }
 
   return (
-    <div className="space-y-6">
+            <div className="space-y-6 bg-white/95 border pt-6 rounded-lg p-3">
                   <h1 className="text-2xl text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Gerenciamento de Eventos</i>✨</h1>
 
       <div className="flex justify-center items-center">

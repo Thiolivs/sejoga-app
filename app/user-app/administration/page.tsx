@@ -75,7 +75,7 @@ export default function AdministrationPage() {
 
                         {/* Usuários */}
                         <div
-                            onClick={() => router.push('/user-app/administration/users')}
+                            onClick={() => router.push('/user-app/administration/manage-users')}
                             className={`${buttonBaseStyle} bg-yellow-300 text-white`}
                             style={textShadowStyle}
                         >

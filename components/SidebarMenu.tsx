@@ -140,7 +140,7 @@ export function SidebarMenu({
                     {/* Item: Usuários (apenas admin) */}
                     {isAdmin && (
                         <button
-                            onClick={() => handleNavigation('/user-app/users')}
+                            onClick={() => handleNavigation('/user-app/administration/manage-users')}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                                 currentPage === 'users'
                                     ? 'bg-red-100 text-red-700'
