@@ -19,7 +19,7 @@ const AVATAR_OPTIONS = [
     '/avatars/MeepleAzul.png',
     '/avatars/MeepleVermelho.png',
     '/avatars/1.jpg',
-    '/avatars/2.jpg',
+    '/avatars/2.png',
 
 ];
 
