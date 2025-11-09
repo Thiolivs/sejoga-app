@@ -218,8 +218,8 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
     };
 
     return (
-        <div>
-            <h1 className="text-2xl text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Editar Jogo</i>✨</h1>
+        <div className="p-3 bg-white/90 rounded-lg space-y-3">
+                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Editar Jogo</div>
 
             <div className="max-w-4xl mx-auto p-4 border-1 bg-white rounded-lg shadow-lg">
                 <Form {...form}>

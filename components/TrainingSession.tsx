@@ -155,7 +155,7 @@ export function TrainingSession() {
         <div className="p-3 bg-white/90 rounded-lg space-y-3">
             {/* Header */}
             <div className="flex flex-col items-center">
-                        <h1 className="text-[22px] text-center font-bold text-blue-800 mt-4 flex-1 mb-5">✨<i>Treinamentos</i>✨</h1>
+                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Treinamentos</div>
                 {isAdmin && (
                     <div className="flex gap-2">
                         <Button

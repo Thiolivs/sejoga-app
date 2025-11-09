@@ -143,7 +143,7 @@ export function ManageTrainingCycles() {
 
             <div className='bg-white/95 p-3 rounded-lg g'>
 
-                <h1 className="text-[25px] text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Ciclos de Treinamentos</i>✨</h1>
+                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Ciclos de Treinamentos</div>
 
                 {!showAddForm && (
                     <div className="flex justify-center mb-4">

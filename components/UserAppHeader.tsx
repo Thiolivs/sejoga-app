@@ -31,7 +31,7 @@ export function UserAppHeader() {
 
                     {/* Centro: Título */}
                     <div className="flex-1 text-center">
-                        <h1 className="text-2xl font-bold text-gray-900">
+                        <h1 className="text-[35px] font-caveat text-gray-900">
                             SeJoga no App!
                         </h1>
                     </div>

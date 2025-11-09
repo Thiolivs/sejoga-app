@@ -150,8 +150,8 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
     };
 
     return (
-        <div>
-            <h1 className="text-2xl text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Cadastrar Novo Jogo</i>✨</h1>
+        <div className="p-3 bg-white/90 rounded-lg space-y-3">
+                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Cadastrar Novo Jogo</div>
             <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg">
 
                 <Form {...form}>

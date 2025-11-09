@@ -213,8 +213,8 @@ export function MySeJogaSession() {
     return (
         <div className="max-w-2xl mx-auto p-4">
             <div className="bg-white rounded-lg shadow p-4">
-                <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-xl font-bold text-gray-900">Minha Área</h1>
+                <div className="pl-5 flex justify-between items-center mb-4">
+                    <h1 className="text-[30px] font-aladin text-blue-800">Meu espaço</h1>
                     {!isEditing && (
                         <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
                             Editar Perfil

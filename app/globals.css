@@ -187,3 +187,19 @@ input[type="checkbox"].custom-check:checked::after {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.font-caveat {
+  font-family: var(--font-caveat);
+}
+
+.font-shadows {
+  font-family: var(--font-shadows);
+}
+
+.font-joti {
+  font-family: var(--font-joti);
+}
+
+.font-aladin {
+  font-family: var(--font-aladin);
+}

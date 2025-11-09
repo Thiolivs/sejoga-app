@@ -193,7 +193,7 @@ export function EventGameSelection() {
     return (
 
         <div className="space-y-6 bg-white border rounded-lg p-3 pt-6">
-            <h1 className="text-[22px] text-center font-bold text-blue-800 flex-1 mb-1">✨<i>Seleção de Jogos para Eventos</i>✨</h1>
+                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Seleção para Eventos</div>
 
             {/* Header com estatísticas */}
             <div className="bg-white mt-6 border-1 rounded-lg shadow p-3">

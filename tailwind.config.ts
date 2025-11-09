@@ -9,10 +9,8 @@ const config: Config = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ["var(--font-geist-sans)", "sans-serif"],
-                mono: ["var(--font-geist-mono)", "monospace"],
-                caveat: ["var(--font-caveat)", "cursive"],
-                "caveat-brush": ["var(--font-caveat-brush)", "cursive"],
+                sans: ['var(--font-inter)', 'sans-serif'],
+                poppins: ['var(--font-poppins)', 'sans-serif'],
             },
             colors: {
                 'sejoga-vermelho-oficial': '#DD2228',

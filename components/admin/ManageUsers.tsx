@@ -158,7 +158,7 @@ export function ManageUsers() {
     return (
         <div className="space-y-4 bg-white/95 rounded-lg p-4">
 
-            <h1 className="text-[25px] text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Gerenciar Usuários</i>✨</h1>
+                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Gerenciar Usuários</div>
 
             {/* Estatísticas no topo */}
                             <h3 className="font-semibold text-center text-sm mb-2">📊 Estatísticas:</h3>

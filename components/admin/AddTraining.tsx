@@ -129,9 +129,8 @@ export function AddTraining() {
 
             {/* Formulário */}
             <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
-                <h1 className="text-[21px] text-center font-bold text-blue-800 flex-1 mb-5">
-                    ✨<i>Novo Treinamento</i>✨
-                </h1>
+                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Novo Treinamento</div>
+
                 {/* Seleção de Ciclo */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">

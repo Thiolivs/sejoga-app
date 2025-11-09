@@ -168,9 +168,8 @@ export function TeachingSessionLog() {
     <div className="space-y-6">
       {/* Formulário */}
       <form onSubmit={handleSubmit} className="bg-white/95 rounded-lg shadow p-6 space-y-4">
-        <h1 className="text-[21px] text-center font-bold text-blue-800 flex-1 mb-5">
-          ✨<i>Registro de Jogos Ensinados</i>✨
-        </h1>
+                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Registro de Jogos Ensinados</div>
+
 
         {/* Seletor de Evento */}
         <div className="flex justify-between items-center">

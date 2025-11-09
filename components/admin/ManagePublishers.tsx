@@ -134,7 +134,7 @@ export function ManagePublishers() {
         <div className="space-y-6">
 
             <div className='bg-white/95 rounded-xl pt-6 p-3'>
-                <h1 className="text-[23px] text-center font-bold text-blue-800 flex-1 mb-6">✨<i>Gerenciamento de Editoras</i>✨</h1>
+                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Gerenciamento de Editoras</div>
                 {!showAddForm && (
                     <div className="flex justify-center items-center pb-6">
 

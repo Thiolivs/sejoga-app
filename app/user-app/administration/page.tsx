@@ -34,9 +34,8 @@ export default function AdministrationPage() {
 
 
                 <div className="bg-white/90 rounded-xl shadow-md p-6">
-                    <h1 className="text-[23px] font-bold text-center text-blue-800 mb-4">
-                        ✨ <i>Painel de Administração </i>✨
-                    </h1>
+                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Painel de Administração</div>
+
 
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 pt-4 lg:grid-cols-3 gap-3">

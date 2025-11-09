@@ -354,18 +354,8 @@ export function BoardgameList() {
                 )}
             </div>
             <div className="space-y-3 bg-white/90 rounded-xl p-4">
-                <div className="text-[22px] text-center font-bold text-blue-800 flex-1 mb-5">✨<i>Lista de Jogos</i>✨</div>
-                <div className=" rounded-xl  ">
+                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Lista de Jogos</div>
 
-                    <div className=" mb-5 border-b-1 text-center border-t-1 p-1 ">
-                        <p className="text-sejoga-azul-oficial ">
-                            <i>&quot;Prepara, menina, é sua vez de brilhar!&quot;</i> 🌟
-                        </p>
-                        <p className="text-sejoga-rosa-oficial text-center font-semibold text-[15px]">
-                            Marque aqui os jogos que você sabe ensinar
-                        </p>
-                    </div>
-                </div>
                 {/* Contador de resultados */}
                 <div className="flex justify-between items-center mb">
                     <p className="text-sm text-gray-600">
