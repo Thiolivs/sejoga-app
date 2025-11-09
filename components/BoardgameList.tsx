@@ -353,7 +353,8 @@ export function BoardgameList() {
                     </div>
                 )}
             </div>
-            <div className="space-y-3 bg-white/90 rounded-xl p-4">
+
+            <div className="space-y-2 bg-white/90 rounded-xl p-4">
                 <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Lista de Jogos</div>
 
                 {/* Contador de resultados */}
@@ -433,18 +434,18 @@ export function BoardgameList() {
 
                             {/* Botão - direita (ocupa altura toda) */}
                             {isMonitor && (
-                                <div className="flex items-center">
+                                <div className="flex items-stretch">
                                     {game.isLoaned ? (
                                         game.loanedBy === user?.id ? (
                                             <button
                                                 onClick={() => handleReturn(game.id)}
-                                                className="w-20 py-4 bg-green-50 text-sejoga-verde-oficial border-l-2 border-sejoga-verde-oficial hover:bg-green-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg" /* ✅ reduzido de py-6 para py-4 */
+                                                className="w-22 h-full py-4 bg-green-50 text-sejoga-verde-oficial border-l-2 border-sejoga-verde-oficial hover:bg-green-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
                                             >
-                                                <span className="text-base">⬅️</span> {/* ✅ reduzido de text-lg para text-base */}
+                                                <span className="text-base">⬅️</span>
                                                 <span>Devolver</span>
                                             </button>
                                         ) : (
-                                            <div className="w-20 py-4 bg-gray-100 text-gray-500 border-l-2 border-gray-300 text-xs font-medium cursor-not-allowed flex flex-col items-center justify-center gap-1 rounded-r-lg"> {/* ✅ reduzido de py-6 para py-4 */}
+                                            <div className="w-22 h-full py-4 bg-gray-100 text-gray-500 border-l-2 border-gray-300 text-xs font-medium cursor-not-allowed flex flex-col items-center justify-center gap-1 rounded-r-lg">
                                                 <span className="text-lg">⚔️</span>
                                                 <span className="text-center">Indisponível</span>
                                             </div>
@@ -452,13 +453,16 @@ export function BoardgameList() {
                                     ) : (
                                         <button
                                             onClick={() => handleBorrow(game.id)}
-                                            className="w-20 py-4 bg-blue-50 text-sejoga-azul-oficial border-l-2 border-sejoga-azul-oficial hover:bg-blue-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg" /* ✅ reduzido de py-6 para py-4 */
+                                            className="w-22 h-full py-4 bg-blue-50 text-sejoga-azul-oficial border-l-2 border-sejoga-azul-oficial hover:bg-blue-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
                                         >
-                                            <span className="text-base">➡️</span> {/* ✅ reduzido de text-lg para text-base */}
-                                            <span className="text-center leading-tight">Pegar<br />Emprestado</span>
+                                            <span className="text-base">➡️</span>
+                                            <span className="text-center leading-tight">
+                                                Pegar<br />Emprestado
+                                            </span>
                                         </button>
                                     )}
                                 </div>
+
                             )}
                         </div>
                     </div>

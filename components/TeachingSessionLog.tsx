@@ -264,9 +264,8 @@ export function TeachingSessionLog() {
 
       {/* Lista por Monitor */}
       <div className="space-y-6">
-        <h1 className="text-[22px] text-center font-bold text-blue-800 flex-1 mb-5">
-          ✨<i>Registro por Monitor</i>✨
-        </h1>
+                <div className="text-[35px] bg-white/95 rounded-xl font-aladin text-center text-blue-800 flex-1 mb-5">Registro por Monitor</div>
+
 
         {Object.keys(sessionsByMonitor).length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-lg">

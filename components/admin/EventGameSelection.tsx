@@ -232,7 +232,7 @@ export function EventGameSelection() {
                         </span>
                     </div>
                     <p className="text-sm text-green-700 mb-4">
-                        Jogos com 2 ou mais monitores que sabem ensinar
+                        Jogos que 2 ou mais monitores sabem 
                     </p>
 
                     <div className="space-y-2 max-h-[600px] overflow-y-auto">

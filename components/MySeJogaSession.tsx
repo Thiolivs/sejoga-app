@@ -18,7 +18,9 @@ const AVATAR_OPTIONS = [
     '/avatars/MeepleColorido.png',
     '/avatars/MeepleAzul.png',
     '/avatars/MeepleVermelho.png',
-    '/avatars/MeepleVerde.png',
+    '/avatars/1.jpg',
+    '/avatars/2.jpg',
+
 ];
 
 const BACKGROUND_OPTIONS = [
