@@ -146,7 +146,7 @@ export function ManagePublishers() {
                 )}
                 {/* Formulário */}
                 {showAddForm && (
-                    <form onSubmit={handleSubmit} className="bg-white border-2 border-blue-200 rounded-lg p-6 space-y-4">
+                    <form onSubmit={handleSubmit} className="bg-white border-2 border-blue-200 rounded-lg p-6 mb-3 space-y-4">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-semibold">
                                 {editingId ? 'Editar Editora' : 'Nova Editora'}
