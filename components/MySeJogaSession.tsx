@@ -15,11 +15,25 @@ interface ProfileData {
 }
 
 const AVATAR_OPTIONS = [
-    '/avatars/MeepleColorido.png',
-    '/avatars/MeepleAzul.png',
+    '/avatars/AvatarDracula.png',
+    '/avatars/AvatarZombie.png',
+    '/avatars/AvatarNatalino.png',
+    '/avatars/AvatarOrgulhoNerd.png',
+    '/avatars/AvatarBarbie.png',
+    '/avatars/BottonSemCensura.jpg',
+    '/avatars/BottonDiaDosMortos.jpg',
+    '/avatars/BottonCoisaEstranha1.jpg',
+    '/avatars/BottonCoisaEstranha2.jpg',
+    '/avatars/BottonTrans.jpg',
     '/avatars/MeepleVermelho.png',
-    '/avatars/1.jpg',
-    '/avatars/2.png',
+    '/avatars/MeepleAzul.png',
+    '/avatars/MeepleLaranja.png',
+    '/avatars/MeepleVerde.png',
+    '/avatars/MeepleRosa.png',
+    '/avatars/MeepleColorido.png',
+
+
+
 
 ];
 
@@ -283,7 +297,7 @@ export function MySeJogaSession() {
 
                     {/* Seletores - Aparecem abaixo */}
                     {showAvatarSelector && (
-                        <div className="flex gap-2 p-3 bg-gray-50 rounded-lg justify-center border-b">
+                        <div className="grid grid-cols-5 gap-2 p-3 bg-gray-50 rounded-lg border-b">
                             {AVATAR_OPTIONS.map((avatarPath) => (
                                 <button
                                     key={avatarPath}
