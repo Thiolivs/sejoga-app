@@ -404,13 +404,13 @@ export function EventGameSelection() {
                                                             </span>
                                                         </div>
                                                     </div>
-                                                    <p className="text-xs text-red-600 mt-2">
+                                                    {/*<p className="text-xs text-red-600 mt-2">
                                                         {!game.active
                                                             ? 'Jogo marcado como inativo'
                                                             : game.teacherCount === 0
                                                                 ? 'Nenhum monitor sabe ensinar'
                                                                 : 'Apenas 1 monitor sabe ensinar (mínimo: 2)'}
-                                                    </p>
+                                                    </p>*/}
                                                 </div>
                                             </div>
                                         </div>
