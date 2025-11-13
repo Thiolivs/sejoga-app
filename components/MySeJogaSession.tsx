@@ -112,46 +112,72 @@ export function MySeJogaSession() {
     }
 
     async function handleSave() {
-        if (!user) return;
+    if (!user) return;
 
-        try {
-            setSaving(true);
-            setError(null);
-            setSuccess(false);
+    try {
+        setSaving(true);
+        setError(null);
+        setSuccess(false);
 
-            const { error: updateError } = await supabase
-                .from('profiles')
-                .update({
-                    first_name: profile.first_name,
-                    last_name: profile.last_name,
-                    avatar: profile.avatar,
-                    background: profile.background
-                })
-                .eq('id', user.id);
+        // Se o email mudou, pedir confirmação dupla
+        if (email !== user.email) {
 
-            if (updateError) throw updateError;
+            // Segunda confirmação
+            const confirmVerification = window.confirm(
+                `📧 Um email de confirmação será enviado para:\n\n${email}\n\n` +
+                `Você precisará clicar no link do email para confirmar a alteração.\n\n` +
+                `Deseja continuar?`
+            );
 
-            if (email !== user.email) {
-                const { error: emailError } = await supabase.auth.updateUser({
-                    email: email
-                });
-
-                if (emailError) throw emailError;
+            if (!confirmVerification) {
+                setSaving(false);
+                return; // Cancela a operação
             }
-
-            setSuccess(true);
-            setIsEditing(false);
-            router.refresh();
-
-            setTimeout(() => setSuccess(false), 3000);
-
-        } catch (err) {
-            console.error('Erro ao salvar perfil:', err);
-            setError('Erro ao salvar alterações');
-        } finally {
-            setSaving(false);
         }
+
+        // Atualiza perfil (nome, sobrenome, avatar, background)
+        const { error: updateError } = await supabase
+            .from('profiles')
+            .update({
+                first_name: profile.first_name,
+                last_name: profile.last_name,
+                avatar: profile.avatar,
+                background: profile.background
+            })
+            .eq('id', user.id);
+
+        if (updateError) throw updateError;
+
+        // Atualiza email se mudou
+        if (email !== user.email) {
+            const { error: emailError } = await supabase.auth.updateUser({
+                email: email
+            });
+
+            if (emailError) throw emailError;
+
+            // Mostrar mensagem de sucesso
+            alert('✅ Email de confirmação enviado!\n\nVerifique sua caixa de entrada (e spam) para confirmar a alteração.');
+        } else {
+            setSuccess(true);
+            setTimeout(() => setSuccess(false), 3000);
+        }
+
+        setIsEditing(false);
+        router.refresh();
+
+    } catch (err: any) {
+        console.error('Erro ao salvar perfil:', err);
+        
+        if (err?.message?.includes('email')) {
+            setError('Erro ao atualizar email. Verifique se o email é válido.');
+        } else {
+            setError('Erro ao salvar alterações');
+        }
+    } finally {
+        setSaving(false);
     }
+}
 
     function handleCancel() {
         loadUserProfile();
