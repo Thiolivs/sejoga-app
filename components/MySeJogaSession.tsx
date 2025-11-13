@@ -31,10 +31,6 @@ const AVATAR_OPTIONS = [
     '/avatars/MeepleVerde.png',
     '/avatars/MeepleRosa.png',
     '/avatars/MeepleColorido.png',
-
-
-
-
 ];
 
 const BACKGROUND_OPTIONS = [
@@ -65,126 +61,148 @@ export function MySeJogaSession() {
     const router = useRouter();
 
     useEffect(() => {
-        loadUserProfile();
-    }, []);
+        async function loadUserProfile() {
+            try {
+                setLoading(true);
+                setError(null);
 
-    async function loadUserProfile() {
-        try {
-            setLoading(true);
-            setError(null);
+                const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser();
 
-            const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser();
+                if (userError || !currentUser) {
+                    console.log('Erro ao buscar usuário:', userError);
+                    setError('Você precisa estar logado para acessar esta página');
+                    setLoading(false);
+                    return;
+                }
 
-            if (userError || !currentUser) {
-                console.log('Erro ao buscar usuário:', userError);
-                setError('Você precisa estar logado para acessar esta página');
+                setUser(currentUser);
+                setEmail(currentUser.email || '');
+
+                const { data, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('first_name, last_name, avatar, background')
+                    .eq('id', currentUser.id)
+                    .single();
+
+                if (profileError) {
+                    console.log('Erro ao buscar perfil:', profileError);
+                    throw profileError;
+                }
+
+                setProfile({
+                    first_name: data?.first_name || '',
+                    last_name: data?.last_name || '',
+                    avatar: data?.avatar || '/avatars/MeepleColorido.png',
+                    background: data?.background || '/images/backgrounds/rainbow.png'
+                });
+
+            } catch (err) {
+                console.error('Erro ao carregar perfil:', err);
+                setError('Erro ao carregar dados do perfil');
+            } finally {
                 setLoading(false);
-                return;
+            }
+        }
+
+        loadUserProfile();
+    }, [supabase]);
+
+    async function handleSave() {
+        if (!user) return;
+
+        try {
+            setSaving(true);
+            setError(null);
+            setSuccess(false);
+
+            // Se o email mudou, pedir confirmação
+            if (email !== user.email) {
+                const confirmVerification = window.confirm(
+                    `📧 Um email de confirmação será enviado para:\n\n${email}\n\n` +
+                    `Você precisará clicar no link do email para confirmar a alteração.\n\n` +
+                    `Deseja continuar?`
+                );
+
+                if (!confirmVerification) {
+                    setSaving(false);
+                    return;
+                }
             }
 
-            setUser(currentUser);
+            // Atualiza perfil
+            const { error: updateError } = await supabase
+                .from('profiles')
+                .update({
+                    first_name: profile.first_name,
+                    last_name: profile.last_name,
+                    avatar: profile.avatar,
+                    background: profile.background
+                })
+                .eq('id', user.id);
+
+            if (updateError) throw updateError;
+
+            // Atualiza email se mudou
+            if (email !== user.email) {
+                const { error: emailError } = await supabase.auth.updateUser({
+                    email: email
+                });
+
+                if (emailError) throw emailError;
+
+                alert('✅ Email de confirmação enviado!\n\nVerifique sua caixa de entrada (e spam) para confirmar a alteração.');
+            } else {
+                setSuccess(true);
+                setTimeout(() => setSuccess(false), 3000);
+            }
+
+            setIsEditing(false);
+            router.refresh();
+
+        } catch (err) {
+            console.error('Erro ao salvar perfil:', err);
+            
+            if (err && typeof err === 'object' && 'message' in err && 
+                typeof err.message === 'string' && err.message.includes('email')) {
+                setError('Erro ao atualizar email. Verifique se o email é válido.');
+            } else {
+                setError('Erro ao salvar alterações');
+            }
+        } finally {
+            setSaving(false);
+        }
+    }
+
+    async function handleCancel() {
+        setIsEditing(false);
+        setShowAvatarSelector(false);
+        setShowBgSelector(false);
+        setError(null);
+        
+        // Recarrega os dados originais
+        try {
+            const { data: { user: currentUser } } = await supabase.auth.getUser();
+            if (!currentUser) return;
+
             setEmail(currentUser.email || '');
 
-            const { data, error: profileError } = await supabase
+            const { data } = await supabase
                 .from('profiles')
                 .select('first_name, last_name, avatar, background')
                 .eq('id', currentUser.id)
                 .single();
 
-            if (profileError) {
-                console.log('Erro ao buscar perfil:', profileError);
-                throw profileError;
+            if (data) {
+                setProfile({
+                    first_name: data.first_name || '',
+                    last_name: data.last_name || '',
+                    avatar: data.avatar || '/avatars/MeepleColorido.png',
+                    background: data.background || '/images/backgrounds/rainbow.png'
+                });
             }
-
-            setProfile({
-                first_name: data?.first_name || '',
-                last_name: data?.last_name || '',
-                avatar: data?.avatar || '/avatars/MeepleColorido.png',
-                background: data?.background || '/images/backgrounds/rainbow.png'
-            });
-
         } catch (err) {
-            console.error('Erro ao carregar perfil:', err);
-            setError('Erro ao carregar dados do perfil');
-        } finally {
-            setLoading(false);
+            console.error('Erro ao recarregar perfil:', err);
         }
-    }
-
-    async function handleSave() {
-    if (!user) return;
-
-    try {
-        setSaving(true);
-        setError(null);
-        setSuccess(false);
-
-        // Se o email mudou, pedir confirmação dupla
-        if (email !== user.email) {
-
-            // Segunda confirmação
-            const confirmVerification = window.confirm(
-                `📧 Um email de confirmação será enviado para:\n\n${email}\n\n` +
-                `Você precisará clicar no link do email para confirmar a alteração.\n\n` +
-                `Deseja continuar?`
-            );
-
-            if (!confirmVerification) {
-                setSaving(false);
-                return; // Cancela a operação
-            }
-        }
-
-        // Atualiza perfil (nome, sobrenome, avatar, background)
-        const { error: updateError } = await supabase
-            .from('profiles')
-            .update({
-                first_name: profile.first_name,
-                last_name: profile.last_name,
-                avatar: profile.avatar,
-                background: profile.background
-            })
-            .eq('id', user.id);
-
-        if (updateError) throw updateError;
-
-        // Atualiza email se mudou
-        if (email !== user.email) {
-            const { error: emailError } = await supabase.auth.updateUser({
-                email: email
-            });
-
-            if (emailError) throw emailError;
-
-            // Mostrar mensagem de sucesso
-            alert('✅ Email de confirmação enviado!\n\nVerifique sua caixa de entrada (e spam) para confirmar a alteração.');
-        } else {
-            setSuccess(true);
-            setTimeout(() => setSuccess(false), 3000);
-        }
-
-        setIsEditing(false);
-        router.refresh();
-
-    } catch (err: any) {
-        console.error('Erro ao salvar perfil:', err);
-        
-        if (err?.message?.includes('email')) {
-            setError('Erro ao atualizar email. Verifique se o email é válido.');
-        } else {
-            setError('Erro ao salvar alterações');
-        }
-    } finally {
-        setSaving(false);
-    }
-}
-
-    function handleCancel() {
-        loadUserProfile();
-        setIsEditing(false);
-        setShowAvatarSelector(false);
-        setShowBgSelector(false);
-        setError(null);
     }
 
     async function handleAvatarSelect(avatarPath: string) {
@@ -201,11 +219,7 @@ export function MySeJogaSession() {
 
             if (error) throw error;
 
-            // Força atualização
             router.refresh();
-
-            // Recarrega perfil para garantir
-            await loadUserProfile();
         } catch (err) {
             console.error('Erro ao salvar avatar:', err);
             setError('Erro ao salvar avatar');
@@ -277,7 +291,7 @@ export function MySeJogaSession() {
                 )}
 
                 <div className="space-y-4">
-                    {/* Avatar e Background Section - Lado a Lado */}
+                    {/* Avatar e Background Section */}
                     <div className="grid grid-cols-2 gap-4 pb-3 border-b">
                         {/* Avatar */}
                         <div className="flex flex-col items-center gap-2">
@@ -295,7 +309,7 @@ export function MySeJogaSession() {
                                     setShowAvatarSelector(!showAvatarSelector);
                                     setShowBgSelector(false);
                                 }}
-                                className="text-xs h-1"
+                                className="text-xs h-7"
                             >
                                 Alterar Avatar
                             </Button>
@@ -321,17 +335,18 @@ export function MySeJogaSession() {
                         </div>
                     </div>
 
-                    {/* Seletores - Aparecem abaixo */}
+                    {/* Seletores */}
                     {showAvatarSelector && (
                         <div className="grid grid-cols-5 gap-2 p-3 bg-gray-50 rounded-lg border-b">
                             {AVATAR_OPTIONS.map((avatarPath) => (
                                 <button
                                     key={avatarPath}
                                     onClick={() => handleAvatarSelect(avatarPath)}
-                                    className={`relative h-12 w-12 rounded-full overflow-hidden border-2 transition-all hover:scale-110 ${profile.avatar === avatarPath
-                                        ? 'border-blue-600 ring-2 ring-blue-200'
-                                        : 'border-gray-300 hover:border-blue-400'
-                                        }`}
+                                    className={`relative h-12 w-12 rounded-full overflow-hidden border-2 transition-all hover:scale-110 ${
+                                        profile.avatar === avatarPath
+                                            ? 'border-blue-600 ring-2 ring-blue-200'
+                                            : 'border-gray-300 hover:border-blue-400'
+                                    }`}
                                 >
                                     <Image src={avatarPath} alt="Avatar" fill className="object-cover" />
                                 </button>
@@ -345,10 +360,11 @@ export function MySeJogaSession() {
                                 <button
                                     key={bgPath}
                                     onClick={() => handleBackgroundSelect(bgPath)}
-                                    className={`relative h-20 rounded overflow-hidden border-2 transition-all hover:scale-105 ${profile.background === bgPath
-                                        ? 'border-blue-600 ring-2 ring-blue-200'
-                                        : 'border-gray-300 hover:border-blue-400'
-                                        }`}
+                                    className={`relative h-20 rounded overflow-hidden border-2 transition-all hover:scale-105 ${
+                                        profile.background === bgPath
+                                            ? 'border-blue-600 ring-2 ring-blue-200'
+                                            : 'border-gray-300 hover:border-blue-400'
+                                    }`}
                                 >
                                     <Image src={bgPath} alt="Background" fill className="object-cover" />
                                 </button>
