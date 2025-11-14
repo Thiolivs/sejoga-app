@@ -57,6 +57,10 @@ export function MySeJogaSession() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
     const supabase = createClientComponentClient();
     const router = useRouter();
 
@@ -161,8 +165,8 @@ export function MySeJogaSession() {
 
         } catch (err) {
             console.error('Erro ao salvar perfil:', err);
-            
-            if (err && typeof err === 'object' && 'message' in err && 
+
+            if (err && typeof err === 'object' && 'message' in err &&
                 typeof err.message === 'string' && err.message.includes('email')) {
                 setError('Erro ao atualizar email. Verifique se o email é válido.');
             } else {
@@ -178,7 +182,7 @@ export function MySeJogaSession() {
         setShowAvatarSelector(false);
         setShowBgSelector(false);
         setError(null);
-        
+
         // Recarrega os dados originais
         try {
             const { data: { user: currentUser } } = await supabase.auth.getUser();
@@ -241,6 +245,53 @@ export function MySeJogaSession() {
             document.body.style.backgroundImage = `url(${bgPath})`;
         } catch (err) {
             console.error('Erro ao salvar background:', err);
+        }
+    }
+
+    async function handlePasswordChange() {
+        if (!newPassword || !confirmPassword) {
+            setError('Preencha ambos os campos de senha');
+            return;
+        }
+
+        if (newPassword.length < 7) {
+            setError('A senha deve ter no mínimo 7 caracteres');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            setError('As senhas não coincidem');
+            return;
+        }
+
+        const confirmChange = window.confirm(
+            '🔒 Você está prestes a alterar sua senha.\n\n' +
+            'Após a alteração, você precisará usar a nova senha para fazer login.\n\n' +
+            'Deseja continuar?'
+        );
+
+        if (!confirmChange) return;
+
+        try {
+            setSaving(true);
+            setError(null);
+
+            const { error } = await supabase.auth.updateUser({
+                password: newPassword
+            });
+
+            if (error) throw error;
+
+            alert('✅ Senha alterada com sucesso!');
+            setIsChangingPassword(false);
+            setNewPassword('');
+            setConfirmPassword('');
+
+        } catch (err) {
+            console.error('Erro ao alterar senha:', err);
+            setError('Erro ao alterar senha. Tente novamente.');
+        } finally {
+            setSaving(false);
         }
     }
 
@@ -342,11 +393,10 @@ export function MySeJogaSession() {
                                 <button
                                     key={avatarPath}
                                     onClick={() => handleAvatarSelect(avatarPath)}
-                                    className={`relative h-12 w-12 rounded-full overflow-hidden border-2 transition-all hover:scale-110 ${
-                                        profile.avatar === avatarPath
-                                            ? 'border-blue-600 ring-2 ring-blue-200'
-                                            : 'border-gray-300 hover:border-blue-400'
-                                    }`}
+                                    className={`relative h-12 w-12 rounded-full overflow-hidden border-2 transition-all hover:scale-110 ${profile.avatar === avatarPath
+                                        ? 'border-blue-600 ring-2 ring-blue-200'
+                                        : 'border-gray-300 hover:border-blue-400'
+                                        }`}
                                 >
                                     <Image src={avatarPath} alt="Avatar" fill className="object-cover" />
                                 </button>
@@ -360,11 +410,10 @@ export function MySeJogaSession() {
                                 <button
                                     key={bgPath}
                                     onClick={() => handleBackgroundSelect(bgPath)}
-                                    className={`relative h-20 rounded overflow-hidden border-2 transition-all hover:scale-105 ${
-                                        profile.background === bgPath
-                                            ? 'border-blue-600 ring-2 ring-blue-200'
-                                            : 'border-gray-300 hover:border-blue-400'
-                                    }`}
+                                    className={`relative h-20 rounded overflow-hidden border-2 transition-all hover:scale-105 ${profile.background === bgPath
+                                        ? 'border-blue-600 ring-2 ring-blue-200'
+                                        : 'border-gray-300 hover:border-blue-400'
+                                        }`}
                                 >
                                     <Image src={bgPath} alt="Background" fill className="object-cover" />
                                 </button>
@@ -426,6 +475,86 @@ export function MySeJogaSession() {
                             </p>
                         )}
                     </div>
+
+                    {/* Alterar Senha */}
+                    <div className="border-t pt-4">
+                        <div className="flex justify-between items-center mb-2">
+                            <label className="block text-xs font-medium text-gray-700">Senha</label>
+                            {!isChangingPassword && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setIsChangingPassword(true)}
+                                    className="text-xs h-6"
+                                >
+                                    Alterar Senha
+                                </Button>
+                            )}
+                        </div>
+
+                        {isChangingPassword ? (
+                            <div className="space-y-3 bg-gray-50 p-3 rounded-lg">
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                                        Nova Senha
+                                    </label>
+                                    <input
+                                        type="password"
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="Mínimo 7 caracteres"
+                                        minLength={7}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                                        Confirmar Nova Senha
+                                    </label>
+                                    <input
+                                        type="password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="Digite a senha novamente"
+                                        minLength={6}
+                                    />
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <Button
+                                        onClick={handlePasswordChange}
+                                        disabled={saving}
+                                        size="sm"
+                                        className="flex-1 h-7 text-xs"
+                                    >
+                                        {saving ? 'Alterando...' : 'Confirmar'}
+                                    </Button>
+                                    <Button
+                                        onClick={() => {
+                                            setIsChangingPassword(false);
+                                            setNewPassword('');
+                                            setConfirmPassword('');
+                                            setError(null);
+                                        }}
+                                        disabled={saving}
+                                        variant="outline"
+                                        size="sm"
+                                        className="flex-1 h-7 text-xs"
+                                    >
+                                        Cancelar
+                                    </Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <p className="px-2 py-1.5 text-sm bg-gray-50 rounded text-gray-900">
+                                ••••••••
+                            </p>
+                        )}
+                    </div>
+
+
 
                     {/* Botões */}
                     {isEditing && (
