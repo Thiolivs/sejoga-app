@@ -320,13 +320,9 @@ export function MySeJogaSession() {
     return (
         <div className="max-w-2xl mx-auto p-4">
             <div className="bg-white rounded-lg shadow p-4">
-                <div className="pl-5 flex justify-between items-center mb-4">
+                <div className="flex justify-center mb-4">
                     <h1 className="text-[30px] font-aladin text-blue-800">Meu espaço</h1>
-                    {!isEditing && (
-                        <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
-                            Editar Perfil
-                        </Button>
-                    )}
+
                 </div>
 
                 {error && (
@@ -421,6 +417,22 @@ export function MySeJogaSession() {
                         </div>
                     )}
 
+                    {/* Informações e Editar*/}
+
+                    <div className="flex justify-between items-center mb-5">
+                        <label className="block text-xs font-semibold text-gray-700">Meus dados</label>
+                        {!isEditing && (
+                            <Button variant="outline" 
+                                    size="sm" 
+                                    className="text-xs h-6 text-red-700"
+                                    onClick={() => setIsEditing(true)}>
+                                    Alterar dados
+                            </Button>
+                        )}
+
+                    </div>
+
+
                     {/* Nome e Sobrenome */}
                     <div className="grid grid-cols-2 gap-3">
                         <div>
@@ -479,13 +491,13 @@ export function MySeJogaSession() {
                     {/* Alterar Senha */}
                     <div className="border-t pt-4">
                         <div className="flex justify-between items-center mb-2">
-                            <label className="block text-xs font-medium text-gray-700">Senha</label>
+                            <label className="block text-xs font-semibold text-gray-700">Senha</label>
                             {!isChangingPassword && (
                                 <Button
-                                    variant="ghost"
+                                    variant="outline"
                                     size="sm"
                                     onClick={() => setIsChangingPassword(true)}
-                                    className="text-xs h-6"
+                                    className="text-xs h-6  text-red-700"
                                 >
                                     Alterar Senha
                                 </Button>
