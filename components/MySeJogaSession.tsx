@@ -20,10 +20,10 @@ const AVATAR_OPTIONS = [
     '/avatars/AvatarNatalino.png',
     '/avatars/AvatarOrgulhoNerd.png',
     '/avatars/AvatarBarbie.png',
-    '/avatars/BottonSemCensura.jpg',
-    '/avatars/BottonDiaDosMortos.jpg',
+    '/avatars/Botton5Anos.jpg',
     '/avatars/BottonCoisaEstranha1.jpg',
     '/avatars/BottonCoisaEstranha2.jpg',
+    '/avatars/BottonSemCensura.jpg',
     '/avatars/BottonTrans.jpg',
     '/avatars/MeepleVermelho.png',
     '/avatars/MeepleAzul.png',
@@ -35,9 +35,11 @@ const AVATAR_OPTIONS = [
 
 const BACKGROUND_OPTIONS = [
     '/images/backgrounds/rainbow.png',
+    '/images/backgrounds/lesbica.png',
     '/images/backgrounds/gay.png',
     '/images/backgrounds/bi.png',
     '/images/backgrounds/trans.png',
+
 ];
 
 export function MySeJogaSession() {
@@ -422,11 +424,11 @@ export function MySeJogaSession() {
                     <div className="flex justify-between items-center mb-5">
                         <label className="block text-xs font-semibold text-gray-700">Meus dados</label>
                         {!isEditing && (
-                            <Button variant="outline" 
-                                    size="sm" 
-                                    className="text-xs h-6 text-red-700"
-                                    onClick={() => setIsEditing(true)}>
-                                    Alterar dados
+                            <Button variant="outline"
+                                size="sm"
+                                className="text-xs h-6 text-red-700"
+                                onClick={() => setIsEditing(true)}>
+                                Alterar dados
                             </Button>
                         )}
 
