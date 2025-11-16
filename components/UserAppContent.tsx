@@ -22,7 +22,7 @@ interface UserAppContentProps {
 }
 
 export function UserAppContent({ userEmail }: UserAppContentProps) {
-    const [activeTab, setActiveTab] = useState<Tab>('jogos');
+    const [activeTab, setActiveTab] = useState<string>('jogos');
     //const [adminSection, setAdminSection] = useState<AdminSection>('menu');
     const { isAdmin } = useUserRole();
     const { isMonitor } = useUserRole();
@@ -32,6 +32,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
     const [role, setRole] = useState<string | null>(null);
     const [teachCount, setTeachCount] = useState(0);
     const [totalGames, setTotalGames] = useState(0);
+
 
     // Busca o usuário autenticado e o nome no perfil
     useEffect(() => {
