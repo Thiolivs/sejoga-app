@@ -62,7 +62,7 @@ export function SplashScreen({ onFinish, logoUrl }: SplashScreenProps) {
 
                 {/* Subtítulo */}
                 <p className="text-xl text-purple-900 animate-fade-in-up-delay font-light drop-shadow">
-                    <i>Seu evento de Diversidade<br/> nos Jogos de Mesa</i>
+                    Seu evento de Diversidade<br/> nos Jogos de Mesa
                 </p>
 
                 {/* Loading dots */}
