@@ -101,7 +101,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
             {/* Tabs */}
             <div className="bg-white/70">
                 <div className="max-w2xl mx-auto flex flex-col items-center sm:px-6 lg:px-8">
-                    <nav className="flex space-x-1 " aria-label="Tabs">
+                    <nav className="flex" aria-label="Tabs">
 
 
                         <button
