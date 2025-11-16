@@ -62,8 +62,23 @@ export function CreateAccountForm() {
             setErrorMessage(null);
             setSuccessMessage(null);
             
-            const supabase = createClient();
             const { email, password, firstName, lastName } = values;
+
+            // Confirmação antes de criar conta
+            const confirmed = window.confirm(
+                `📋 Confirme seus dados:\n\n` +
+                `Nome: ${firstName}\n` +
+                `Sobrenome: ${lastName}\n` +
+                `Email: ${email}\n\n` +
+                `📧 Um email de confirmação será enviado para ${email}.\n\n` +
+                `Deseja prosseguir?`
+            );
+
+            if (!confirmed) {
+                return; // Usuário cancelou
+            }
+
+            const supabase = createClient();
 
             const {
                 error,
@@ -97,13 +112,13 @@ export function CreateAccountForm() {
             }
 
             if (user) {
-                setSuccessMessage('Conta criada com sucesso! Redirecionando...');
+                setSuccessMessage('Conta criada com sucesso! Verifique seu email para confirmar o cadastro.');
                 form.reset();
                 
                 setTimeout(() => {
                     router.refresh();
                     router.push("/user-app");
-                }, 1500);
+                }, 2000);
             }
 
         } catch (error) {
@@ -145,7 +160,7 @@ export function CreateAccountForm() {
                                 <FormItem>
                                     <FormLabel>Nome</FormLabel>
                                     <FormControl>
-                                        <Input  {...field} />
+                                        <Input {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
