@@ -29,23 +29,39 @@ export function BackgroundManager() {
 
         loadBackground();
 
-        const channel = supabase
-            .channel('bg-changes')
-            .on('postgres_changes', {
-                event: 'UPDATE',
-                schema: 'public',
-                table: 'profiles',
-            }, (payload: { new?: { background?: string } }) => {
-                if (payload.new?.background) {
-                    document.body.style.backgroundImage = `url(${payload.new.background})`;
-                }
-            })
-            .subscribe();
+        const setupRealtimeListener = async () => {
+            const { data: { user: currentUser } } = await supabase.auth.getUser();
 
-        return () => { supabase.removeChannel(channel); };
+            if (!currentUser) return;
+
+            // ✅ CORRIGIDO: Escuta APENAS mudanças do usuário logado
+            const channel = supabase
+                .channel(`profile-changes-${currentUser.id}`)
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'UPDATE',
+                        schema: 'public',
+                        table: 'profiles',
+                        filter: `id=eq.${currentUser.id}` // ← IMPORTANTE: filtra por ID
+                    },
+                    (payload: { new?: { background?: string } }) => {
+                        if (payload.new?.background) {
+                            document.body.style.backgroundImage = `url(${payload.new.background})`;
+                        }
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                supabase.removeChannel(channel);
+            };
+        };
+
+        setupRealtimeListener();
+
     }, [supabase]);
 
-    // Overlay durante carregamento
     if (!bgLoaded) {
         return (
             <div style={{
