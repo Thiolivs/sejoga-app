@@ -7,16 +7,16 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-import { 
+import {
     Form,
-    FormControl, 
-    FormField, 
-    FormItem, 
-    FormLabel, 
-    FormMessage 
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage
 } from "@/components/ui/form";
 
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from '@/lib/supabase';
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
@@ -55,12 +55,12 @@ export function CreateAccountForm() {
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            const supabase = createClientComponentClient();
+            const supabase = createClient();
             const { email, password, firstName, lastName } = values;
-            
+
             const {
-                error, 
-                data: { user }, 
+                error,
+                data: { user },
             } = await supabase.auth.signUp({
                 email,
                 password,
@@ -98,8 +98,8 @@ export function CreateAccountForm() {
                 <i>Mais rápido que uma partida de Terra Mystica</i>
             </span>
             <Form {...form}>
-                <form 
-                    onSubmit={form.handleSubmit(onSubmit)} 
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
                     className="flex flex-col space-y-4 w-full"
                 >
                     <div className="grid grid-cols-2 gap-4">
@@ -140,10 +140,10 @@ export function CreateAccountForm() {
                             <FormItem>
                                 <FormLabel>E-mail</FormLabel>
                                 <FormControl>
-                                    <Input 
+                                    <Input
                                         type="email"
-                                        placeholder="Digite seu email" 
-                                        {...field} 
+                                        placeholder="Digite seu email"
+                                        {...field}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -159,10 +159,10 @@ export function CreateAccountForm() {
                             <FormItem>
                                 <FormLabel>Senha</FormLabel>
                                 <FormControl>
-                                    <Input 
-                                        type="password" 
-                                        placeholder="Digite a senha" 
-                                        {...field} 
+                                    <Input
+                                        type="password"
+                                        placeholder="Digite a senha"
+                                        {...field}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -178,10 +178,10 @@ export function CreateAccountForm() {
                             <FormItem>
                                 <FormLabel>Confirmar Senha</FormLabel>
                                 <FormControl>
-                                    <Input 
-                                        type="password" 
-                                        placeholder="Digite a senha novamente" 
-                                        {...field} 
+                                    <Input
+                                        type="password"
+                                        placeholder="Digite a senha novamente"
+                                        {...field}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -189,8 +189,8 @@ export function CreateAccountForm() {
                         )}
                     />
 
-                    <Button 
-                        type="submit" 
+                    <Button
+                        type="submit"
                         className="w-full mt-6 bg-sejoga-verde-oficial"
                     >
                         SeJoga!

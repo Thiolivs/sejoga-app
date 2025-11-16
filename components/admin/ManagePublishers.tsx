@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, ArrowLeft, Building2 } from 'lucide-react';
@@ -18,7 +18,7 @@ interface Publisher {
 
 export function ManagePublishers() {
     const router = useRouter();
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
     const [publishers, setPublishers] = useState<Publisher[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingId, setEditingId] = useState<string | null>(null);

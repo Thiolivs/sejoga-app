@@ -6,7 +6,7 @@ import { useTrainings } from '@/hooks/useTrainings';
 import { useUser } from '@/hooks/useUser';
 import { useUserRole } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import { Plus, Sun, Sunset, Moon, MapPin, Calendar, XCircle, X } from 'lucide-react';
 
 interface TrainingAvailabilityWithProfile {
@@ -82,7 +82,7 @@ export function TrainingSession() {
                 loadCycleData(cycle.id);
             });
         }
-    }, [cycles.length]); 
+    }, [cycles.length]);
 
     const handleCycleUnavailability = async (cycleId: string, isCurrentlyUnavailable: boolean) => {
         if (!user) return;
@@ -115,7 +115,7 @@ export function TrainingSession() {
         if (!confirm(`Tem certeza que deseja excluir o treinamento do dia ${trainingDate}?`)) return;
 
         try {
-            const supabase = createClientComponentClient();
+            const supabase = createClient();
             const { error } = await supabase
                 .from('trainings')
                 .delete()

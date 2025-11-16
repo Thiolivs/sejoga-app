@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import { useUser } from './useUser';
 
 export function useUserRole() {
     const { user, loading: userLoading } = useUser();
     const [role, setRole] = useState<'admin' | 'monitor' | 'user' | null>(null);
     const [loading, setLoading] = useState(true);
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
 
     useEffect(() => {
         if (!user) {
@@ -20,26 +20,26 @@ export function useUserRole() {
     }, [user]);
 
     const fetchUserRole = async () => {
-    try {
-        setLoading(true);
-        
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user!.id)
-            .single();
+        try {
+            setLoading(true);
 
-        if (error) throw error;
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', user!.id)
+                .single();
 
-        const fetchedRole = data?.role || 'user';
-        setRole(fetchedRole);
-    } catch (err) {
-        console.error('Erro ao buscar role:', err instanceof Error ? err.message : 'Erro desconhecido');
-        setRole('user'); // Default if error
-    } finally {
-        setLoading(false);
-    }
-};
+            if (error) throw error;
+
+            const fetchedRole = data?.role || 'user';
+            setRole(fetchedRole);
+        } catch (err) {
+            console.error('Erro ao buscar role:', err instanceof Error ? err.message : 'Erro desconhecido');
+            setRole('user'); // Default if error
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Auxiliar Functions
     const isAdmin = role === 'admin';
@@ -47,7 +47,7 @@ export function useUserRole() {
     const isUser = role === 'user';
 
     useEffect(() => {
-}, [role, isAdmin, loading]);
+    }, [role, isAdmin, loading]);
 
 
     return {

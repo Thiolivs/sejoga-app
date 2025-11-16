@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import type { BoardgameWithTeachers, Profile } from '@/types/database';
 import { useGameLoans } from './useGameLoans';
 
@@ -7,7 +7,7 @@ export function useBoardgames(userId?: string) {
     const [boardgames, setBoardgames] = useState<BoardgameWithTeachers[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
     const { loans, isGameLoaned, isLoanedByMe } = useGameLoans();
 
     useEffect(() => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,7 +13,7 @@ export function ManageEvents() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -138,8 +138,8 @@ export function ManageEvents() {
   }
 
   return (
-            <div className="space-y-6 bg-white/95 border pt-6 rounded-lg p-3">
-                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Gerenciar Eventos</div>
+    <div className="space-y-6 bg-white/95 border pt-6 rounded-lg p-3">
+      <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Gerenciar Eventos</div>
 
       <div className="flex justify-center items-center">
         <Button

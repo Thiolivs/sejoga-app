@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase';
 import {
     Sheet,
     SheetContent,
@@ -26,21 +27,31 @@ interface SidebarMenuProps {
     isAdmin?: boolean;
     isMonitor?: boolean;
     currentPage?: string;
-    onLogout?: () => void;
 }
 
 export function SidebarMenu({ 
     isAdmin = false, 
     isMonitor = false,
     currentPage = 'user-app',
-    onLogout 
 }: SidebarMenuProps) {
     const [open, setOpen] = useState(false);
     const router = useRouter();
+    const supabase = createClient();
 
     const handleNavigation = (path: string) => {
         router.push(path);
         setOpen(false);
+    };
+
+    const handleLogout = async () => {
+        try {
+            await supabase.auth.signOut();
+            setOpen(false);
+            router.push('/');
+            router.refresh();
+        } catch (error) {
+            console.error('Erro ao fazer logout:', error);
+        }
     };
 
     return (
@@ -140,7 +151,7 @@ export function SidebarMenu({
                     {/* Item: Usuários (apenas admin) */}
                     {isAdmin && (
                         <button
-                            onClick={() => handleNavigation('/user-app/administration/manage-users')}
+                            onClick={() => handleNavigation('/user-app/administration/users')}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                                 currentPage === 'users'
                                     ? 'bg-red-100 text-red-700'
@@ -155,10 +166,7 @@ export function SidebarMenu({
                     {/* Logout no final */}
                     <div className="border-t my-2" />
                     <button
-                        onClick={() => {
-                            onLogout?.();
-                            setOpen(false);
-                        }}
+                        onClick={handleLogout}
                         className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-red-50 text-red-600"
                     >
                         <LogOut className="w-5 h-5" />

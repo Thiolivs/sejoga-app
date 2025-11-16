@@ -4,8 +4,10 @@ import { TeachingSessionLog } from '@/components/TeachingSessionLog';
 import { MySeJogaSession } from '@/components/MySeJogaSession';
 import { TrainingSession } from '@/components/TrainingSession';
 import { StatisticsSession } from '@/components/StatisticsSession';
+import { User } from '@supabase/supabase-js';
 
-import { User, createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+
+import { createClient } from '@/lib/supabase';
 import { useState, useEffect } from 'react';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -22,7 +24,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
     const [activeTab, setActiveTab] = useState<Tab>('jogos');
     const { isAdmin } = useUserRole();
     const { isMonitor } = useUserRole();
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
     const [user, setUser] = useState<User | null>(null);
     const [name, setName] = useState<string | null>(null);
     const [role, setRole] = useState<string | null>(null);
@@ -107,11 +109,10 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                     <nav className="flex" aria-label="Tabs">
                         <button
                             onClick={() => handleTabChange('profile')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${
-                                activeTab === 'profile'
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${activeTab === 'profile'
                                     ? 'border-red-500 text-red-600'
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            }`}
+                                }`}
                         >
                             <Star className="w-4 h-4" />
                             Meu SeJoga
@@ -119,11 +120,10 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
 
                         <button
                             onClick={() => handleTabChange('register')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${
-                                activeTab === 'register'
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${activeTab === 'register'
                                     ? 'border-orange-500 text-orange-600'
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            }`}
+                                }`}
                         >
                             <ClipboardList className="w-4 h-4" />
                             Registro
@@ -131,11 +131,10 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
 
                         <button
                             onClick={() => handleTabChange('jogos')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${
-                                activeTab === 'jogos'
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${activeTab === 'jogos'
                                     ? 'border-sejoga-verde-oficial text-sejoga-verde-oficial'
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            }`}
+                                }`}
                         >
                             <Dices className="w-4 h-4" />
                             Acervo
@@ -143,11 +142,10 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
 
                         <button
                             onClick={() => handleTabChange('training')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${
-                                activeTab === 'training'
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${activeTab === 'training'
                                     ? 'border-sejoga-azul-oficial text-sejoga-azul-oficial'
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            }`}
+                                }`}
                         >
                             <Calendar className="w-4 h-4" />
                             Treinamentos
@@ -155,11 +153,10 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
 
                         <button
                             onClick={() => handleTabChange('statistics')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${
-                                activeTab === 'statistics'
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${activeTab === 'statistics'
                                     ? 'border-sejoga-rosa-oficial text-sejoga-rosa-oficial'
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            }`}
+                                }`}
                         >
                             <ChartNoAxesCombined className="w-4 h-4" />
                             Dados

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { User } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Image from 'next/image';
@@ -63,19 +64,24 @@ export function MySeJogaSession() {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
     const router = useRouter();
 
     useEffect(() => {
         async function loadUserProfile() {
             try {
+                console.log('🔍 MySeJoga - Iniciando busca do usuário...');
+
                 setLoading(true);
                 setError(null);
 
                 const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser();
 
+                console.log('🔍 MySeJoga - User:', currentUser);
+                console.log('🔍 MySeJoga - Error:', userError);
+
                 if (userError || !currentUser) {
-                    console.log('Erro ao buscar usuário:', userError);
+                console.log('❌ MySeJoga - Erro ao buscar usuário:', userError);
                     setError('Você precisa estar logado para acessar esta página');
                     setLoading(false);
                     return;

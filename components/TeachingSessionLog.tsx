@@ -2,7 +2,7 @@
 import { Boardgame } from '@/types/database';
 
 import { useState, useEffect } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,7 +18,7 @@ export function TeachingSessionLog() {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [resetAutocomplete, setResetAutocomplete] = useState(false); // ✅ estado para resetar
-  const supabase = createClientComponentClient();
+const supabase = createClient();
 
   const [formData, setFormData] = useState({
     boardgame_id: '',

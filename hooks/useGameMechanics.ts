@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import type { GameMechanic } from '@/types/database';
 
 export function useGameMechanics() {
     const [mechanics, setMechanics] = useState<GameMechanic[]>([]);
     const [loading, setLoading] = useState(true);
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
 
     useEffect(() => {
         fetchMechanics();

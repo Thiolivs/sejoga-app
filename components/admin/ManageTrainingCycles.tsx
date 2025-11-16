@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Calendar, ArrowLeft } from 'lucide-react';
@@ -10,7 +10,7 @@ import type { TrainingCycle } from '@/types/database';
 
 export function ManageTrainingCycles() {
     const router = useRouter();
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
     const [cycles, setCycles] = useState<TrainingCycle[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingId, setEditingId] = useState<string | null>(null);

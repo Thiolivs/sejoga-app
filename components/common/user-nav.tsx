@@ -1,6 +1,7 @@
 "use client";
 
-import { User, createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { User } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -24,15 +25,20 @@ export function UserNav() {
     const [name, setName] = useState<string | null>(null);
     const [role, setRole] = useState<string | null>(null);
     const [avatar, setAvatar] = useState<string>('/avatars/MeepleColorido.png');
-    const supabase = createClientComponentClient();
+const supabase = createClient();
     const router = useRouter();
 
     useEffect(() => {
         const fetchUserAndProfile = async () => {
+            console.log('🔍 UserNav - Iniciando busca...');
+
             const {
                 data: { user },
                 error: userError,
             } = await supabase.auth.getUser();
+
+            console.log('🔍 UserNav - User:', user);
+            console.log('🔍 UserNav - Error:', userError);
 
             if (userError || !user) {
                 console.log("Erro ao buscar usuário:", userError);
@@ -61,7 +67,7 @@ export function UserNav() {
         // Configurar listener para mudanças em tempo real
         const setupRealtimeListener = async () => {
             const { data: { user: currentUser } } = await supabase.auth.getUser();
-            
+
             if (!currentUser) return;
 
             const channel = supabase
@@ -117,16 +123,16 @@ export function UserNav() {
 
                     <DropdownMenuContent className="w-56" align="end" forceMount>
                         <DropdownMenuLabel className="font-normal">
-                        
-                        <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-semibold leading-none">{name}</p>
-                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                        <p></p>
-                        <p></p>
-                            <span className="self-start bg-red-100 text-red-800 text-[11px] font-medium rounded px-1 py-0.5 leading-tight capitalize">
-                                {role}
-                            </span>
-                        </div>
+
+                            <div className="flex flex-col space-y-1">
+                                <p className="text-sm font-semibold leading-none">{name}</p>
+                                <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                                <p></p>
+                                <p></p>
+                                <span className="self-start bg-red-100 text-red-800 text-[11px] font-medium rounded px-1 py-0.5 leading-tight capitalize">
+                                    {role}
+                                </span>
+                            </div>
 
                         </DropdownMenuLabel>
 

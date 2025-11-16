@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import type { Training, TrainingCycle, TrainingCycleUnavailability } from '@/types/database';
 
 export function useTrainings() {
@@ -7,7 +7,7 @@ export function useTrainings() {
     const [trainings, setTrainings] = useState<Training[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
 
     useEffect(() => {
         fetchData();
@@ -123,21 +123,21 @@ export function useTrainings() {
     };
 
     const isUserUnavailableForCycle = async (cycleId: string, userId: string) => {
-    try {
-        const { data, error } = await supabase
-            .from('training_cycle_unavailability')
-            .select('id')
-            .eq('cycle_id', cycleId)
-            .eq('user_id', userId)
-            .single();
+        try {
+            const { data, error } = await supabase
+                .from('training_cycle_unavailability')
+                .select('id')
+                .eq('cycle_id', cycleId)
+                .eq('user_id', userId)
+                .single();
 
-        if (error && error.code !== 'PGRST116') throw error;
-        return !!data;
-    } catch (err) {
-        // Silenciosamente retorna false - não há problema se não encontrar
-        return false;
-    }
-};
+            if (error && error.code !== 'PGRST116') throw error;
+            return !!data;
+        } catch (err) {
+            // Silenciosamente retorna false - não há problema se não encontrar
+            return false;
+        }
+    };
 
     const toggleCycleUnavailability = async (
         cycleId: string,

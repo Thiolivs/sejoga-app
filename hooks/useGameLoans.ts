@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import type { GameLoan, Profile } from '@/types/database';
 
 export function useGameLoans() {
     const [loans, setLoans] = useState<Map<string, GameLoan>>(new Map());
     const [loading, setLoading] = useState(true);
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
 
     useEffect(() => {
         fetchActiveLoans();
@@ -13,34 +13,34 @@ export function useGameLoans() {
     }, []);
 
     const fetchActiveLoans = async () => {
-    try {
-        
-        const { data, error } = await supabase
-            .from('game_loans')
-            .select('*')
-            .is('returned_at', null);
+        try {
 
-        if (error) throw error;
+            const { data, error } = await supabase
+                .from('game_loans')
+                .select('*')
+                .is('returned_at', null);
+
+            if (error) throw error;
 
 
-        const loansMap = new Map<string, GameLoan>();
-        data?.forEach(loan => {
-            loansMap.set(loan.boardgame_id, loan);
-        });
+            const loansMap = new Map<string, GameLoan>();
+            data?.forEach(loan => {
+                loansMap.set(loan.boardgame_id, loan);
+            });
 
-        
-        // Retorna uma promise que resolve quando setState terminar
-        return new Promise<void>((resolve) => {
-            setLoans(loansMap);
-            // Aguarda o próximo tick para garantir que o estado foi atualizado
-            setTimeout(() => resolve(), 0);
-        });
-    } catch (err) {
-        console.error('Erro ao buscar empréstimos:', err);
-    } finally {
-        setLoading(false);
-    }
-};
+
+            // Retorna uma promise que resolve quando setState terminar
+            return new Promise<void>((resolve) => {
+                setLoans(loansMap);
+                // Aguarda o próximo tick para garantir que o estado foi atualizado
+                setTimeout(() => resolve(), 0);
+            });
+        } catch (err) {
+            console.error('Erro ao buscar empréstimos:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const subscribeToLoans = () => {
         // REALTIME: Listen changes on table game_loans
@@ -179,7 +179,7 @@ export function useGameLoans() {
         getLoanInfo,
         isGameLoaned,
         isLoanedByMe,
-        refetchLoans: fetchActiveLoans, 
+        refetchLoans: fetchActiveLoans,
 
     };
 }

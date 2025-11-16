@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation'; // ✅ Adicionar
 import { Button } from '@/components/ui/button';
 import { User, Shield, Crown, ArrowLeft } from 'lucide-react'; // ✅ Adicionar ArrowLeft
@@ -21,7 +21,7 @@ export function ManageUsers() {
     const [loading, setLoading] = useState(true);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
     const router = useRouter(); // ✅ Adicionar router
 
     const fetchUsers = useCallback(async () => {
@@ -51,7 +51,7 @@ export function ManageUsers() {
             setUsers(data || []);
         } catch (error) {
             console.error('Erro ao carregar usuários:', error);
-            
+
             // Mostrar erro mais detalhado
             if (error && typeof error === 'object' && 'message' in error) {
                 alert(`❌ Erro ao carregar usuários: ${(error as { message: string }).message}`);
@@ -92,7 +92,7 @@ export function ManageUsers() {
             fetchUsers();
         } catch (error) {
             console.error('Erro ao atualizar permissão:', error);
-            
+
             // Mostrar erro mais detalhado
             if (error && typeof error === 'object' && 'message' in error) {
                 alert(`❌ Erro ao atualizar permissão: ${(error as { message: string }).message}`);
@@ -158,10 +158,10 @@ export function ManageUsers() {
     return (
         <div className="space-y-4 bg-white/95 rounded-lg p-4">
 
-                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Gerenciar Usuários</div>
+            <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Gerenciar Usuários</div>
 
             {/* Estatísticas no topo */}
-                            <h3 className="font-semibold text-center text-sm mb-2">📊 Estatísticas:</h3>
+            <h3 className="font-semibold text-center text-sm mb-2">📊 Estatísticas:</h3>
 
             <div className="bg-white border rounded-lg p-3">
                 <div className="grid grid-cols-3 gap-3 text-center">
@@ -201,9 +201,8 @@ export function ManageUsers() {
                     return (
                         <div
                             key={user.id}
-                            className={`bg-white border rounded-lg p-2.5 ${
-                                isCurrentUser ? 'border-yellow-400 bg-yellow-50' : ''
-                            }`}
+                            className={`bg-white border rounded-lg p-2.5 ${isCurrentUser ? 'border-yellow-400 bg-yellow-50' : ''
+                                }`}
                         >
                             <div className="flex items-center justify-between gap-3">
                                 {/* Info do usuário - esquerda */}
@@ -252,13 +251,12 @@ export function ManageUsers() {
                                                     disabled={isUpdating}
                                                     variant="outline"
                                                     size="sm"
-                                                    className={`h-6 px-2 text-[10px] w-20 ${
-                                                        newRole === 'admin'
-                                                            ? 'hover:bg-red-50 hover:text-red-700 hover:border-red-300'
-                                                            : newRole === 'monitor'
+                                                    className={`h-6 px-2 text-[10px] w-20 ${newRole === 'admin'
+                                                        ? 'hover:bg-red-50 hover:text-red-700 hover:border-red-300'
+                                                        : newRole === 'monitor'
                                                             ? 'hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300'
                                                             : 'hover:bg-gray-50'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     <span className="flex items-center gap-0.5">
                                                         {getRoleIcon(newRole)}

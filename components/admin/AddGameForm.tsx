@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import {
     Form,
     FormControl,
@@ -45,7 +45,7 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
     const [loading, setLoading] = useState(false);
     const [resetPublisher, setResetPublisher] = useState(false); // ✅ estado para reset
     const [publisherName, setPublisherName] = useState(''); // ✅ guardar nome da editora
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -151,7 +151,7 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
 
     return (
         <div className="p-3 bg-white/90 rounded-lg space-y-3">
-                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Cadastrar Novo Jogo</div>
+            <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Cadastrar Novo Jogo</div>
             <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg">
 
                 <Form {...form}>

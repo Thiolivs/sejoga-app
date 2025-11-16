@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
     Select,
@@ -36,7 +36,7 @@ export function EventGameSelection() {
     const [unavailableGames, setUnavailableGames] = useState<GameWithTeachers[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
 
     useEffect(() => {
         fetchEvents();

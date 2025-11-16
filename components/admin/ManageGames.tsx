@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { EditGameForm } from './EditGameForm';
 import { useRouter } from 'next/navigation';
@@ -23,7 +23,7 @@ export function ManageGames() {
     const [games, setGames] = useState<Game[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingGameId, setEditingGameId] = useState<string | null>(null);
-    const supabase = createClientComponentClient();
+const supabase = createClient();
     const router = useRouter();
 
     const fetchGames = useCallback(async () => {

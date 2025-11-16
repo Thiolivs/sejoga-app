@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 
 interface Game {
@@ -25,7 +25,7 @@ export function GameAutocomplete({
     const [showDropdown, setShowDropdown] = useState(false);
     const [loading, setLoading] = useState(false);
     const [selectedGame, setSelectedGame] = useState<string>('');
-    const supabase = createClientComponentClient();
+const supabase = createClient();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // ✅ CORREÇÃO 2: Resetar quando o componente pai pedir

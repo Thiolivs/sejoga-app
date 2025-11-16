@@ -1,12 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-
+import { createClient } from '@/lib/supabase'
 export function BackgroundManager() {
     const [bgLoaded, setBgLoaded] = useState(false);
-    const supabase = createClientComponentClient();
-
+const supabase = createClient()
     useEffect(() => {
         async function loadBackground() {
             const { data: { user } } = await supabase.auth.getUser();

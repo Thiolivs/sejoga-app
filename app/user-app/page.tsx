@@ -1,37 +1,37 @@
-import { UserNav } from "@/components/common/user-nav";
 import { UserAppContent } from "@/components/UserAppContent";
-import { UserAppHeader } from "@/components/UserAppHeader"; // 👈 ADICIONE
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { UserAppHeader } from "@/components/UserAppHeader";
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from "next/headers";
-import { redirect, RedirectType } from "next/navigation";
 
 export default async function UserApp() {
-    let loggedIn = false;
-    let userEmail = "";
-
-    try {
-        const supabase = createServerComponentClient({ cookies });
-        const {
-            data: { session },
-        } = await supabase.auth.getSession();
-
-        if (session) {
-            loggedIn = true;
-            userEmail = session.user.email || "";
+    const cookieStore = await cookies();
+    
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll() {
+                    return cookieStore.getAll();
+                },
+                setAll(cookiesToSet) {
+                    try {
+                        cookiesToSet.forEach(({ name, value, options }) =>
+                            cookieStore.set(name, value, options)
+                        );
+                    } catch {}
+                },
+            },
         }
-    } catch (error) {
-        console.log("UserApp", error);
-    } finally {
-        if (!loggedIn) redirect("/", RedirectType.replace);
-    }
+    );
 
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Middleware já garante que tem usuário aqui
     return (
         <div className="min-h-screen">
-            {/* Header com Menu e UserNav */}
-            <UserAppHeader /> {/* 👈 USE O COMPONENTE */}
-
-            {/* Conteúdo com abas (Client Component) */}
-            <UserAppContent userEmail={userEmail} />
+            <UserAppHeader />
+            <UserAppContent userEmail={user?.email || ""} />
         </div>
     );
 }
