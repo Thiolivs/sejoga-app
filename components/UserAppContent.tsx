@@ -10,20 +10,16 @@ import { useState, useEffect } from 'react';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
 
-
 import { CircleUser, ClipboardList, Calendar, BarChart, Dices, Heart, Star, TrendingUp, ChartBarIncreasing, ChartColumnIncreasingIcon, ChartBarBig, ChartNoAxesColumnIncreasing, ChartNoAxesCombined } from "lucide-react"
 
-
 type Tab = 'training' | 'profile' | 'jogos' | 'register' | 'statistics';
-//type AdminSection = 'menu' | 'add-game' | 'manage-games' | 'manage-events' | 'manage-users';
 
 interface UserAppContentProps {
     userEmail: string;
 }
 
 export function UserAppContent({ userEmail }: UserAppContentProps) {
-    const [activeTab, setActiveTab] = useState<string>('jogos');
-    //const [adminSection, setAdminSection] = useState<AdminSection>('menu');
+    const [activeTab, setActiveTab] = useState<Tab>('jogos');
     const { isAdmin } = useUserRole();
     const { isMonitor } = useUserRole();
     const supabase = createClientComponentClient();
@@ -33,6 +29,19 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
     const [teachCount, setTeachCount] = useState(0);
     const [totalGames, setTotalGames] = useState(0);
 
+    // Carrega a aba salva ao montar o componente
+    useEffect(() => {
+        const savedTab = localStorage.getItem('userapp-active-tab');
+        if (savedTab && ['training', 'profile', 'jogos', 'register', 'statistics'].includes(savedTab)) {
+            setActiveTab(savedTab as Tab);
+        }
+    }, []);
+
+    // Função para mudar de aba e salvar no localStorage
+    const handleTabChange = (tab: Tab) => {
+        setActiveTab(tab);
+        localStorage.setItem('userapp-active-tab', tab);
+    };
 
     // Busca o usuário autenticado e o nome no perfil
     useEffect(() => {
@@ -90,85 +99,77 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
         fetchUserAndProfile();
     }, [supabase]);
 
-    // Reseta a seção de admin quando muda de aba
-    /*useEffect(() => {
-        if (activeTab !== 'gerenciar') {
-            setAdminSection('menu');
-        }
-    }, [activeTab]);*/
-
     return (
         <>
             {/* Tabs */}
             <div className="bg-white/70">
                 <div className="max-w2xl mx-auto flex flex-col items-center sm:px-6 lg:px-8">
                     <nav className="flex" aria-label="Tabs">
-
-
                         <button
-                            onClick={() => setActiveTab('profile')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'profile'
-                                ? 'border-red-500 text-red-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
+                            onClick={() => handleTabChange('profile')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${
+                                activeTab === 'profile'
+                                    ? 'border-red-500 text-red-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            }`}
                         >
                             <Star className="w-4 h-4" />
                             Meu SeJoga
                         </button>
 
-                                                <button
-                            onClick={() => setActiveTab('register')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'register'
-                                ? 'border-orange-500 text-orange-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
+                        <button
+                            onClick={() => handleTabChange('register')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${
+                                activeTab === 'register'
+                                    ? 'border-orange-500 text-orange-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            }`}
                         >
                             <ClipboardList className="w-4 h-4" />
                             Registro
                         </button>
 
                         <button
-                            onClick={() => setActiveTab('jogos')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${activeTab === 'jogos'
-                                ? 'border-sejoga-verde-oficial text-sejoga-verde-oficial'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
+                            onClick={() => handleTabChange('jogos')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${
+                                activeTab === 'jogos'
+                                    ? 'border-sejoga-verde-oficial text-sejoga-verde-oficial'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            }`}
                         >
                             <Dices className="w-4 h-4" />
                             Acervo
                         </button>
 
                         <button
-                            onClick={() => setActiveTab('training')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'training'
-                                ? 'border-sejoga-azul-oficial text-sejoga-azul-oficial'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
+                            onClick={() => handleTabChange('training')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${
+                                activeTab === 'training'
+                                    ? 'border-sejoga-azul-oficial text-sejoga-azul-oficial'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            }`}
                         >
                             <Calendar className="w-4 h-4" />
                             Treinamentos
                         </button>
 
-
                         <button
-                            onClick={() => setActiveTab('statistics')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors  flex flex-col items-center ${activeTab === 'statistics'
-                                ? 'border-sejoga-rosa-oficial text-sejoga-rosa-oficial'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
+                            onClick={() => handleTabChange('statistics')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex flex-col items-center ${
+                                activeTab === 'statistics'
+                                    ? 'border-sejoga-rosa-oficial text-sejoga-rosa-oficial'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            }`}
                         >
                             <ChartNoAxesCombined className="w-4 h-4" />
                             Dados
                         </button>
-
-
                     </nav>
                 </div>
             </div>
 
             {/* Conteúdo das abas */}
             <main className="max-w-7xl px-4 mx-auto sm:px-6 lg:px-2 py-2">
-
                 {/* JOGOS */}
                 {activeTab === 'jogos' && (
                     <div>
@@ -196,7 +197,6 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
                         <TrainingSession />
                     </div>
                 )}
-
 
                 {/* ESTATISTICAS */}
                 {activeTab === 'statistics' && (
