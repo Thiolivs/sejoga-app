@@ -145,7 +145,7 @@ export function CreateAccountForm() {
                                 <FormItem>
                                     <FormLabel>Nome</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Seu nome" {...field} />
+                                        <Input  {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -159,7 +159,7 @@ export function CreateAccountForm() {
                                 <FormItem>
                                     <FormLabel>Sobrenome</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Sobrenome" {...field} />
+                                        <Input {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -176,7 +176,6 @@ export function CreateAccountForm() {
                                 <FormControl>
                                     <Input
                                         type="email"
-                                        placeholder="Digite seu email"
                                         {...field}
                                     />
                                 </FormControl>
@@ -194,7 +193,6 @@ export function CreateAccountForm() {
                                 <FormControl>
                                     <Input
                                         type="password"
-                                        placeholder="Digite a senha"
                                         {...field}
                                     />
                                 </FormControl>
@@ -212,7 +210,6 @@ export function CreateAccountForm() {
                                 <FormControl>
                                     <Input
                                         type="password"
-                                        placeholder="Digite a senha novamente"
                                         {...field}
                                     />
                                 </FormControl>

@@ -73,7 +73,7 @@ export function LoginAccountForm() {
 
     return (
         <div className="flex flex-col justify-center text-center p-6 pt-3">
-            <span className="text-[28px] text-blue-500 font-aladin  mb-8 mt-2">Entra, <br/>vai ter Boardgame!</span>
+            <span className="text-[28px] text-blue-500 font-aladin  mb-8 mt-2"> Entra, <br/>vai ter Boardgame!</span>
             
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-2">
