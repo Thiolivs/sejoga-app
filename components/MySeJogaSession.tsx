@@ -364,7 +364,7 @@ export function MySeJogaSession() {
                                     setShowAvatarSelector(!showAvatarSelector);
                                     setShowBgSelector(false);
                                 }}
-                                className="text-xs h-7"
+                                className="text-xs h-1"
                             >
                                 Alterar Avatar
                             </Button>
