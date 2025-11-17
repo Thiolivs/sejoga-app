@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SeJoga Boardgames</string>
+    <string name="title_activity_main">SeJoga Boardgames</string>
+    <string name="package_name">app.sejoga</string>
+    <string name="custom_url_scheme">app.sejoga</string>
+</resources>
