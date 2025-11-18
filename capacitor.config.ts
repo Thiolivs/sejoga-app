@@ -3,9 +3,10 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'app.sejoga',
   appName: 'SeJoga',
-  webDir: 'out',  // ✅ Conteúdo local
+  webDir: 'public',  
   server: {
-    androidScheme: 'https'
+    url: 'https://sejoga.app', 
+    cleartext: true
   }
 };
 
