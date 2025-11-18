@@ -3,10 +3,9 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'app.sejoga',
   appName: 'SeJoga',
-  webDir: '.next', 
+  webDir: 'out',  // ✅ Conteúdo local
   server: {
-    url: 'https://sejoga.app', // ✅ Aponta para seu site na Vercel
-    cleartext: true
+    androidScheme: 'https'
   }
 };
 
