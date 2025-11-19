@@ -49,7 +49,7 @@ export function MySeJogaSession() {
         first_name: '',
         last_name: '',
         avatar: '/avatars/MeepleColorido.png',
-        background: '/images/backgrounds/rainbow.png'
+        background: '/images/backgrounds/rainbow.jpg'
     });
     const [email, setEmail] = useState('');
     const [isEditing, setIsEditing] = useState(false);
@@ -105,7 +105,7 @@ export function MySeJogaSession() {
                     first_name: data?.first_name || '',
                     last_name: data?.last_name || '',
                     avatar: data?.avatar || '/avatars/MeepleColorido.png',
-                    background: data?.background || '/images/backgrounds/rainbow.png'
+                    background: data?.background || '/images/backgrounds/rainbow.jpg'
                 });
 
             } catch (err) {
@@ -209,7 +209,7 @@ export function MySeJogaSession() {
                     first_name: data.first_name || '',
                     last_name: data.last_name || '',
                     avatar: data.avatar || '/avatars/MeepleColorido.png',
-                    background: data.background || '/images/backgrounds/rainbow.png'
+                    background: data.background || '/images/backgrounds/rainbow.jpg'
                 });
             }
         } catch (err) {
