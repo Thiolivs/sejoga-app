@@ -15,14 +15,12 @@
         <item name="android:background">@null</item>
     </style>
 
-
+    <!-- ✅ StatusBar configurada aqui -->
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="android:background">@drawable/splash</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
-
-    <style name="AppTheme.NoActionBarLaunch" parent="AppTheme.NoActionBar">
-    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-    <item name="android:statusBarColor">@color/colorPrimary</item>
-    <item name="android:windowLightStatusBar">false</item>
-</style>
+    
 </resources>
