@@ -18,7 +18,8 @@
             android:launchMode="singleTask"
             android:exported="true"
             android:windowSoftInputMode="adjustResize"
-            android:fitsSystemWindows="false">
+            android:fitsSystemWindows="false"
+            android:windowLayoutInDisplayCutoutMode="default">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

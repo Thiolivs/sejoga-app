@@ -5,7 +5,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
+import androidx.core.view.WindowCompat;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
@@ -23,31 +26,33 @@ public class MainActivity extends BridgeActivity {
     
     private void setupStatusBar() {
         Window window = getWindow();
+        View decorView = window.getDecorView();
         
+        // Para Android 5.0+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // Limpa flags antigas
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-            
-            // Adiciona flags necessárias
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            
-            // Define cor azul
             window.setStatusBarColor(Color.parseColor("#0096FF"));
+        }
+        
+        // Para Android 11+ (incluindo 13 e 16)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Força o sistema a mostrar a status bar
+            WindowCompat.setDecorFitsSystemWindows(window, true);
             
-            // Para Android 6.0+ - ícones brancos
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                View decorView = window.getDecorView();
-                int flags = decorView.getSystemUiVisibility();
-                // Remove flag de ícones escuros se existir
-                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                decorView.setSystemUiVisibility(flags);
+            WindowInsetsController controller = window.getInsetsController();
+            if (controller != null) {
+                // Garante que a status bar está visível
+                controller.show(WindowInsets.Type.statusBars());
+                // Ícones brancos na status bar
+                controller.setSystemBarsAppearance(0, 
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
             }
-            
-            // Para Android 11+ - força visibilidade
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                window.setDecorFitsSystemWindows(true);
-            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Para Android 6-10
+            int flags = decorView.getSystemUiVisibility();
+            flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            decorView.setSystemUiVisibility(flags);
         }
     }
 }
