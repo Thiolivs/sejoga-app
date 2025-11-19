@@ -6,37 +6,48 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // Configuração universal da StatusBar
+        setupStatusBar();
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        setupStatusBar();
+    }
+    
+    private void setupStatusBar() {
         Window window = getWindow();
         
-        // Para Android 5.0+ (API 21+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // Limpa flags antigas
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            
+            // Adiciona flags necessárias
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(0xFF0096FF); // Azul SeJoga
-        }
-        
-        // Para Android 6.0+ (API 23+) - Controla cor dos ícones
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            View decorView = window.getDecorView();
-            // 0 = ícones brancos (para fundo escuro/colorido)
-            decorView.setSystemUiVisibility(0);
-        }
-        
-        // Para Android 11+ (API 30+) - Método moderno
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowCompat.setDecorFitsSystemWindows(window, false);
-            WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(window, window.getDecorView());
-            controller.setAppearanceLightStatusBars(false); // Ícones brancos
+            
+            // Define cor azul
+            window.setStatusBarColor(Color.parseColor("#0096FF"));
+            
+            // Para Android 6.0+ - ícones brancos
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                View decorView = window.getDecorView();
+                int flags = decorView.getSystemUiVisibility();
+                // Remove flag de ícones escuros se existir
+                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                decorView.setSystemUiVisibility(flags);
+            }
+            
+            // Para Android 11+ - força visibilidade
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.setDecorFitsSystemWindows(true);
+            }
         }
     }
 }

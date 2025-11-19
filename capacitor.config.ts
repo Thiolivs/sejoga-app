@@ -11,12 +11,17 @@ const config: CapacitorConfig = {
   },
   plugins: {
     SplashScreen: {
-      launchShowDuration: 0
+      launchShowDuration: 0,
+      backgroundColor: '#0096FF',
+      androidScaleType: 'CENTER_CROP',
+      showSpinner: false,
+      splashFullScreen: false,
+      splashImmersive: false
     },
     StatusBar: {
-      style: 'dark',  // ou 'light' dependendo do tema
-      backgroundColor: '#EC0577',  // Rosa oficial SeJoga
-      overlaysWebView: false  // ✅ IMPORTANTE: não sobrepor
+      style: 'dark',
+      backgroundColor: '#0096FF',
+      overlaysWebView: false
     }
   }
 };
