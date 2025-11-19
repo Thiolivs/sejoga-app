@@ -35,7 +35,7 @@ const AVATAR_OPTIONS = [
 ];
 
 const BACKGROUND_OPTIONS = [
-    '/images/backgrounds/rainbow.png',
+    '/images/backgrounds/rainbow.jpg',
     '/images/backgrounds/lesbica.png',
     '/images/backgrounds/gay.png',
     '/images/backgrounds/bi.png',
