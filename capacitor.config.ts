@@ -7,11 +7,16 @@ const config: CapacitorConfig = {
   server: {
     url: 'https://sejoga.app',
     cleartext: true,
-    allowNavigation: ['sejoga.app', '*.sejoga.app']  // ✅ ADICIONE
+    allowNavigation: ['sejoga.app', '*.sejoga.app']
   },
   plugins: {
     SplashScreen: {
       launchShowDuration: 0
+    },
+    StatusBar: {
+      style: 'dark',  // ou 'light' dependendo do tema
+      backgroundColor: '#EC0577',  // Rosa oficial SeJoga
+      overlaysWebView: false  // ✅ IMPORTANTE: não sobrepor
     }
   }
 };
