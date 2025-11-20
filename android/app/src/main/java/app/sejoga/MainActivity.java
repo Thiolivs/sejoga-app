@@ -14,17 +14,26 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.Bridge;
 
 public class MainActivity extends BridgeActivity {
+    
+    private SwipeRefreshLayout swipeRefreshLayout;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupStatusBar();
         setupEdgeToEdge();
-        enablePullToRefresh();
+        setupPullToRefresh();
+    }
+    
+    @Override
+    public void onStart() {
+        super.onStart();
+        setupPullToRefresh();
     }
     
     @Override
@@ -71,16 +80,41 @@ public class MainActivity extends BridgeActivity {
         });
     }
     
-    private void enablePullToRefresh() {
+    private void setupPullToRefresh() {
         Bridge bridge = getBridge();
         if (bridge != null) {
             WebView webView = bridge.getWebView();
             if (webView != null) {
+                // Habilita overscroll
                 webView.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
                 
+                // Configurações do WebView
                 WebSettings settings = webView.getSettings();
                 settings.setDomStorageEnabled(true);
+                
+                // Detecta scroll no topo e permite refresh
+                webView.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                    if (scrollY == 0) {
+                        webView.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+                    }
+                });
             }
+        }
+        
+        // Tenta configurar SwipeRefreshLayout se existir
+        try {
+            swipeRefreshLayout = findViewById(R.id.swiperefresh);
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#0096FF"));
+                swipeRefreshLayout.setOnRefreshListener(() -> {
+                    if (bridge != null && bridge.getWebView() != null) {
+                        bridge.getWebView().reload();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            // SwipeRefreshLayout não configurado, ignora
         }
     }
 }

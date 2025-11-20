@@ -118,6 +118,24 @@
   }
   body {
     @apply bg-background text-foreground;
+    padding-top: 0;
+  }
+  
+  /* ✅ ADICIONE: Padding para status bar em mobile */
+  @supports (padding: max(0px)) {
+    body {
+      padding-top: max(28px, env(safe-area-inset-top)) !important;
+    }
+  }
+  
+  /* Fallback para Capacitor */
+  html.plt-capacitor body {
+    padding-top: 28px !important;
+  }
+  
+  /* Específico para Android */
+  html.plt-android body {
+    padding-top: 32px !important;
   }
 }
 
