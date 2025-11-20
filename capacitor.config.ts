@@ -4,10 +4,15 @@ const config: CapacitorConfig = {
   appId: 'app.sejoga',
   appName: 'SeJoga',
   webDir: 'public',
+  backgroundColor: '#0096FF',
   server: {
     url: 'https://sejoga.app',
     cleartext: true,
     allowNavigation: ['sejoga.app', '*.sejoga.app']
+  },
+  android: {
+    allowMixedContent: true,
+    backgroundColor: '#0096FF'
   },
   plugins: {
     SplashScreen: {

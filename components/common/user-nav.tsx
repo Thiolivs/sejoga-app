@@ -25,7 +25,7 @@ export function UserNav() {
     const [name, setName] = useState<string | null>(null);
     const [role, setRole] = useState<string | null>(null);
     const [avatar, setAvatar] = useState<string>('/avatars/MeepleColorido.png');
-const supabase = createClient();
+    const supabase = createClient();
     const router = useRouter();
 
     useEffect(() => {
@@ -103,6 +103,8 @@ const supabase = createClient();
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
+        sessionStorage.removeItem('sejoga-session-active');
+        localStorage.removeItem('userapp-active-tab');
         router.refresh();
     };
 
