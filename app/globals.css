@@ -220,3 +220,24 @@ input[type="checkbox"].custom-check:checked::after {
 .font-aladin {
   font-family: var(--font-aladin);
 }
+
+/* Forçar layout correto no Capacitor */
+@media (display-mode: standalone) {
+  html, body {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+  
+  /* Remove qualquer overlay que possa estar causando transparência */
+  body::before,
+  body::after {
+    display: none !important;
+  }
+}
+
+/* Específico para Android WebView */
+html.plt-android body,
+html.plt-capacitor body {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
