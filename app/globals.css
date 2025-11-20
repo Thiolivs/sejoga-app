@@ -118,7 +118,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    padding-top: 0;
   }
   
   /* ✅ ADICIONE: Padding para status bar em mobile */

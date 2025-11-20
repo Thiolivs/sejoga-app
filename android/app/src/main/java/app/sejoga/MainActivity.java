@@ -23,7 +23,6 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupStatusBar();
-        setupEdgeToEdge();
         enablePullToRefresh();
     }
     
@@ -35,7 +34,9 @@ public class MainActivity extends BridgeActivity {
     
     private void setupStatusBar() {
         Window window = getWindow();
+        View decorView = window.getDecorView();
         
+        // Para Android 5.0+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
@@ -43,32 +44,24 @@ public class MainActivity extends BridgeActivity {
             window.setStatusBarColor(Color.parseColor("#0096FF"));
         }
         
+        // Para Android 11+ - NÃO usar edge-to-edge
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // ✅ MUDANÇA: setDecorFitsSystemWindows = TRUE
+            WindowCompat.setDecorFitsSystemWindows(window, true);
+            
             WindowInsetsController controller = window.getInsetsController();
             if (controller != null) {
                 controller.show(WindowInsets.Type.statusBars());
+                // Ícones brancos na status bar azul
                 controller.setSystemBarsAppearance(0, 
                     WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            View decorView = window.getDecorView();
+            // Android 6-10: ícones brancos
             int flags = decorView.getSystemUiVisibility();
             flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             decorView.setSystemUiVisibility(flags);
         }
-    }
-    
-    private void setupEdgeToEdge() {
-        Window window = getWindow();
-        View decorView = window.getDecorView();
-        
-        WindowCompat.setDecorFitsSystemWindows(window, false);
-        
-        ViewCompat.setOnApplyWindowInsetsListener(decorView, (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(0, systemBars.top, 0, 0);
-            return insets;
-        });
     }
     
     private void enablePullToRefresh() {
