@@ -2,22 +2,24 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">#0096FF</item>
+        <item name="colorPrimaryDark">#0096FF</item>
+        <item name="colorAccent">#7BC244</item>
+        <item name="android:statusBarColor">#0096FF</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/colorPrimary</item>
-        <item name="android:fitsSystemWindows">false</item>  <!-- ✅ ADICIONE -->
+        <item name="android:statusBarColor">#0096FF</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="AppTheme.NoActionBarLaunch" parent="AppTheme.NoActionBar">
-        <item name="android:background">@drawable/splash</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:statusBarColor">#0096FF</item>
     </style>
     
 </resources>
