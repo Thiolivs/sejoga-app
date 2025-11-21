@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Poppins, Caveat, Shadows_Into_Light, Joti_One, Aladin } from 'next/font/google';
 import "./globals.css";
 import { BackgroundManager } from "@/components/BackgroundManager";
+import { AndroidVersionDetector } from "@/components/AndroidVersionDetector";
 
 const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#35588C",
+  themeColor: "#0096FF",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -74,6 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           minHeight: '100vh',
         }}
       >
+        <AndroidVersionDetector />
         <BackgroundManager />
         {children}
       </body>
