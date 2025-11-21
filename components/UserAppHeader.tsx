@@ -14,11 +14,9 @@ export function UserAppHeader() {
     }, []);
 
     return (
-        <header className="bg-white/90 shadow">
+        <header className="sticky top-0 z-50 bg-white/90 shadow">
             <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-1">
                 <div className="flex items-center justify-between">
-
-                    {/* Esquerda: Sidebar */}
                     <div className="flex items-center">
                         {mounted && (
                             <SidebarMenu
@@ -29,21 +27,17 @@ export function UserAppHeader() {
                         )}
                     </div>
 
-                    {/* Centro: Título */}
                     <div className="flex-1 text-center">
                         <h1 className="text-[35px] font-caveat text-gray-900">
                             SeJoga no App!
                         </h1>
                     </div>
 
-                    {/* Direita: UserNav */}
                     <div className="flex items-center justify-end">
                         <UserNav />
                     </div>
-
                 </div>
             </div>
         </header>
-
     );
 }
