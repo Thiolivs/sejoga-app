@@ -11,46 +11,33 @@ export function BackgroundManager() {
         async function loadBackground() {
             const { data: { user } } = await supabase.auth.getUser();
             
-            if (!user) {
-                console.log('🎨 Sem usuário - aplicando background padrão');
-                const style = document.createElement('style');
-                style.id = 'dynamic-bg';
-                style.innerHTML = `body::before { background-image: url(/images/backgrounds/rainbow.jpg); }`;
-                document.head.appendChild(style);
-                setBgLoaded(true);
-                return;
-            }
-
-            const { data } = await supabase
-                .from('profiles')
-                .select('background')
-                .eq('id', user.id)
-                .single();
-
-            const bgImage = data?.background || '/images/backgrounds/rainbow.jpg';
+            const bgImage = user 
+                ? (await supabase.from('profiles').select('background').eq('id', user.id).single()).data?.background || '/images/backgrounds/rainbow.jpg'
+                : '/images/backgrounds/rainbow.jpg';
             
-            console.log('🎨 Aplicando background:', bgImage);
+            console.log('🎨 Aplicando background:', bgImage, user ? 'com usuário' : 'sem usuário');
             
-            // ✅ Aplica no pseudo-elemento via style tag
             const style = document.createElement('style');
             style.id = 'dynamic-bg';
-            style.innerHTML = `body::before { background-image: url(${bgImage}); }`;
+            style.innerHTML = `body::before { background-image: url(${bgImage}) !important; }`;
             
-            console.log('📌 Style criado:', style.innerHTML);
-            
-            // Remove style anterior se existir
             const oldStyle = document.getElementById('dynamic-bg');
-            if (oldStyle) {
-                oldStyle.remove();
-                console.log('🗑️ Style anterior removido');
-            }
+            if (oldStyle) oldStyle.remove();
             
             document.head.appendChild(style);
-            console.log('✅ Style adicionado ao head');
+            console.log('✅ Style aplicado');
             setBgLoaded(true);
         }
 
         loadBackground();
+
+        // ✅ ADICIONE: Escuta mudanças de autenticação
+        const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+            console.log('🔐 Auth mudou:', event);
+            if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+                loadBackground(); // Recarrega background quando logar
+            }
+        });
 
         const setupRealtimeListener = async () => {
             const { data: { user: currentUser } } = await supabase.auth.getUser();
@@ -69,11 +56,11 @@ export function BackgroundManager() {
                     },
                     (payload: { new?: { background?: string } }) => {
                         if (payload.new?.background) {
-                            console.log('🔄 Background atualizado via realtime:', payload.new.background);
+                            console.log('🔄 Background via realtime:', payload.new.background);
                             
                             const style = document.createElement('style');
                             style.id = 'dynamic-bg';
-                            style.innerHTML = `body::before { background-image: url(${payload.new.background}); }`;
+                            style.innerHTML = `body::before { background-image: url(${payload.new.background}) !important; }`;
                             
                             const oldStyle = document.getElementById('dynamic-bg');
                             if (oldStyle) oldStyle.remove();
@@ -90,6 +77,10 @@ export function BackgroundManager() {
         };
 
         setupRealtimeListener();
+
+        return () => {
+            authListener?.subscription.unsubscribe();
+        };
 
     }, [supabase]);
 
