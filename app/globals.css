@@ -143,13 +143,13 @@
     z-index: -1;
   }
 
-  /* ✅ Android 15+: padding no body E ajusta o pseudo-elemento */
+/* ✅ Android 15+: padding no body E ajusta o pseudo-elemento */
   html.android-modern body {
-    padding-top: 28px !important;
+    padding-top: 40px !important;
   }
-
+  
   html.android-modern body::before {
-    top: 28px !important;
+    top: 40px !important;
   }
 }
 
