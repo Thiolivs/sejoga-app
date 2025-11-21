@@ -1,46 +1,51 @@
+'use client';
+
 import { UserAppHeader } from "@/components/UserAppHeader"
+import { UserAppTabs } from "@/components/UserAppTabs"
 import { UserAppContent } from "@/components/UserAppContent"
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { createServerClient } from '@supabase/ssr'
+import { useEffect, useState } from 'react';
 
-export default async function UserApp() {
-    const cookieStore = await cookies();
+type Tab = 'training' | 'profile' | 'jogos' | 'register' | 'statistics';
 
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                getAll() {
-                    return cookieStore.getAll();
-                },
-                setAll(cookiesToSet) {
-                    try {
-                        cookiesToSet.forEach(({ name, value, options }) =>
-                            cookieStore.set(name, value, options)
-                        );
-                    } catch {}
-                },
-            },
+export default function UserApp() {
+    const [activeTab, setActiveTab] = useState<Tab>('jogos');
+
+    useEffect(() => {
+        const isActiveSession = sessionStorage.getItem('sejoga-session-active');
+
+        if (isActiveSession === 'true') {
+            const savedTab = localStorage.getItem('userapp-active-tab');
+            if (savedTab && ['training', 'profile', 'jogos', 'register', 'statistics'].includes(savedTab)) {
+                setActiveTab(savedTab as Tab);
+            }
+        } else {
+            sessionStorage.setItem('sejoga-session-active', 'true');
         }
-    );
+    }, []);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    const userEmail = user?.email || '';
+    const handleTabChange = (tab: Tab) => {
+        setActiveTab(tab);
+        localStorage.setItem('userapp-active-tab', tab);
+    };
 
-    if (!user) {
-        redirect('/login');
-    }
+    useEffect(() => {
+        return () => {
+            localStorage.removeItem('userapp-active-tab');
+            sessionStorage.removeItem('sejoga-session-active');
+        };
+    }, []);
 
     return (
         <div className="flex flex-col h-screen overflow-hidden">
-            {/* Header fixo */}
-            <UserAppHeader />
+            {/* ✅ Header + Tabs fixos fora do scroll */}
+            <div className="flex-none">
+                <UserAppHeader />
+                <UserAppTabs activeTab={activeTab} onTabChange={handleTabChange} />
+            </div>
             
-            {/* Conteúdo com scroll */}
-            <div className="flex-1 overflow-y-auto">
-                <UserAppContent userEmail={userEmail} />
+            {/* ✅ Conteúdo com scroll - começa ABAIXO das tabs */}
+            <div className="flex-1 overflow-y-auto overflow-x-hidden">
+                <UserAppContent activeTab={activeTab} />
             </div>
         </div>
     );
