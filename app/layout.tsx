@@ -65,12 +65,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
-      <body
-        className={poppins.className}
-      >
+      <body className={poppins.className}>
         <AndroidVersionDetector />
         
-        {/* ✅ Background como elemento separado */}
+        {/* ✅ Background como elemento separado - SEM backgroundImage inline */}
         <div 
           id="background-layer"
           style={{
@@ -79,10 +77,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundImage: 'url(/images/backgrounds/rainbow.jpg)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundAttachment: 'fixed',
+            backgroundImage: 'url(/images/backgrounds/rainbow.jpg)', // ✅ Imagem padrão
             zIndex: -1,
           }}
         />
