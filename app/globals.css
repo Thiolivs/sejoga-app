@@ -127,10 +127,9 @@
     min-height: 100vh;
     position: relative;
     background-color: transparent !important;
-    /* ✅ ADICIONE */
   }
 
-  /* ✅ Background via pseudo-elemento - permite controle independente */
+  /* ✅ Background via pseudo-elemento */
   body::before {
     content: '';
     position: fixed;
@@ -145,37 +144,27 @@
     z-index: -1;
   }
 
-  /* ✅ Android 15+: padding no body E ajusta o pseudo-elemento */
+  /* ✅ Android 15+: configurações específicas */
   html.android-modern body {
     padding-top: 40px !important;
-    overflow-x: hidden;
-    /* ✅ Previne scroll horizontal */
+    overflow: hidden !important;
   }
 
   html.android-modern body::before {
-    top: 0 !important;
-    /* ✅ MUDOU: volta para 0 */
-    padding-top: 40px !important;
-    /* ✅ Padding interno */
+    top: 40px !important;
   }
 
-  /* ✅ ADICIONE: Container para conteúdo com scroll limitado */
-  html.android-modern body>* {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ✅ Wrapper no Android moderno */
+  /* ✅ Wrapper scrollável no Android moderno */
   html.android-modern #content-wrapper {
-    position: relative;
-    max-height: calc(100vh - 40px);
-    /* Altura total menos padding */
+    position: fixed;
+    top: 40px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    margin-top: 0;
-    padding-top: 0;
+    -webkit-overflow-scrolling: touch;
   }
-
 }
 
 @keyframes fadeIn {
@@ -183,7 +172,6 @@
     opacity: 0;
     transform: translateY(10px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
