@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
@@ -15,28 +17,28 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        forceStatusBarColor();
+        configureStatusBar();
     }
     
     @Override
     public void onResume() {
         super.onResume();
-        forceStatusBarColor();
+        configureStatusBar();
     }
     
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
-            forceStatusBarColor();
+            configureStatusBar();
         }
     }
     
-    private void forceStatusBarColor() {
+    private void configureStatusBar() {
         Window window = getWindow();
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // Remove todas as flags problemáticas
+            // Remove flags problemáticas
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -44,16 +46,20 @@ public class MainActivity extends BridgeActivity {
             // Adiciona flag para desenhar status bar
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             
-            // Define cor
+            // Define cor azul
             window.setStatusBarColor(STATUS_BAR_COLOR);
             
-            // Ícones brancos (para fundo azul escuro)
+            // ✅ NOVO: Para Android 15+ (edge-to-edge)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                // Desabilita edge-to-edge automático
+                WindowCompat.setDecorFitsSystemWindows(window, true);
+            }
+            
+            // Ícones brancos (para fundo azul)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                View decorView = window.getDecorView();
-                int systemUiVisibility = decorView.getSystemUiVisibility();
-                // Remove flag de ícones escuros se existir
-                systemUiVisibility &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                decorView.setSystemUiVisibility(systemUiVisibility);
+                WindowInsetsControllerCompat controller = 
+                    new WindowInsetsControllerCompat(window, window.getDecorView());
+                controller.setAppearanceLightStatusBars(false); // Ícones brancos
             }
         }
     }
