@@ -122,10 +122,11 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
     padding-top: 0;
     min-height: 100vh;
     position: relative;
+    background-color: transparent !important;   /* ✅ ADICIONE */
   }
 
   /* ✅ Background via pseudo-elemento - permite controle independente */
@@ -143,11 +144,11 @@
     z-index: -1;
   }
 
-/* ✅ Android 15+: padding no body E ajusta o pseudo-elemento */
+  /* ✅ Android 15+: padding no body E ajusta o pseudo-elemento */
   html.android-modern body {
     padding-top: 40px !important;
   }
-  
+
   html.android-modern body::before {
     top: 40px !important;
   }
