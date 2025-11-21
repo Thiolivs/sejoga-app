@@ -67,15 +67,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body
         className={poppins.className}
-        style={{
-          backgroundImage: 'url(/images/backgrounds/rainbow.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
-          minHeight: '100vh',
-        }}
       >
         <AndroidVersionDetector />
+        
+        {/* ✅ Background como elemento separado */}
+        <div 
+          id="background-layer"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: 'url(/images/backgrounds/rainbow.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+            zIndex: -1,
+          }}
+        />
+        
         <BackgroundManager />
         {children}
       </body>
