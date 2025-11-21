@@ -161,12 +161,6 @@
     overflow-x: hidden;
   }
 
-  /* ✅ Sticky elements sempre fixos no topo */
-  .sticky {
-    position: sticky;
-    top: 0;
-  }
-
   /* ✅ No Android moderno, ajusta para respeitar o padding */
   html.android-modern .sticky {
     top: 40px !important;
