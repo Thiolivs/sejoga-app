@@ -9,6 +9,23 @@ export function BackgroundManager() {
 
     useEffect(() => {
         async function loadBackground() {
+            // ✅ Espera o background-layer estar disponível
+            const waitForBackgroundLayer = () => {
+                return new Promise<HTMLElement>((resolve) => {
+                    const check = () => {
+                        const layer = document.getElementById('background-layer');
+                        if (layer) {
+                            resolve(layer);
+                        } else {
+                            setTimeout(check, 50);
+                        }
+                    };
+                    check();
+                });
+            };
+
+            const backgroundLayer = await waitForBackgroundLayer();
+
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
                 setBgLoaded(true);
@@ -22,14 +39,10 @@ export function BackgroundManager() {
                 .single();
 
             if (data?.background) {
-                // ✅ MUDOU: Atualiza background-layer em vez de body
-                const backgroundLayer = document.getElementById('background-layer');
-                if (backgroundLayer) {
-                    backgroundLayer.style.backgroundImage = `url(${data.background})`;
-                } else {
-                    // Fallback
-                    document.body.style.backgroundImage = `url(${data.background})`;
-                }
+                backgroundLayer.style.backgroundImage = `url(${data.background})`;
+                console.log('✅ Background carregado:', data.background);
+            } else {
+                console.log('📌 Usando background padrão');
             }
             setBgLoaded(true);
         }
@@ -53,13 +66,10 @@ export function BackgroundManager() {
                     },
                     (payload: { new?: { background?: string } }) => {
                         if (payload.new?.background) {
-                            // ✅ MUDOU: Atualiza background-layer em vez de body
                             const backgroundLayer = document.getElementById('background-layer');
                             if (backgroundLayer) {
                                 backgroundLayer.style.backgroundImage = `url(${payload.new.background})`;
-                            } else {
-                                // Fallback
-                                document.body.style.backgroundImage = `url(${payload.new.background})`;
+                                console.log('✅ Background atualizado via realtime:', payload.new.background);
                             }
                         }
                     }
