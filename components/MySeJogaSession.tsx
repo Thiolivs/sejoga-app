@@ -239,22 +239,30 @@ export function MySeJogaSession() {
     }
 
     async function handleBackgroundSelect(bgPath: string) {
-        if (!user) return;
+    if (!user) return;
 
-        setProfile({ ...profile, background: bgPath });
-        setShowBgSelector(false);
+    setProfile({ ...profile, background: bgPath });
+    setShowBgSelector(false);
 
-        try {
-            await supabase
-                .from('profiles')
-                .update({ background: bgPath })
-                .eq('id', user.id);
+    try {
+        await supabase
+            .from('profiles')
+            .update({ background: bgPath })
+            .eq('id', user.id);
 
-            document.body.style.backgroundImage = `url(${bgPath})`;
-        } catch (err) {
-            console.error('Erro ao salvar background:', err);
-        }
+        // ✅ Aplica no pseudo-elemento
+        const style = document.createElement('style');
+        style.id = 'dynamic-bg';
+        style.innerHTML = `body::before { background-image: url(${bgPath}); }`;
+        
+        const oldStyle = document.getElementById('dynamic-bg');
+        if (oldStyle) oldStyle.remove();
+        
+        document.head.appendChild(style);
+    } catch (err) {
+        console.error('Erro ao salvar background:', err);
     }
+}
 
     async function handlePasswordChange() {
         if (!newPassword || !confirmPassword) {

@@ -125,11 +125,30 @@
     @apply bg-background text-foreground;
     padding-top: 0;
     min-height: 100vh;
+    position: relative;
   }
   
-  /* ✅ Padding APENAS no Android 15+ (onde status bar é transparente) */
-  html.android-modern.plt-capacitor body {
+  /* ✅ Background via pseudo-elemento - permite controle independente */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: -1;
+  }
+  
+  /* ✅ Android 15+: padding no body E ajusta o pseudo-elemento */
+  html.android-modern body {
     padding-top: 28px !important;
+  }
+  
+  html.android-modern body::before {
+    top: 28px !important;
   }
 }
 

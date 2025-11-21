@@ -11,13 +11,11 @@ export function AndroidVersionDetector() {
 
         if (androidMatch) {
             const androidVersion = parseInt(androidMatch[1]);
+            console.log('Android version:', androidVersion);
 
             if (androidVersion >= 15) {
                 document.documentElement.classList.add('android-modern');
-                document.body.style.paddingTop = '28px';
-
-                // ✅ Ajusta a posição do background
-                document.body.style.backgroundPosition = 'center 28px';
+                console.log('✅ android-modern aplicado');
             }
         }
     }, []);
