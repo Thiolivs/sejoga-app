@@ -10,9 +10,11 @@ export function BackgroundManager() {
     useEffect(() => {
         async function loadBackground() {
             const { data: { user } } = await supabase.auth.getUser();
+            
             if (!user) {
-                // ✅ Define background padrão
+                console.log('🎨 Sem usuário - aplicando background padrão');
                 const style = document.createElement('style');
+                style.id = 'dynamic-bg';
                 style.innerHTML = `body::before { background-image: url(/images/backgrounds/rainbow.jpg); }`;
                 document.head.appendChild(style);
                 setBgLoaded(true);
@@ -27,16 +29,24 @@ export function BackgroundManager() {
 
             const bgImage = data?.background || '/images/backgrounds/rainbow.jpg';
             
+            console.log('🎨 Aplicando background:', bgImage);
+            
             // ✅ Aplica no pseudo-elemento via style tag
             const style = document.createElement('style');
             style.id = 'dynamic-bg';
             style.innerHTML = `body::before { background-image: url(${bgImage}); }`;
             
+            console.log('📌 Style criado:', style.innerHTML);
+            
             // Remove style anterior se existir
             const oldStyle = document.getElementById('dynamic-bg');
-            if (oldStyle) oldStyle.remove();
+            if (oldStyle) {
+                oldStyle.remove();
+                console.log('🗑️ Style anterior removido');
+            }
             
             document.head.appendChild(style);
+            console.log('✅ Style adicionado ao head');
             setBgLoaded(true);
         }
 
@@ -59,6 +69,8 @@ export function BackgroundManager() {
                     },
                     (payload: { new?: { background?: string } }) => {
                         if (payload.new?.background) {
+                            console.log('🔄 Background atualizado via realtime:', payload.new.background);
+                            
                             const style = document.createElement('style');
                             style.id = 'dynamic-bg';
                             style.innerHTML = `body::before { background-image: url(${payload.new.background}); }`;
