@@ -108,8 +108,8 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
 
     return (
         <>
-            {/* ✅ Tabs fixas - coladas abaixo do header */}
-            <div className="tabs-sticky sticky top-0 z-40 bg-white/70 shadow-sm">
+            {/* ✅ Tabs sticky dentro da área scrollável */}
+            <div className="sticky top-0 z-40 bg-white/70 shadow-sm">
                 <div className="max-w2xl mx-auto flex flex-col items-center sm:px-6 lg:px-8">
                     <nav className="flex" aria-label="Tabs">
                         <button
