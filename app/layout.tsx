@@ -68,18 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={poppins.className}>
         <AndroidVersionDetector />
         <BackgroundManager />
-        
-        {/*Wrapper para limitar scroll */}
-        <div 
-          id="content-wrapper"
-          style={{
-            position: 'relative',
-            minHeight: '100vh',
-            overflow: 'auto',
-          }}
-        >
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   );
