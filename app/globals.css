@@ -116,18 +116,18 @@
   * {
     @apply border-border outline-ring/50;
   }
-  
+
   html {
     background-color: #0096FF;
   }
-  
+
   body {
     @apply bg-background text-foreground;
     padding-top: 0;
     min-height: 100vh;
     position: relative;
   }
-  
+
   /* ✅ Background via pseudo-elemento - permite controle independente */
   body::before {
     content: '';
@@ -136,17 +136,18 @@
     left: 0;
     right: 0;
     bottom: 0;
+    background-image: url(/images/backgrounds/rainbow.jpg);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     z-index: -1;
   }
-  
+
   /* ✅ Android 15+: padding no body E ajusta o pseudo-elemento */
   html.android-modern body {
     padding-top: 28px !important;
   }
-  
+
   html.android-modern body::before {
     top: 28px !important;
   }
@@ -157,6 +158,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

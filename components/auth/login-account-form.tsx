@@ -30,7 +30,7 @@ const formSchema = z.object({
 });
 
 // ✅ Defina a versão aqui manualmente (sincronize com build.gradle)
-const APP_VERSION = "1.29";
+const APP_VERSION = "1.30";
 
 export function LoginAccountForm() {
     const router = useRouter();
