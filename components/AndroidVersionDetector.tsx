@@ -14,15 +14,10 @@ export function AndroidVersionDetector() {
 
             if (androidVersion >= 15) {
                 document.documentElement.classList.add('android-modern');
-
-                // Força padding no body
                 document.body.style.paddingTop = '28px';
 
-                // ✅ Move o background também
-                const backgroundLayer = document.getElementById('background-layer');
-                if (backgroundLayer) {
-                    backgroundLayer.style.top = '28px';
-                }
+                // ✅ Ajusta a posição do background
+                document.body.style.backgroundPosition = 'center 28px';
             }
         }
     }, []);

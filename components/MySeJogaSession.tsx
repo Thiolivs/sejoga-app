@@ -81,7 +81,7 @@ export function MySeJogaSession() {
                 console.log('🔍 MySeJoga - Error:', userError);
 
                 if (userError || !currentUser) {
-                console.log('❌ MySeJoga - Erro ao buscar usuário:', userError);
+                    console.log('❌ MySeJoga - Erro ao buscar usuário:', userError);
                     setError('Você precisa estar logado para acessar esta página');
                     setLoading(false);
                     return;
@@ -239,29 +239,22 @@ export function MySeJogaSession() {
     }
 
     async function handleBackgroundSelect(bgPath: string) {
-    if (!user) return;
+        if (!user) return;
 
-    setProfile({ ...profile, background: bgPath });
-    setShowBgSelector(false);
+        setProfile({ ...profile, background: bgPath });
+        setShowBgSelector(false);
 
-    try {
-        await supabase
-            .from('profiles')
-            .update({ background: bgPath })
-            .eq('id', user.id);
+        try {
+            await supabase
+                .from('profiles')
+                .update({ background: bgPath })
+                .eq('id', user.id);
 
-        // ✅ MUDOU: Atualiza o background-layer em vez do body
-        const backgroundLayer = document.getElementById('background-layer');
-        if (backgroundLayer) {
-            backgroundLayer.style.backgroundImage = `url(${bgPath})`;
-        } else {
-            // Fallback para o body se não existir background-layer
             document.body.style.backgroundImage = `url(${bgPath})`;
+        } catch (err) {
+            console.error('Erro ao salvar background:', err);
         }
-    } catch (err) {
-        console.error('Erro ao salvar background:', err);
     }
-}
 
     async function handlePasswordChange() {
         if (!newPassword || !confirmPassword) {
