@@ -156,7 +156,6 @@
   /* ✅ Android moderno: ajusta estrutura de layout */
   html.android-modern .h-screen {
     height: calc(100vh - 40px) !important;
-    margin-top: 40px;
   }
 }
 
