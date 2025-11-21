@@ -15,7 +15,13 @@ export function AndroidVersionDetector() {
 
             if (androidVersion >= 15) {
                 document.documentElement.classList.add('android-modern');
-                console.log('✅ android-modern aplicado (para referência futura)');
+                console.log('✅ android-modern aplicado');
+
+                // ✅ Força padding via JS também (backup)
+                setTimeout(() => {
+                    document.body.style.paddingTop = '40px';
+                    console.log('✅ Padding forçado via JS');
+                }, 100);
             }
         }
     }, []);
