@@ -160,6 +160,18 @@
     overflow-y: visible;
     overflow-x: hidden;
   }
+
+  /* ✅ Sticky elements sempre fixos no topo */
+  .sticky {
+    position: sticky;
+    top: 0;
+  }
+
+  /* ✅ No Android moderno, ajusta para respeitar o padding */
+  html.android-modern .sticky {
+    top: 40px !important;
+  }
+
 }
 
 @keyframes fadeIn {
@@ -167,6 +179,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
