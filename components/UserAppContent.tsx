@@ -10,7 +10,7 @@ import type { User } from '@supabase/supabase-js';
 import { BoardgameList } from '@/components/BoardgameList';
 import { useUserRole } from '@/hooks/useUserRole';
 
-import { CircleUser, ClipboardList, Calendar, BarChart, Dices, Heart, Star, TrendingUp, ChartBarIncreasing, ChartColumnIncreasingIcon, ChartBarBig, ChartNoAxesColumnIncreasing, ChartNoAxesCombined } from "lucide-react"
+import { ClipboardList, Calendar, Dices, Star, ChartNoAxesCombined } from "lucide-react"
 import { useEffect, useState } from 'react';
 
 type Tab = 'training' | 'profile' | 'jogos' | 'register' | 'statistics';
@@ -23,7 +23,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
     const [activeTab, setActiveTab] = useState<Tab>('jogos');
     const { isAdmin } = useUserRole();
     const { isMonitor } = useUserRole();
-    const supabase = createClient(); // ✅ Usando a função do lib/supabase/client
+    const supabase = createClient(); 
     const [user, setUser] = useState<User | null>(null);
     const [name, setName] = useState<string | null>(null);
     const [role, setRole] = useState<string | null>(null);
