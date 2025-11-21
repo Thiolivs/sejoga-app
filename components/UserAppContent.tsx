@@ -171,7 +171,7 @@ export function UserAppContent({ userEmail }: UserAppContentProps) {
             </div>
 
             {/* ✅ Conteúdo scrollável */}
-            <main className="max-w-7xl px-4 mx-auto sm:px-6 lg:px-2 py-2 pt-4">
+            <main className="max-w-7xl px-4 mx-auto sm:px-6 lg:px-2 py-2 pt-40">
                 {activeTab === 'jogos' && (
                     <div>
                         <BoardgameList />
