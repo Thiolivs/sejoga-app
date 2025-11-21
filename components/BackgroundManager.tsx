@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase'
+
 export function BackgroundManager() {
     const [bgLoaded, setBgLoaded] = useState(false);
-const supabase = createClient()
+    const supabase = createClient()
+
     useEffect(() => {
         async function loadBackground() {
             const { data: { user } } = await supabase.auth.getUser();
@@ -20,7 +22,14 @@ const supabase = createClient()
                 .single();
 
             if (data?.background) {
-                document.body.style.backgroundImage = `url(${data.background})`;
+                // ✅ MUDOU: Atualiza background-layer em vez de body
+                const backgroundLayer = document.getElementById('background-layer');
+                if (backgroundLayer) {
+                    backgroundLayer.style.backgroundImage = `url(${data.background})`;
+                } else {
+                    // Fallback
+                    document.body.style.backgroundImage = `url(${data.background})`;
+                }
             }
             setBgLoaded(true);
         }
@@ -32,7 +41,6 @@ const supabase = createClient()
 
             if (!currentUser) return;
 
-            // ✅ CORRIGIDO: Escuta APENAS mudanças do usuário logado
             const channel = supabase
                 .channel(`profile-changes-${currentUser.id}`)
                 .on(
@@ -41,11 +49,18 @@ const supabase = createClient()
                         event: 'UPDATE',
                         schema: 'public',
                         table: 'profiles',
-                        filter: `id=eq.${currentUser.id}` // ← IMPORTANTE: filtra por ID
+                        filter: `id=eq.${currentUser.id}`
                     },
                     (payload: { new?: { background?: string } }) => {
                         if (payload.new?.background) {
-                            document.body.style.backgroundImage = `url(${payload.new.background})`;
+                            // ✅ MUDOU: Atualiza background-layer em vez de body
+                            const backgroundLayer = document.getElementById('background-layer');
+                            if (backgroundLayer) {
+                                backgroundLayer.style.backgroundImage = `url(${payload.new.background})`;
+                            } else {
+                                // Fallback
+                                document.body.style.backgroundImage = `url(${payload.new.background})`;
+                            }
                         }
                     }
                 )
