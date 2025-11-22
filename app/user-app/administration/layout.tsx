@@ -1,6 +1,9 @@
+'use client';
+
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { AdministrationLayoutClient } from '@/components/AdministrationLayoutClient';
 
 export default async function AdministrationLayout({
     children,
@@ -30,7 +33,7 @@ export default async function AdministrationLayout({
         }
     );
 
-    // Verifica autenticação (use getUser ao invés de getSession)
+    // Verifica autenticação
     const { data: { user }, error } = await supabase.auth.getUser();
     
     if (error || !user) {
@@ -48,5 +51,5 @@ export default async function AdministrationLayout({
         redirect('/user-app');
     }
 
-    return <>{children}</>;
+    return <AdministrationLayoutClient>{children}</AdministrationLayoutClient>;
 }
