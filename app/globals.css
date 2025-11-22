@@ -157,6 +157,12 @@
   html.android-modern .h-screen {
     height: calc(100vh - 40px) !important;
   }
+
+  /* ✅ Sidebar no Android moderno */
+  html.android-modern [data-radix-dialog-content],
+  html.android-modern [role="dialog"] {
+    padding-top: 40px !important;
+  }
 }
 
 @keyframes fadeIn {
