@@ -40,16 +40,22 @@ export function SidebarMenu({
     const isAndroidModern = useAndroidModern();
 
     useEffect(() => {
-        if (open && isAndroidModern) {
-            setTimeout(() => {
-                const sheet = document.querySelector('[role="dialog"].bg-background');
-                if (sheet instanceof HTMLElement) {
-                    sheet.style.setProperty('padding-top', '40px', 'important');
-                    console.log('✅ Padding aplicado no sheet aberto');
-                }
-            }, 50);
-        }
-    }, [open, isAndroidModern]);
+    if (open && isAndroidModern) {
+        console.log('🔍 Sheet aberto, tentando aplicar padding...');
+        setTimeout(() => {
+            const sheet = document.querySelector('[role="dialog"].bg-background');
+            console.log('🔍 Sheet encontrado:', sheet);
+            if (sheet instanceof HTMLElement) {
+                console.log('🔍 Padding atual:', sheet.style.paddingTop);
+                sheet.style.setProperty('padding-top', '40px', 'important');
+                console.log('✅ Padding aplicado');
+                console.log('🔍 Padding depois:', window.getComputedStyle(sheet).paddingTop);
+            } else {
+                console.log('❌ Sheet não encontrado');
+            }
+        }, 50);
+    }
+}, [open, isAndroidModern]);
 
     const handleNavigation = (path: string) => {
         router.push(path);
