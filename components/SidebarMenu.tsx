@@ -38,6 +38,8 @@ export function SidebarMenu({
     const router = useRouter();
     const supabase = createClient();
     const isAndroidModern = useAndroidModern();
+        console.log('🔍 SidebarMenu - isAndroidModern:', isAndroidModern);
+
 
     const handleNavigation = (path: string) => {
         router.push(path);
