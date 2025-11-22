@@ -1,9 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { AddGameForm } from '@/components/admin/AddGameForm';
 import { ManageEvents } from '@/components/admin/ManageEvents';
 
 export default function AddGamePage() {

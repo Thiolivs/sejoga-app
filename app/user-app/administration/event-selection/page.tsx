@@ -1,9 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { SidebarMenu } from '@/components/SidebarMenu';
 import { useUserRole } from '@/hooks/useUserRole';
 import { EventGameSelection } from '@/components/admin/EventGameSelection';
 

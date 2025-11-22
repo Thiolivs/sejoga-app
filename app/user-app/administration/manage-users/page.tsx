@@ -1,9 +1,6 @@
 'use client';
 
-import { ManagePublishers } from '@/components/admin/ManagePublishers';
 import { ManageUsers } from '@/components/admin/ManageUsers';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase';
 import { Checkbox } from '@/components/ui/checkbox';
+import { X, ChevronDown, ChevronRight } from 'lucide-react';
 import {
     Select,
     SelectContent,
@@ -27,15 +28,23 @@ interface GameWithTeachers {
     teacherCount: number;
     isLoaned: boolean;
     selectedForEvent: boolean;
+    returned?: boolean; // ✅ Estado local (não persiste no BD)
 }
 
 export function EventGameSelection() {
     const [events, setEvents] = useState<Event[]>([]);
     const [selectedEventId, setSelectedEventId] = useState<string>('');
     const [availableGames, setAvailableGames] = useState<GameWithTeachers[]>([]);
+    const [selectedGames, setSelectedGames] = useState<GameWithTeachers[]>([]);
     const [unavailableGames, setUnavailableGames] = useState<GameWithTeachers[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    
+    // ✅ Estados de collapse
+    const [availableCollapsed, setAvailableCollapsed] = useState(false);
+    const [selectedCollapsed, setSelectedCollapsed] = useState(false);
+    const [unavailableCollapsed, setUnavailableCollapsed] = useState(true);
+    
     const supabase = createClient();
 
     useEffect(() => {
@@ -54,7 +63,7 @@ export function EventGameSelection() {
                 .from('events')
                 .select('*')
                 .eq('is_active', true)
-                .order('event_date', { ascending: false });  // ← MUDOU
+                .order('event_date', { ascending: false });
 
             if (error) throw error;
 
@@ -75,7 +84,6 @@ export function EventGameSelection() {
         try {
             setLoading(true);
 
-            // Buscar todos os jogos ativos
             const { data: games, error: gamesError } = await supabase
                 .from('boardgames')
                 .select('id, name, publisher, active, copies')
@@ -83,21 +91,18 @@ export function EventGameSelection() {
 
             if (gamesError) throw gamesError;
 
-            // Buscar contagem de professores por jogo
             const { data: teachCounts, error: teachError } = await supabase
                 .from('user_teaches_game')
                 .select('boardgame_id');
 
             if (teachError) throw teachError;
 
-            // Contar professores por jogo
             const teacherCountMap = new Map<string, number>();
             teachCounts?.forEach(item => {
                 const count = teacherCountMap.get(item.boardgame_id) || 0;
                 teacherCountMap.set(item.boardgame_id, count + 1);
             });
 
-            // Buscar jogos emprestados
             const { data: loans, error: loansError } = await supabase
                 .from('game_loans')
                 .select('boardgame_id')
@@ -107,7 +112,6 @@ export function EventGameSelection() {
 
             const loanedGameIds = new Set(loans?.map(l => l.boardgame_id) || []);
 
-            // Buscar jogos selecionados para ESTE evento específico
             const { data: eventGames, error: eventError } = await supabase
                 .from('event_game_selection')
                 .select('boardgame_id')
@@ -116,22 +120,26 @@ export function EventGameSelection() {
 
             const selectedGameIds = new Set(eventGames?.map(e => e.boardgame_id) || []);
 
-            // Processar jogos
             const available: GameWithTeachers[] = [];
+            const selected: GameWithTeachers[] = [];
             const unavailable: GameWithTeachers[] = [];
 
             games?.forEach(game => {
                 const teacherCount = teacherCountMap.get(game.id) || 0;
                 const isLoaned = loanedGameIds.has(game.id);
+                const isSelected = selectedGameIds.has(game.id);
 
                 const gameWithTeachers: GameWithTeachers = {
                     ...game,
                     teacherCount,
                     isLoaned,
-                    selectedForEvent: selectedGameIds.has(game.id),
+                    selectedForEvent: isSelected,
+                    returned: false,
                 };
 
-                if (game.active && teacherCount >= 2) {
+                if (isSelected) {
+                    selected.push(gameWithTeachers);
+                } else if (game.active && teacherCount >= 2) {
                     available.push(gameWithTeachers);
                 } else {
                     unavailable.push(gameWithTeachers);
@@ -139,6 +147,7 @@ export function EventGameSelection() {
             });
 
             setAvailableGames(available);
+            setSelectedGames(selected);
             setUnavailableGames(unavailable);
         } catch (error) {
             console.error('Erro ao carregar jogos:', error);
@@ -148,52 +157,67 @@ export function EventGameSelection() {
         }
     };
 
-    const toggleGameSelection = async (gameId: string, currentState: boolean) => {
-        if (!selectedEventId) {
-            alert('Selecione um evento primeiro');
-            return;
-        }
+    const selectGame = async (game: GameWithTeachers) => {
+        if (!selectedEventId) return;
 
         try {
             setSaving(true);
 
-            if (currentState) {
-                // Desmarcar
-                const { error } = await supabase
-                    .from('event_game_selection')
-                    .delete()
-                    .eq('boardgame_id', gameId)
-                    .eq('event_id', selectedEventId);
+            const { error } = await supabase
+                .from('event_game_selection')
+                .upsert({
+                    boardgame_id: game.id,
+                    event_id: selectedEventId,
+                    selected: true,
+                    selected_at: new Date().toISOString(),
+                });
 
-                if (error) throw error;
-            } else {
-                // Marcar
-                const { error } = await supabase
-                    .from('event_game_selection')
-                    .upsert({
-                        boardgame_id: gameId,
-                        event_id: selectedEventId,
-                        selected: true,
-                        selected_at: new Date().toISOString(),
-                    });
+            if (error) throw error;
 
-                if (error) throw error;
-            }
-
-            // Atualizar estado local
-            setAvailableGames(prev =>
-                prev.map(game =>
-                    game.id === gameId
-                        ? { ...game, selectedForEvent: !currentState }
-                        : game
-                )
-            );
+            // Move para selecionados
+            setAvailableGames(prev => prev.filter(g => g.id !== game.id));
+            setSelectedGames(prev => [...prev, { ...game, selectedForEvent: true, returned: false }]);
         } catch (error) {
-            console.error('Erro ao atualizar seleção:', error);
-            alert('Erro ao atualizar seleção');
+            console.error('Erro ao selecionar jogo:', error);
+            alert('Erro ao selecionar jogo');
         } finally {
             setSaving(false);
         }
+    };
+
+    const unselectGame = async (game: GameWithTeachers) => {
+        if (!selectedEventId) return;
+
+        try {
+            setSaving(true);
+
+            const { error } = await supabase
+                .from('event_game_selection')
+                .delete()
+                .eq('boardgame_id', game.id)
+                .eq('event_id', selectedEventId);
+
+            if (error) throw error;
+
+            // Move de volta para disponíveis
+            setSelectedGames(prev => prev.filter(g => g.id !== game.id));
+            setAvailableGames(prev => [...prev, { ...game, selectedForEvent: false }].sort((a, b) => a.name.localeCompare(b.name)));
+        } catch (error) {
+            console.error('Erro ao desselecionar jogo:', error);
+            alert('Erro ao desselecionar jogo');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const toggleReturned = (gameId: string) => {
+        setSelectedGames(prev =>
+            prev.map(game =>
+                game.id === gameId
+                    ? { ...game, returned: !game.returned }
+                    : game
+            )
+        );
     };
 
     if (loading && events.length === 0) {
@@ -250,17 +274,17 @@ export function EventGameSelection() {
             ) : (
                 <>
                     {/* Header com estatísticas */}
-                    <div className="bg-white mt-6 border-1 rounded-lg shadow p-3">
+                    <div className="bg-white mt-6 border rounded-lg shadow p-3">
                         <div className="grid grid-cols-3 gap-4">
                             <div className="text-center">
                                 <p className="text-3xl font-bold text-sejoga-verde-oficial">
                                     {availableGames.length}
                                 </p>
-                                <p className="text-sm text-gray-600">Jogos Disponíveis</p>
+                                <p className="text-sm text-gray-600">Disponíveis</p>
                             </div>
                             <div className="text-center">
                                 <p className="text-3xl font-bold text-sejoga-azul-oficial">
-                                    {availableGames.filter(g => g.selectedForEvent).length}
+                                    {selectedGames.length}
                                 </p>
                                 <p className="text-sm text-gray-600">Selecionados</p>
                             </div>
@@ -273,150 +297,191 @@ export function EventGameSelection() {
                         </div>
                     </div>
 
-                    {/* Duas colunas */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {/* Coluna Esquerda: DISPONÍVEIS */}
-                        <div className="bg-green-50 rounded-lg border-1 border-green-200 p-6">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-xl text-center font-bold text-green-800">
-                                    ✅ Jogos Disponíveis
-                                </h3>
+                    {/* Três colunas colapsáveis */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        {/* Coluna 1: DISPONÍVEIS */}
+                        <div className="bg-green-50 rounded-lg border border-green-200">
+                            <button
+                                onClick={() => setAvailableCollapsed(!availableCollapsed)}
+                                className="w-full p-4 flex items-center justify-between hover:bg-green-100 transition-colors"
+                            >
+                                <div className="flex items-center gap-2">
+                                    {availableCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                                    <h3 className="text-lg font-bold text-green-800">
+                                        ✅ Disponíveis
+                                    </h3>
+                                </div>
                                 <span className="px-3 py-1 bg-green-600 text-white rounded-full text-sm font-semibold">
                                     {availableGames.length}
                                 </span>
-                            </div>
-                            <p className="text-sm text-green-700 mb-4">
-                                Jogos que 2 ou mais monitores sabem
-                            </p>
+                            </button>
 
-                            <div className="space-y-2 max-h-[600px] overflow-y-auto">
-                                {availableGames.length === 0 ? (
-                                    <div className="text-center py-8 text-green-700">
-                                        Nenhum jogo disponível ainda
-                                    </div>
-                                ) : (
-                                    availableGames.map(game => (
+                            {!availableCollapsed && (
+                                <div className="p-4 pt-0 space-y-2 max-h-[600px] overflow-y-auto">
+                                    {availableGames.map(game => (
                                         <div
                                             key={game.id}
-                                            className={`bg-white rounded-lg p-4 border-1 transition-all ${game.selectedForEvent
-                                                ? 'border-green-600 shadow-md'
-                                                : 'border-green-100'
-                                                }`}
+                                            onClick={() => selectGame(game)}
+                                            className="bg-white rounded-lg p-3 border border-green-100 hover:border-green-400 hover:shadow-md transition-all cursor-pointer"
                                         >
-                                            <div className="flex items-start gap-3">
-                                                <Checkbox
-                                                    id={`game-${game.id}`}
-                                                    checked={game.selectedForEvent}
-                                                    onCheckedChange={() =>
-                                                        toggleGameSelection(game.id, game.selectedForEvent)
-                                                    }
-                                                    disabled={saving}
-                                                    className="mt-1"
-                                                />
-                                                <label
-                                                    htmlFor={`game-${game.id}`}
-                                                    className="flex-1 cursor-pointer"
-                                                >
-                                                    <div className="flex justify-between items-start">
-                                                        <div>
-                                                            <h4 className="font-semibold text-gray-900">
-                                                                {game.name}
-                                                            </h4>
-                                                            {game.publisher && (
-                                                                <p className="text-xs text-gray-600">
-                                                                    {game.publisher}
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                        <div className="flex gap-2">
-                                                            {game.isLoaned && (
-                                                                <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded">
-                                                                    ⚔️ Emprestado
-                                                                </span>
-                                                            )}
-                                                            <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded font-semibold">
-                                                                👤{game.teacherCount}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Coluna Direita: INDISPONÍVEIS */}
-                        <div className="bg-red-50 rounded-lg border-1 border-red-200 p-6">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-xl text-center font-bold text-red-800">
-                                    ❌ Jogos Indisponíveis
-                                </h3>
-                                <span className="px-3 py-1 bg-red-600 text-white rounded-full text-sm font-semibold">
-                                    {unavailableGames.length}
-                                </span>
-                            </div>
-                            <p className="text-sm text-red-700 mb-4">
-                                Jogos inativos ou com menos de 2 monitores
-                            </p>
-
-                            <div className="space-y-2 max-h-[600px] overflow-y-auto">
-                                {unavailableGames.length === 0 ? (
-                                    <div className="text-center py-8 text-red-700">
-                                        Todos os jogos estão disponíveis! 🎉
-                                    </div>
-                                ) : (
-                                    unavailableGames.map(game => (
-                                        <div
-                                            key={game.id}
-                                            className="bg-white rounded-lg p-4 border-1 border-red-100 opacity-75"
-                                        >
-                                            <div className="flex items-start gap-3">
-                                                <Checkbox
-                                                    checked={false}
-                                                    disabled={true}
-                                                    className="mt-1 cursor-not-allowed"
-                                                />
+                                            <div className="flex justify-between items-start">
                                                 <div className="flex-1">
-                                                    <div className="flex justify-between items-start">
-                                                        <div>
-                                                            <h4 className="font-semibold text-gray-700">
-                                                                {game.name}
-                                                            </h4>
-                                                            {game.publisher && (
-                                                                <p className="text-xs text-gray-500">
-                                                                    {game.publisher}
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                        <div className="flex gap-2">
-                                                            {!game.active && (
-                                                                <span className="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">
-                                                                    🚫 Inativo
-                                                                </span>
-                                                            )}
-                                                            <span className={`px-2 py-1 text-xs rounded font-semibold ${game.teacherCount === 0
-                                                                ? 'bg-red-200 text-red-900'
-                                                                : 'bg-orange-100 text-orange-800'
-                                                                }`}>
-                                                                👤{game.teacherCount}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    {/*<p className="text-xs text-red-600 mt-2">
-                                                        {!game.active
-                                                            ? 'Jogo marcado como inativo'
-                                                            : game.teacherCount === 0
-                                                                ? 'Nenhum monitor sabe ensinar'
-                                                                : 'Apenas 1 monitor sabe ensinar (mínimo: 2)'}
-                                                    </p>*/}
+                                                    <h4 className="font-semibold text-gray-900 text-sm">
+                                                        {game.name}
+                                                    </h4>
+                                                    {game.publisher && (
+                                                        <p className="text-xs text-gray-600">
+                                                            {game.publisher}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div className="flex gap-1">
+                                                    {game.isLoaned && (
+                                                        <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded">
+                                                            ⚔️
+                                                        </span>
+                                                    )}
+                                                    <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded font-semibold">
+                                                        👤{game.teacherCount}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
-                                    ))
-                                )}
-                            </div>
+                                    ))}
+                                    {availableGames.length === 0 && (
+                                        <p className="text-center text-sm text-green-700 py-4">
+                                            Nenhum jogo disponível
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Coluna 2: SELECIONADOS */}
+                        <div className="bg-blue-50 rounded-lg border border-blue-200">
+                            <button
+                                onClick={() => setSelectedCollapsed(!selectedCollapsed)}
+                                className="w-full p-4 flex items-center justify-between hover:bg-blue-100 transition-colors"
+                            >
+                                <div className="flex items-center gap-2">
+                                    {selectedCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                                    <h3 className="text-lg font-bold text-blue-800">
+                                        📦 Selecionados
+                                    </h3>
+                                </div>
+                                <span className="px-3 py-1 bg-blue-600 text-white rounded-full text-sm font-semibold">
+                                    {selectedGames.length}
+                                </span>
+                            </button>
+
+                            {!selectedCollapsed && (
+                                <div className="p-4 pt-0 space-y-2 max-h-[600px] overflow-y-auto">
+                                    {selectedGames.map(game => (
+                                        <div
+                                            key={game.id}
+                                            className="bg-white rounded-lg p-3 border border-blue-200 shadow-sm"
+                                        >
+                                            <div className="flex items-start gap-2">
+                                                <Checkbox
+                                                    id={`returned-${game.id}`}
+                                                    checked={game.returned}
+                                                    onCheckedChange={() => toggleReturned(game.id)}
+                                                    className="mt-1"
+                                                />
+                                                <label
+                                                    htmlFor={`returned-${game.id}`}
+                                                    className="flex-1 cursor-pointer"
+                                                >
+                                                    <h4 className="font-semibold text-gray-900 text-sm">
+                                                        {game.name}
+                                                    </h4>
+                                                    {game.publisher && (
+                                                        <p className="text-xs text-gray-600">
+                                                            {game.publisher}
+                                                        </p>
+                                                    )}
+                                                    <p className="text-xs text-blue-600 mt-1">
+                                                        {game.returned ? '✓ Retornou' : 'Retornou'}
+                                                    </p>
+                                                </label>
+                                                <button
+                                                    onClick={() => unselectGame(game)}
+                                                    disabled={saving}
+                                                    className="p-1 hover:bg-red-100 rounded transition-colors"
+                                                >
+                                                    <X className="w-4 h-4 text-red-600" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {selectedGames.length === 0 && (
+                                        <p className="text-center text-sm text-blue-700 py-4">
+                                            Nenhum jogo selecionado
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Coluna 3: INDISPONÍVEIS */}
+                        <div className="bg-red-50 rounded-lg border border-red-200">
+                            <button
+                                onClick={() => setUnavailableCollapsed(!unavailableCollapsed)}
+                                className="w-full p-4 flex items-center justify-between hover:bg-red-100 transition-colors"
+                            >
+                                <div className="flex items-center gap-2">
+                                    {unavailableCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                                    <h3 className="text-lg font-bold text-red-800">
+                                        ❌ Indisponíveis
+                                    </h3>
+                                </div>
+                                <span className="px-3 py-1 bg-red-600 text-white rounded-full text-sm font-semibold">
+                                    {unavailableGames.length}
+                                </span>
+                            </button>
+
+                            {!unavailableCollapsed && (
+                                <div className="p-4 pt-0 space-y-2 max-h-[600px] overflow-y-auto">
+                                    {unavailableGames.map(game => (
+                                        <div
+                                            key={game.id}
+                                            className="bg-white rounded-lg p-3 border border-red-100 opacity-60"
+                                        >
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex-1">
+                                                    <h4 className="font-semibold text-gray-700 text-sm">
+                                                        {game.name}
+                                                    </h4>
+                                                    {game.publisher && (
+                                                        <p className="text-xs text-gray-500">
+                                                            {game.publisher}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div className="flex gap-1">
+                                                    {!game.active && (
+                                                        <span className="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">
+                                                            🚫
+                                                        </span>
+                                                    )}
+                                                    <span className={`px-2 py-1 text-xs rounded font-semibold ${
+                                                        game.teacherCount === 0
+                                                            ? 'bg-red-200 text-red-900'
+                                                            : 'bg-orange-100 text-orange-800'
+                                                    }`}>
+                                                        👤{game.teacherCount}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {unavailableGames.length === 0 && (
+                                        <p className="text-center text-sm text-red-700 py-4">
+                                            Todos disponíveis! 🎉
+                                        </p>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </>

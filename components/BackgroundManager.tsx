@@ -14,9 +14,7 @@ export function BackgroundManager() {
             const bgImage = user 
                 ? (await supabase.from('profiles').select('background').eq('id', user.id).single()).data?.background || '/images/backgrounds/rainbow.jpg'
                 : '/images/backgrounds/rainbow.jpg';
-            
-            console.log('🎨 Aplicando background:', bgImage, user ? 'com usuário' : 'sem usuário');
-            
+                        
             const style = document.createElement('style');
             style.id = 'dynamic-bg';
             style.innerHTML = `body::before { background-image: url(${bgImage}) !important; }`;
@@ -25,7 +23,6 @@ export function BackgroundManager() {
             if (oldStyle) oldStyle.remove();
             
             document.head.appendChild(style);
-            console.log('✅ Style aplicado');
             setBgLoaded(true);
         }
 
@@ -33,7 +30,6 @@ export function BackgroundManager() {
 
         // ✅ ADICIONE: Escuta mudanças de autenticação
         const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-            console.log('🔐 Auth mudou:', event);
             if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
                 loadBackground(); // Recarrega background quando logar
             }
@@ -55,9 +51,7 @@ export function BackgroundManager() {
                         filter: `id=eq.${currentUser.id}`
                     },
                     (payload: { new?: { background?: string } }) => {
-                        if (payload.new?.background) {
-                            console.log('🔄 Background via realtime:', payload.new.background);
-                            
+                        if (payload.new?.background) {                            
                             const style = document.createElement('style');
                             style.id = 'dynamic-bg';
                             style.innerHTML = `body::before { background-image: url(${payload.new.background}) !important; }`;
