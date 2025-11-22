@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "app.sejoga",
+            "sha256_cert_fingerprints": [
+                "BD:47:35:C0:49:C0:C9:A0:49:09:49:86:93:23:84:22:B3:1B:61:38:53:15:1A:32:6E:4F:71:70:77:D2:92:E3"
+            ]
+        }
+    }
+]
