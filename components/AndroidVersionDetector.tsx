@@ -17,10 +17,27 @@ export function AndroidVersionDetector() {
                 document.documentElement.classList.add('android-modern');
                 console.log('✅ android-modern aplicado');
 
-                // ✅ Força padding via JS também (backup)
+                // ✅ Força padding via JS
                 setTimeout(() => {
                     document.body.style.paddingTop = '40px';
-                    console.log('✅ Padding forçado via JS');
+
+                    // ✅ ADICIONE: Observer para sidebars/dialogs
+                    const observer = new MutationObserver(() => {
+                        // Procura por sidebars/dialogs abertos
+                        const dialogs = document.querySelectorAll('[role="dialog"], [data-radix-dialog-content]');
+                        dialogs.forEach((dialog) => {
+                            if (dialog instanceof HTMLElement) {
+                                dialog.style.paddingTop = '40px';
+                            }
+                        });
+                    });
+
+                    observer.observe(document.body, {
+                        childList: true,
+                        subtree: true,
+                    });
+
+                    console.log('✅ Padding e observer configurados');
                 }, 100);
             }
         }
