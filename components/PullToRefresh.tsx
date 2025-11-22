@@ -1,20 +1,22 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export function PullToRefresh() {
-    const router = useRouter();
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     useEffect(() => {
         let startY = 0;
         let currentY = 0;
         let pulling = false;
-        const threshold = 80; // Pixels necessários para disparar refresh
+        const threshold = 100;
 
         const handleTouchStart = (e: TouchEvent) => {
-            // Só ativa se estiver no topo da página
-            if (window.scrollY === 0) {
+            // ✅ Verifica se REALMENTE está no topo (scroll = 0)
+            const scrollableElement = document.querySelector('.overflow-y-auto') as HTMLElement;
+            const isAtTop = scrollableElement ? scrollableElement.scrollTop === 0 : window.scrollY === 0;
+
+            if (isAtTop) {
                 startY = e.touches[0].clientY;
                 pulling = true;
             }
@@ -26,14 +28,14 @@ export function PullToRefresh() {
             currentY = e.touches[0].clientY;
             const distance = currentY - startY;
 
-            // Se puxou para baixo o suficiente
-            if (distance > threshold) {
-                // Visual feedback (opcional)
-                document.body.style.transform = `translateY(${Math.min(distance / 3, 50)}px)`;
+            // ✅ Só permite puxar para BAIXO (distância positiva)
+            if (distance > 0 && distance < threshold * 2) {
+                document.body.style.transform = `translateY(${Math.min(distance / 2.5, 60)}px)`;
+                document.body.style.transition = 'none';
             }
         };
 
-        const handleTouchEnd = () => {
+        const handleTouchEnd = async () => {
             if (!pulling) return;
 
             const distance = currentY - startY;
@@ -42,14 +44,15 @@ export function PullToRefresh() {
             document.body.style.transition = 'transform 0.3s ease';
             document.body.style.transform = 'translateY(0)';
 
-            setTimeout(() => {
-                document.body.style.transition = '';
-            }, 300);
-
-            // Se passou do threshold, refresh
+            // ✅ Se passou do threshold, RECARREGA A PÁGINA
             if (distance > threshold) {
-                console.log('🔄 Refresh disparado!');
-                router.refresh();
+                setIsRefreshing(true);
+                console.log('🔄 Recarregando página...');
+
+                // ✅ Recarrega a página completamente
+                setTimeout(() => {
+                    window.location.reload();
+                }, 300);
             }
 
             pulling = false;
@@ -66,7 +69,11 @@ export function PullToRefresh() {
             document.removeEventListener('touchmove', handleTouchMove);
             document.removeEventListener('touchend', handleTouchEnd);
         };
-    }, [router]);
+    }, []);
 
-    return null;
+    return isRefreshing ? (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg">
+            🔄 Atualizando...
+        </div>
+    ) : null;
 }
