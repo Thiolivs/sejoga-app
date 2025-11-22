@@ -55,7 +55,7 @@ export function SidebarMenu({
                 {/* ✅ Padding dinâmico baseado no hook */}
                 <div
                     className="h-full flex flex-col"
-                    style={{ paddingTop: isAndroidModern ? '40px' : '0' }}
+                    style={{ paddingTop: isAndroidModern ? '80px' : '0' }}
                 >
                     <SheetHeader>
                         <SheetTitle>Menu</SheetTitle>
