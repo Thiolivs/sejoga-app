@@ -47,7 +47,7 @@ export function SidebarMenu({
             console.log('🔍 Sheet encontrado:', sheet);
             if (sheet instanceof HTMLElement) {
                 console.log('🔍 Padding atual:', sheet.style.paddingTop);
-                sheet.style.setProperty('padding-top', '40px', 'important');
+                sheet.style.setProperty('padding-top', '340px', 'important');
                 console.log('✅ Padding aplicado');
                 console.log('🔍 Padding depois:', window.getComputedStyle(sheet).paddingTop);
             } else {
