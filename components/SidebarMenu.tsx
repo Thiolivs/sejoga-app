@@ -102,7 +102,7 @@ export function SidebarMenu({
                     {/* Item: Eventos (apenas monitor/admin) */}
                     {(isMonitor || isAdmin) && (
                         <button
-                            onClick={() => handleNavigation('/user-app/event-selection')}
+                            onClick={() => handleNavigation('/user-app/administration/event-selection')}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'event-selection'
                                 ? 'bg-blue-100 text-blue-700'
                                 : 'hover:bg-gray-100 text-gray-700'
