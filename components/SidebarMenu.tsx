@@ -39,21 +39,19 @@ export function SidebarMenu({
     const supabase = createClient();
     const isAndroidModern = useAndroidModern();
 
-    useEffect(() => {
+useEffect(() => {
     if (open && isAndroidModern) {
-        console.log('🔍 Sheet aberto, tentando aplicar padding...');
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
             const sheet = document.querySelector('[role="dialog"].bg-background');
-            console.log('🔍 Sheet encontrado:', sheet);
             if (sheet instanceof HTMLElement) {
-                console.log('🔍 Padding atual:', sheet.style.paddingTop);
-                sheet.style.setProperty('padding-top', '340px', 'important');
-                console.log('✅ Padding aplicado');
-                console.log('🔍 Padding depois:', window.getComputedStyle(sheet).paddingTop);
-            } else {
-                console.log('❌ Sheet não encontrado');
+                // ✅ Muda o TOP em vez do padding
+                sheet.style.setProperty('top', '40px', 'important');
+                sheet.style.setProperty('height', 'calc(100% - 40px)', 'important');
+                console.log('✅ Top 40px aplicado no sidebar');
             }
         }, 50);
+
+        return () => clearTimeout(timeoutId);
     }
 }, [open, isAndroidModern]);
 
