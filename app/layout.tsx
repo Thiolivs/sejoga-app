@@ -3,6 +3,8 @@ import { Poppins, Caveat, Shadows_Into_Light, Joti_One, Aladin } from 'next/font
 import "./globals.css";
 import { BackgroundManager } from "@/components/BackgroundManager";
 import { AndroidVersionDetector } from "@/components/AndroidVersionDetector";
+import { PullToRefresh } from '@/components/PullToRefresh'
+
 
 const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
@@ -68,6 +70,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={poppins.className}>
         <AndroidVersionDetector />
         <BackgroundManager />
+        <PullToRefresh /> 
+
         {children}
       </body>
     </html>
