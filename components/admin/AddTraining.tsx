@@ -100,16 +100,6 @@ const supabase = createClient();
 
     return (
         <div className="max-w-2xl mx-auto p-6">
-            {/* Header */}
-            <div className="flex items-center gap-4 mb-6">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => router.back()}
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                </Button>
-            </div>
 
             {/* Aviso se não houver ciclos */}
             {cycles.length === 0 && !loading && (
