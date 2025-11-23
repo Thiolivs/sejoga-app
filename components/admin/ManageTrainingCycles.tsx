@@ -130,16 +130,6 @@ export function ManageTrainingCycles() {
 
     return (
         <div className="space-y-6 ">
-            {/* Header com botão voltar */}
-            <div className="flex items-center gap-4 mb-6">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => router.back()}
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                </Button>
-            </div>
 
             <div className='bg-white/95 p-3 rounded-lg g'>
 
