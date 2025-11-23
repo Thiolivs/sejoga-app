@@ -103,7 +103,6 @@ export function LoginAccountForm() {
                                 <FormControl>
                                     <Input
                                         type="email"
-                                        placeholder="Digite seu email"
                                         {...field}
                                     />
                                 </FormControl>
@@ -121,7 +120,6 @@ export function LoginAccountForm() {
                                 <FormControl>
                                     <Input
                                         type="password"
-                                        placeholder="Digite sua senha"
                                         {...field}
                                     />
                                 </FormControl>
