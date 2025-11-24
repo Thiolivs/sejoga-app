@@ -340,7 +340,6 @@ export function MySeJogaSession() {
             <div className="flex items-center justify-center min-h-[300px]">
                 <div className="text-center">
                     <p className="text-red-600 text-sm mb-2">Você precisa estar logado</p>
-                    <a href="/" className="text-blue-600 hover:underline text-sm">Ir para o login</a>
                 </div>
             </div>
         );
