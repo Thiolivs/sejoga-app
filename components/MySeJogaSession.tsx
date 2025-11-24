@@ -641,7 +641,7 @@ export function MySeJogaSession() {
                     <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Tem certeza absoluta?</AlertDialogTitle>
+                                <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
                                 <AlertDialogDescription>
                                     Esta ação não pode ser desfeita. Isso irá excluir permanentemente sua conta
                                     e remover todos os seus dados dos nossos servidores.
