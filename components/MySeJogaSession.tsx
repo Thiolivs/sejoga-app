@@ -623,27 +623,15 @@ export function MySeJogaSession() {
 
 
                     {/* ✅ Seção de Exclusão de Conta */}
-                    <div className="border-t pt-6 mt-8">
-                        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                            Zona de Perigo
-                        </h2>
-                        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <h3 className="text-red-900 font-semibold">
-                                        Excluir Conta
-                                    </h3>
-                                    <p className="text-sm text-red-700 mt-1">
-                                        Esta ação não pode ser desfeita. Todos os seus dados serão permanentemente removidos.
-                                    </p>
-                                </div>
+                    <div className="border-t pt-4 mt-8">
+                        <div className="bg-red-50 border border-red-200 rounded-lg">
+                            <div className="flex text-red-800 items-start justify-center">
                                 <Button
-                                    variant="destructive"
+                                    variant="ghost"
                                     onClick={() => setShowDeleteDialog(true)}
                                     className="ml-4"
                                 >
-                                    <Trash2 className="w-4 h-4 mr-2" />
-                                    Excluir
+                                    Excluir minha conta
                                 </Button>
                             </div>
                         </div>
