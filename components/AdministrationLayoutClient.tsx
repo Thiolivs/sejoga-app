@@ -17,30 +17,28 @@ export function AdministrationLayoutClient({
 
     return (
         <div className="flex flex-col h-screen overflow-hidden">
-            {/* ✅ Header fixo */}
-            <header className="flex-none bg-white shadow-sm">
-                <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-1 flex items-center relative">
-                    <SidebarMenu isAdmin={isAdmin} isMonitor={isMonitor} currentPage="gerenciar" />
-                    <Button variant="ghost" size="icon" onClick={() => router.back()}>
-                        <ArrowLeft className="w-5 h-5" />
-                    </Button>
+            <header className="flex-none bg-white/90 shadow-sm">
+                <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-1">
+                    <div className="flex items-center gap-4 relative">
+                        <SidebarMenu isAdmin={isAdmin} isMonitor={isMonitor} currentPage="gerenciar" />
+                        <Button variant="ghost" size="icon" onClick={() => router.back()}>
+                            <ArrowLeft className="w-5 h-5" />
+                        </Button>
 
-                    {/* ✅ Título centralizado absolutamente */}
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                        <h1 className="text-[35px] font-caveat text-gray-900 whitespace-nowrap">
-                            SeJoga no App!
-                        </h1>
-                    </div>
+                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                            <h1 className="text-[35px] font-caveat text-gray-900 whitespace-nowrap">
+                                SeJoga no App!
+                            </h1>
+                        </div>
 
-                    <div className="ml-auto flex items-center">
-                        <UserNav />
+                        <div className="ml-auto flex items-center">
+                            <UserNav />
+                        </div>
                     </div>
                 </div>
             </header>
 
-
-
-            {/* ✅ Conteúdo scrollável */}
+            {/*Conteúdo scrollável */}
             <div className="flex-1 overflow-y-auto overflow-x-hidden">
                 {children}
             </div>

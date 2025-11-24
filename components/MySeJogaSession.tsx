@@ -7,6 +7,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { Trash2 } from 'lucide-react';
+
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ProfileData {
     first_name: string;
@@ -67,11 +79,13 @@ export function MySeJogaSession() {
     const supabase = createClient();
     const router = useRouter();
 
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
     useEffect(() => {
         async function loadUserProfile() {
             try {
-                console.log('🔍 MySeJoga - Iniciando busca do usuário...');
-
                 setLoading(true);
                 setError(null);
 
@@ -81,7 +95,6 @@ export function MySeJogaSession() {
                 console.log('🔍 MySeJoga - Error:', userError);
 
                 if (userError || !currentUser) {
-                    console.log('❌ MySeJoga - Erro ao buscar usuário:', userError);
                     setError('Você precisa estar logado para acessar esta página');
                     setLoading(false);
                     return;
@@ -239,30 +252,30 @@ export function MySeJogaSession() {
     }
 
     async function handleBackgroundSelect(bgPath: string) {
-    if (!user) return;
+        if (!user) return;
 
-    setProfile({ ...profile, background: bgPath });
-    setShowBgSelector(false);
+        setProfile({ ...profile, background: bgPath });
+        setShowBgSelector(false);
 
-    try {
-        await supabase
-            .from('profiles')
-            .update({ background: bgPath })
-            .eq('id', user.id);
+        try {
+            await supabase
+                .from('profiles')
+                .update({ background: bgPath })
+                .eq('id', user.id);
 
-        // ✅ Aplica no pseudo-elemento
-        const style = document.createElement('style');
-        style.id = 'dynamic-bg';
-        style.innerHTML = `body::before { background-image: url(${bgPath}); }`;
-        
-        const oldStyle = document.getElementById('dynamic-bg');
-        if (oldStyle) oldStyle.remove();
-        
-        document.head.appendChild(style);
-    } catch (err) {
-        console.error('Erro ao salvar background:', err);
+            // ✅ Aplica no pseudo-elemento
+            const style = document.createElement('style');
+            style.id = 'dynamic-bg';
+            style.innerHTML = `body::before { background-image: url(${bgPath}); }`;
+
+            const oldStyle = document.getElementById('dynamic-bg');
+            if (oldStyle) oldStyle.remove();
+
+            document.head.appendChild(style);
+        } catch (err) {
+            console.error('Erro ao salvar background:', err);
+        }
     }
-}
 
     async function handlePasswordChange() {
         if (!newPassword || !confirmPassword) {
@@ -327,11 +340,41 @@ export function MySeJogaSession() {
             <div className="flex items-center justify-center min-h-[300px]">
                 <div className="text-center">
                     <p className="text-red-600 text-sm mb-2">Você precisa estar logado</p>
-                    <a href="/login" className="text-blue-600 hover:underline text-sm">Ir para o login</a>
+                    <a href="/" className="text-blue-600 hover:underline text-sm">Ir para o login</a>
                 </div>
             </div>
         );
     }
+
+    const handleDeleteAccount = async () => {
+        try {
+            setIsDeleting(true);
+
+            // Chama a função do Supabase para deletar
+            const { error } = await supabase.rpc('delete_user_account');
+
+            if (error) throw error;
+
+            // Fecha dialog de confirmação e abre de sucesso
+            setShowDeleteDialog(false);
+            setShowSuccessDialog(true);
+
+            // Aguarda 2 segundos e desloga
+            setTimeout(async () => {
+                await supabase.auth.signOut();
+                sessionStorage.removeItem('sejoga-session-active');
+                localStorage.removeItem('userapp-active-tab');
+                router.push('/');
+                router.refresh();
+            }, 2000);
+
+        } catch (error) {
+            console.error('Erro ao excluir conta:', error);
+            alert('Erro ao excluir conta. Tente novamente.');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     return (
         <div className="max-w-2xl mx-auto p-4">
@@ -459,7 +502,6 @@ export function MySeJogaSession() {
                                     value={profile.first_name}
                                     onChange={(e) => setProfile({ ...profile, first_name: e.target.value })}
                                     className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Seu nome"
                                 />
                             ) : (
                                 <p className="px-2 py-1.5 text-sm bg-gray-50 rounded text-gray-900">
@@ -476,7 +518,6 @@ export function MySeJogaSession() {
                                     value={profile.last_name}
                                     onChange={(e) => setProfile({ ...profile, last_name: e.target.value })}
                                     className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Seu sobrenome"
                                 />
                             ) : (
                                 <p className="px-2 py-1.5 text-sm bg-gray-50 rounded text-gray-900">
@@ -495,7 +536,6 @@ export function MySeJogaSession() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="seu@email.com"
                             />
                         ) : (
                             <p className="px-2 py-1.5 text-sm bg-gray-50 rounded text-gray-900">
@@ -546,7 +586,7 @@ export function MySeJogaSession() {
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="Digite a senha novamente"
-                                        minLength={6}
+                                        minLength={7}
                                     />
                                 </div>
 
@@ -581,6 +621,73 @@ export function MySeJogaSession() {
                             </p>
                         )}
                     </div>
+
+
+                    {/* ✅ Seção de Exclusão de Conta */}
+                    <div className="border-t pt-6 mt-8">
+                        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                            Zona de Perigo
+                        </h2>
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <h3 className="text-red-900 font-semibold">
+                                        Excluir Conta
+                                    </h3>
+                                    <p className="text-sm text-red-700 mt-1">
+                                        Esta ação não pode ser desfeita. Todos os seus dados serão permanentemente removidos.
+                                    </p>
+                                </div>
+                                <Button
+                                    variant="destructive"
+                                    onClick={() => setShowDeleteDialog(true)}
+                                    className="ml-4"
+                                >
+                                    <Trash2 className="w-4 h-4 mr-2" />
+                                    Excluir
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ✅ Dialog de Confirmação */}
+                    <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Tem certeza absoluta?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Esta ação não pode ser desfeita. Isso irá excluir permanentemente sua conta
+                                    e remover todos os seus dados dos nossos servidores.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel disabled={isDeleting}>
+                                    Cancelar
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={handleDeleteAccount}
+                                    disabled={isDeleting}
+                                    className="bg-red-600 hover:bg-red-700"
+                                >
+                                    {isDeleting ? 'Excluindo...' : 'Sim, excluir minha conta'}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+
+                    {/* ✅ Dialog de Sucesso */}
+                    <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="text-green-600">
+                                    Conta excluída com sucesso!
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Seus dados foram removidos. Você será redirecionado para a tela de login.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                        </AlertDialogContent>
+                    </AlertDialog>
 
 
 
