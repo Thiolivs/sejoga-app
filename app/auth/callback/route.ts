@@ -7,11 +7,13 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
     const requestUrl = new URL(request.url);
     const code = requestUrl.searchParams.get("code");
+    const token_hash = requestUrl.searchParams.get("token_hash");
+    const type = requestUrl.searchParams.get("type");
 
     try {
-        if (code) {
+        if (code || token_hash) {
             const cookieStore = await cookies();
-            
+
             const supabase = createServerClient(
                 process.env.NEXT_PUBLIC_SUPABASE_URL!,
                 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -25,21 +27,26 @@ export async function GET(request: NextRequest) {
                                 cookiesToSet.forEach(({ name, value, options }) =>
                                     cookieStore.set(name, value, options)
                                 );
-                            } catch {}
+                            } catch { }
                         },
                     },
                 }
             );
-            
-            await supabase.auth.exchangeCodeForSession(code);
-            
-            // ✅ Redireciona para /user-app após confirmar email
+
+            // Se tem code (OAuth flow)
+            if (code) {
+                await supabase.auth.exchangeCodeForSession(code);
+            }
+            // Se tem token_hash (email verification via custom scheme)
+            else if (token_hash && type) {
+                await supabase.auth.verifyOtp({ token_hash, type: type as any });
+            }
+
             return NextResponse.redirect(`${requestUrl.origin}/user-app`);
         }
     } catch (error) {
         console.log("Auth_Callback", error);
     }
-    
-    // ✅ Se não tem code, redireciona para login
+
     return NextResponse.redirect(`${requestUrl.origin}/`);
 }
