@@ -26,7 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- ✅ Deep Link com autoVerify para abrir app automaticamente -->
+            <!-- Deep Link HTTPS -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -34,6 +34,14 @@
                 <data 
                     android:scheme="https" 
                     android:host="sejoga.app" />
+            </intent-filter>
+
+            <!-- ✅ URL Scheme personalizado (fallback garantido) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="app.sejoga" />
             </intent-filter>
 
         </activity>
