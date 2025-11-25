@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createServerClient } from '@supabase/ssr';
 
-// ✅ ADICIONE ESTA LINHA
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
@@ -33,10 +32,14 @@ export async function GET(request: NextRequest) {
             );
             
             await supabase.auth.exchangeCodeForSession(code);
+            
+            // ✅ Redireciona para /user-app após confirmar email
+            return NextResponse.redirect(`${requestUrl.origin}/user-app`);
         }
     } catch (error) {
         console.log("Auth_Callback", error);
     }
     
-    return NextResponse.redirect(requestUrl.origin);
+    // ✅ Se não tem code, redireciona para login
+    return NextResponse.redirect(`${requestUrl.origin}/`);
 }
