@@ -117,16 +117,17 @@
     @apply border-border outline-ring/50;
   }
 
-html {
-  background-color: #0096FF;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
+  html {
+    background-color: #0096FF;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
 
   body {
     @apply text-foreground;
     padding-top: 0;
+    padding-bottom: 0;
     min-height: 100vh;
     position: relative;
     background-color: transparent !important;
@@ -147,20 +148,21 @@ html {
     z-index: -1;
   }
 
-  /* ✅ Android 15+: padding e background ajustados */
+  /* ✅ Android 15+: padding top e bottom */
   html.android-modern body {
     padding-top: 40px !important;
+    padding-bottom: env(safe-area-inset-bottom, 20px) !important;
   }
 
   html.android-modern body::before {
     top: 40px !important;
+    bottom: env(safe-area-inset-bottom, 20px) !important;
   }
 
   /* ✅ Android moderno: ajusta estrutura de layout */
   html.android-modern .h-screen {
-    height: calc(100vh - 40px) !important;
+    height: calc(100vh - 40px - env(safe-area-inset-bottom, 20px)) !important;
   }
-
 }
 
 @keyframes fadeIn {
