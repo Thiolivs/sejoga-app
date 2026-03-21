@@ -164,7 +164,7 @@ export function TrainingSession() {
                             className="flex items-center gap-2"
                         >
                             <Calendar className="w-4 h-4" />
-                            Gerenciar Ciclos
+                            Gerenciar
                         </Button>
                         <Button
                             onClick={() => router.push('/user-app/administration/add-training')}
@@ -288,13 +288,13 @@ export function TrainingSession() {
                                                                             type="checkbox"
                                                                             checked={isChecked}
                                                                             onChange={() => handleToggle(training.id, shiftKey as 'morning' | 'afternoon' | 'night', isChecked)}
-                                                                            className="w-5 h-5"
+                                                                            className="w-5 h-5 hidden"
                                                                         />
                                                                         <div className="flex flex-col items-center gap-1 flex-1">
                                                                             <ShiftIcon className="w-4 h-4" />
                                                                             <span className="text-sm font-semibold">{shiftData.label}</span>
                                                                             {participants.length > 0 && (
-                                                                                <span className="text-xs">({participants.length})</span>
+                                                                                <span className="text-xs">{participants.length}</span>
                                                                             )}
                                                                         </div>
                                                                     </label>
