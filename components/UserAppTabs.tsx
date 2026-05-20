@@ -31,7 +31,7 @@ export function UserAppTabs({ activeTab, onTabChange, isMonitor = false, isAdmin
                         Meu SeJoga
                     </button>
 
-                    {/* ✅ Só monitores/admins veem */}
+                    {/* Só monitores/admins veem */}
                     {canSeeRestrictedTabs && (
                         <button
                             onClick={() => onTabChange('register')}
@@ -58,7 +58,7 @@ export function UserAppTabs({ activeTab, onTabChange, isMonitor = false, isAdmin
                         Acervo
                     </button>
 
-                    {/* ✅ Só monitores/admins veem */}
+                    {/*Só monitores/admins veem */}
                     {canSeeRestrictedTabs && (
                         <button
                             onClick={() => onTabChange('training')}
@@ -73,7 +73,7 @@ export function UserAppTabs({ activeTab, onTabChange, isMonitor = false, isAdmin
                         </button>
                     )}
 
-                    {/* ✅ Só monitores/admins veem */}
+                    {/* Só monitores/admins veem */}
                     {canSeeRestrictedTabs && (
                         <button
                             onClick={() => onTabChange('statistics')}
