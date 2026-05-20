@@ -221,8 +221,8 @@ export function BoardgameList() {
                         )}
                     </Button>
 
-                    
-                    {/* Botão limpar */}
+                {/* 
+                    Botão limpar 
                     {hasActiveFilters && (
                         <Button
                             onClick={clearFilters}
@@ -231,8 +231,8 @@ export function BoardgameList() {
                         >
                             ❌ Limpar
                         </Button>
-                    )}*/
-                    
+                    )}
+                */}
                 </div>
 
                 {/* Painel de Filtros Avançados */}
