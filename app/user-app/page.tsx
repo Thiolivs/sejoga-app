@@ -4,11 +4,13 @@ import { UserAppHeader } from "@/components/UserAppHeader"
 import { UserAppTabs } from "@/components/UserAppTabs"
 import { UserAppContent } from "@/components/UserAppContent"
 import { useEffect, useState } from 'react';
+import { useUserRole } from '@/hooks/useUserRole';
 
 type Tab = 'training' | 'profile' | 'jogos' | 'register' | 'statistics';
 
 export default function UserApp() {
     const [activeTab, setActiveTab] = useState<Tab>('jogos');
+    const { isAdmin, isMonitor } = useUserRole();
 
     useEffect(() => {
         const isActiveSession = sessionStorage.getItem('sejoga-session-active');
@@ -36,11 +38,16 @@ export default function UserApp() {
     }, []);
 
     return (
-        <div className="flex flex-col h-screen overflow-hidden">
+        <div className="flex flex-col h-screen overflow-hidden" data-app-layout>
             {/* ✅ Header + Tabs fixos fora do scroll */}
             <div className="flex-none">
                 <UserAppHeader />
-                <UserAppTabs activeTab={activeTab} onTabChange={handleTabChange} />
+                <UserAppTabs 
+                    activeTab={activeTab} 
+                    onTabChange={handleTabChange}
+                    isMonitor={isMonitor}
+                    isAdmin={isAdmin}
+                />
             </div>
             
             {/* ✅ Conteúdo com scroll - começa ABAIXO das tabs */}
