@@ -221,6 +221,7 @@ export function BoardgameList() {
                         )}
                     </Button>
 
+                    
                     {/* Botão limpar */}
                     {hasActiveFilters && (
                         <Button
@@ -230,7 +231,8 @@ export function BoardgameList() {
                         >
                             ❌ Limpar
                         </Button>
-                    )}
+                    )}*/
+                    
                 </div>
 
                 {/* Painel de Filtros Avançados */}
@@ -390,7 +392,7 @@ export function BoardgameList() {
                 {filteredGames.map((game) => (
                     <div
                         key={game.id}
-                        className={`border rounded-lg transition-all ${game.isLoaned ? 'bg-red-50 border-red-300' : 'bg-white hover:shadow-md'
+                        className={`border rounded-lg transition-all ${(isMonitor || isAdmin) && game.isLoaned ? 'bg-red-50 border-red-300' : 'bg-white hover:shadow-md'
                             }`}
                     >
                         <div className="flex gap-2">
@@ -404,11 +406,14 @@ export function BoardgameList() {
                                     <div className="flex items-center gap-2 flex-wrap">
                                         <h3 className="font-semibold text-base">{game.name}</h3> {/* ✅ reduzido de text-lg para text-base */}
 
-                                        {game.isLoaned && (
+                                        
+                                        {(isMonitor || isAdmin) && game.isLoaned && (
                                             <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs font-semibold rounded"> {/* ✅ reduzido py-1 para py-0.5 */}
                                                 ⚔️ Emprestado
                                             </span>
                                         )}
+
+
                                     </div>
                                 </div>
 
@@ -490,7 +495,7 @@ export function BoardgameList() {
                             </div>
 
                             <div className="space-y-4">
-                                {selectedGame.isLoaned && (
+                                {(isMonitor || isAdmin) && selectedGame.isLoaned && (
                                     <div className="bg-red-50 border text-center border-red-200 rounded-lg p-4">
                                         <h4 className="font-semibold text-red-800 mb-2">
                                             ⚔️ Jogo Emprestado
