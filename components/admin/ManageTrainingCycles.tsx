@@ -174,17 +174,21 @@ export function ManageTrainingCycles() {
                             </label>
                         </div>
 
-                        {/*<div className="flex gap-3 pt-4">
+                        <div className="flex gap-3 pt-4">
+                            
+                            {/*
                             <Button type="button" variant="outline" onClick={resetForm} className="flex-1">
                                 Cancelar
                             </Button>
+                            */}
+
                             <Button type="submit" disabled={loading} className="bg-sejoga-verde-oficial flex-1">
                                 {editingId ? 'Atualizar' : 'Criar Ciclo'}
                             </Button>
                         </div>
                         
-                        */}
-                        
+
+
                     </form>
                 )}
 
