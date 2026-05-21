@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Calendar, MapPin, Save } from 'lucide-react';
+import { Calendar, MapPin } from 'lucide-react';
 import type { TrainingCycle } from '@/types/database';
 
 export function AddTraining() {
@@ -16,8 +16,7 @@ export function AddTraining() {
     const [formData, setFormData] = useState({
         cycle_id: '',
         training_date: '',
-        location: '',
-        is_active: true
+        location: ''
     });
 
     const [loading, setLoading] = useState(false);
@@ -34,7 +33,7 @@ export function AddTraining() {
                 .from('training_cycles')
                 .select('*')
                 .eq('is_active', true)
-                .order('created_at', { ascending: false }); // ✅ Mudou de start_date para created_at
+                .order('created_at', { ascending: false });
 
             if (error) throw error;
             setCycles(data || []);
@@ -50,15 +49,12 @@ export function AddTraining() {
         setSuccess(false);
 
         try {
-            // ✅ REMOVIDA: validação de data dentro do range do ciclo
-
             const { error: insertError } = await supabase
                 .from('trainings')
                 .insert([{
                     cycle_id: formData.cycle_id,
                     training_date: formData.training_date,
-                    location: formData.location,
-                    is_active: formData.is_active
+                    location: formData.location
                 }]);
 
             if (insertError) throw insertError;
@@ -69,8 +65,7 @@ export function AddTraining() {
             setFormData({
                 cycle_id: '',
                 training_date: '',
-                location: '',
-                is_active: true
+                location: ''
             });
 
             // Redireciona após 2 segundos
@@ -88,7 +83,6 @@ export function AddTraining() {
 
     return (
         <div className="max-w-2xl mx-auto p-6">
-
             {/* Aviso se não houver ciclos */}
             {cycles.length === 0 && !loading && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6 text-center">
@@ -107,7 +101,9 @@ export function AddTraining() {
 
             {/* Formulário */}
             <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
-                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Novo Treinamento</div>
+                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">
+                    Novo Treinamento
+                </div>
 
                 {/* Seleção de Ciclo */}
                 <div>
@@ -118,7 +114,7 @@ export function AddTraining() {
                         value={formData.cycle_id}
                         onChange={(e) => setFormData({ ...formData, cycle_id: e.target.value })}
                         required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sejoga-azul-oficial"
                     >
                         <option value="">Selecione um ciclo</option>
                         {cycles.map((cycle) => (
@@ -127,9 +123,7 @@ export function AddTraining() {
                             </option>
                         ))}
                     </select>
-                    <p className="text-xs text-gray-500 mt-1">
-                        Se não houver ciclos, crie um primeiro em Gerenciar Ciclos
-                    </p>
+
                 </div>
 
                 {/* Data do Treinamento */}
@@ -161,39 +155,25 @@ export function AddTraining() {
                     />
                 </div>
 
-                {/* Status Ativo */}
-                <div className="flex items-center gap-3">
-                    <input
-                        type="checkbox"
-                        id="is_active"
-                        checked={formData.is_active}
-                        onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                        className="w-5 h-5 rounded"
-                    />
-                    <label htmlFor="is_active" className="text-sm font-medium text-gray-700 cursor-pointer">
-                        Data ativa (visível para os monitores)
-                    </label>
-                </div>
-
-                {/* Informação sobre turnos */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p className="text-sm text-blue-800">
+                {/* Informação sobre turnos 
+                <div className="bg-sejoga-azul-oficial/10 border border-sejoga-azul-oficial/30 rounded-lg p-4">
+                    <p className="text-sm text-gray-800">
                         <strong>ℹ️ Sobre os turnos:</strong> Os três turnos (Manhã, Tarde e Noite)
                         estarão disponíveis automaticamente para esta data. Os monitores poderão
                         marcar sua disponibilidade para cada turno.
                     </p>
-                </div>
+                </div>*/}
 
                 {/* Mensagens de erro/sucesso */}
                 {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <p className="text-sm text-red-800">{error}</p>
+                    <div className="bg-sejoga-vermelho-oficial/10 border border-sejoga-vermelho-oficial/30 rounded-lg p-4">
+                        <p className="text-sm text-sejoga-vermelho-oficial font-medium">{error}</p>
                     </div>
                 )}
 
                 {success && (
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                        <p className="text-sm text-green-800">
+                    <div className="bg-sejoga-verde-oficial/10 border border-sejoga-verde-oficial/30 rounded-lg p-4">
+                        <p className="text-sm text-sejoga-verde-oficial font-medium">
                             ✅ Data de treinamento criada com sucesso! Redirecionando...
                         </p>
                     </div>
@@ -208,12 +188,12 @@ export function AddTraining() {
                         disabled={loading}
                         className="flex-1"
                     >
-                        ❌ Cancelar
+                        Cancelar
                     </Button>
                     <Button
                         type="submit"
                         disabled={loading || cycles.length === 0}
-                        className="flex-1 bg-sejoga-verde-oficial hover:bg-green-500"
+                        className="flex-1 bg-sejoga-verde-oficial hover:bg-sejoga-verde-chiclete text-white"
                     >
                         {loading ? (
                             <>
