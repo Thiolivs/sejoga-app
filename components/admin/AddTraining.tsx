@@ -10,7 +10,7 @@ import type { TrainingCycle } from '@/types/database';
 
 export function AddTraining() {
     const router = useRouter();
-const supabase = createClient();
+    const supabase = createClient();
 
     const [cycles, setCycles] = useState<TrainingCycle[]>([]);
     const [formData, setFormData] = useState({
@@ -34,7 +34,7 @@ const supabase = createClient();
                 .from('training_cycles')
                 .select('*')
                 .eq('is_active', true)
-                .order('start_date', { ascending: true });
+                .order('created_at', { ascending: false }); // ✅ Mudou de start_date para created_at
 
             if (error) throw error;
             setCycles(data || []);
@@ -50,19 +50,7 @@ const supabase = createClient();
         setSuccess(false);
 
         try {
-            // Valida se a data está dentro do período do ciclo selecionado
-            const selectedCycle = cycles.find(c => c.id === formData.cycle_id);
-            if (selectedCycle) {
-                const trainingDate = new Date(formData.training_date);
-                const startDate = new Date(selectedCycle.start_date);
-                const endDate = new Date(selectedCycle.end_date);
-
-                if (trainingDate < startDate || trainingDate > endDate) {
-                    setError(`A data do treinamento deve estar entre ${startDate.toLocaleDateString('pt-BR')} e ${endDate.toLocaleDateString('pt-BR')}`);
-                    setLoading(false);
-                    return;
-                }
-            }
+            // ✅ REMOVIDA: validação de data dentro do range do ciclo
 
             const { error: insertError } = await supabase
                 .from('trainings')
@@ -135,7 +123,7 @@ const supabase = createClient();
                         <option value="">Selecione um ciclo</option>
                         {cycles.map((cycle) => (
                             <option key={cycle.id} value={cycle.id}>
-                                {cycle.name} ({new Date(cycle.start_date).toLocaleDateString('pt-BR')} - {new Date(cycle.end_date).toLocaleDateString('pt-BR')})
+                                {cycle.name}
                             </option>
                         ))}
                     </select>
@@ -155,14 +143,7 @@ const supabase = createClient();
                         value={formData.training_date}
                         onChange={(e) => setFormData({ ...formData, training_date: e.target.value })}
                         required
-                        min={cycles.find(c => c.id === formData.cycle_id)?.start_date || undefined}
-                        max={cycles.find(c => c.id === formData.cycle_id)?.end_date || undefined}
                     />
-                    {formData.cycle_id && (
-                        <p className="text-xs text-gray-500 mt-1">
-                            A data deve estar dentro do período do ciclo selecionado
-                        </p>
-                    )}
                 </div>
 
                 {/* Local */}
@@ -173,7 +154,7 @@ const supabase = createClient();
                     </label>
                     <Input
                         type="text"
-                        placeholder=" "
+                        placeholder="Ex: Sede do SeJoga"
                         value={formData.location}
                         onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                         required
