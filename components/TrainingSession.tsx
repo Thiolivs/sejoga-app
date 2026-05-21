@@ -235,7 +235,7 @@ export function TrainingSession() {
                                 {!isUnavailable && cycleTrainings.length > 0 && (
                                     <div className="space-y-4">
                                         {cycleTrainings.map((training) => {
-                                            const trainingDate = new Date(training.training_date);
+                                            const trainingDate = new Date(training.training_date + 'T00:00:00');
                                             const formattedDate = trainingDate.toLocaleDateString('pt-BR', {
                                                 day: '2-digit',
                                                 month: 'long',
