@@ -170,11 +170,11 @@ export function ManageTrainingCycles() {
                                 className="w-5 h-5 rounded"
                             />
                             <label htmlFor="is_active_cycle" className="text-sm font-medium text-gray-700 cursor-pointer">
-                                Ciclo ativo (visível para os monitores)
+                                Ciclo visível para os monitores
                             </label>
                         </div>
 
-                        <div className="flex gap-3 pt-4">
+                        {/*<div className="flex gap-3 pt-4">
                             <Button type="button" variant="outline" onClick={resetForm} className="flex-1">
                                 Cancelar
                             </Button>
@@ -182,6 +182,9 @@ export function ManageTrainingCycles() {
                                 {editingId ? 'Atualizar' : 'Criar Ciclo'}
                             </Button>
                         </div>
+                        
+                        */}
+                        
                     </form>
                 )}
 
