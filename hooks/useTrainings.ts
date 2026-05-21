@@ -47,7 +47,7 @@ export function useTrainings() {
                 .from('training_cycles')
                 .select('*')
                 .eq('is_active', true)
-                .order('start_date', { ascending: true });
+                .order('created_at', { ascending: false }); // ✅ Mudou de start_date para created_at
 
             if (cyclesError) throw cyclesError;
 
@@ -134,7 +134,6 @@ export function useTrainings() {
             if (error && error.code !== 'PGRST116') throw error;
             return !!data;
         } catch (err) {
-            // Silenciosamente retorna false - não há problema se não encontrar
             return false;
         }
     };
@@ -147,7 +146,6 @@ export function useTrainings() {
     ) => {
         try {
             if (isUnavailable) {
-                // Marcar como indisponível
                 const { error } = await supabase
                     .from('training_cycle_unavailability')
                     .insert({
@@ -158,7 +156,6 @@ export function useTrainings() {
 
                 if (error) throw error;
 
-                // Remove todas as disponibilidades específicas deste ciclo
                 const cycleTrainings = getTrainingsByCycle(cycleId);
                 for (const training of cycleTrainings) {
                     await supabase
@@ -168,7 +165,6 @@ export function useTrainings() {
                         .eq('user_id', userId);
                 }
             } else {
-                // Remover indisponibilidade
                 const { error } = await supabase
                     .from('training_cycle_unavailability')
                     .delete()
@@ -196,7 +192,6 @@ export function useTrainings() {
     ) => {
         try {
             if (isChecked) {
-                // Adicionar disponibilidade
                 const { error } = await supabase
                     .from('training_availability')
                     .insert({
@@ -207,7 +202,6 @@ export function useTrainings() {
 
                 if (error) throw error;
             } else {
-                // Remover disponibilidade
                 const { error } = await supabase
                     .from('training_availability')
                     .delete()
