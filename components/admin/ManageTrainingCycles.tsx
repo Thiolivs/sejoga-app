@@ -19,8 +19,6 @@ export function ManageTrainingCycles() {
     const [formData, setFormData] = useState({
         name: '',
         description: '',
-        start_date: '',
-        end_date: '',
         is_active: true
     });
 
@@ -33,7 +31,7 @@ export function ManageTrainingCycles() {
             const { data, error } = await supabase
                 .from('training_cycles')
                 .select('*')
-                .order('start_date', { ascending: false });
+                .order('created_at', { ascending: false }); // ✅ Mudou de start_date para created_at
 
             if (error) throw error;
             setCycles(data || []);
@@ -56,8 +54,6 @@ export function ManageTrainingCycles() {
                     .update({
                         name: formData.name,
                         description: formData.description,
-                        start_date: formData.start_date,
-                        end_date: formData.end_date,
                         is_active: formData.is_active,
                         updated_at: new Date().toISOString()
                     })
@@ -87,8 +83,6 @@ export function ManageTrainingCycles() {
         setFormData({
             name: cycle.name,
             description: cycle.description || '',
-            start_date: cycle.start_date,
-            end_date: cycle.end_date,
             is_active: cycle.is_active
         });
         setEditingId(cycle.id);
@@ -116,8 +110,6 @@ export function ManageTrainingCycles() {
         setFormData({
             name: '',
             description: '',
-            start_date: '',
-            end_date: '',
             is_active: true
         });
         setEditingId(null);
@@ -129,10 +121,8 @@ export function ManageTrainingCycles() {
     }
 
     return (
-        <div className="space-y-6 ">
-
-            <div className='bg-white/95 p-3 rounded-lg g'>
-
+        <div className="space-y-6">
+            <div className='bg-white/95 p-3 rounded-lg'>
                 <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Ciclos de Treinamentos</div>
 
                 {!showAddForm && (
@@ -143,7 +133,6 @@ export function ManageTrainingCycles() {
                         </Button>
                     </div>
                 )}
-
 
                 {/* Formulário */}
                 {showAddForm && (
@@ -163,37 +152,14 @@ export function ManageTrainingCycles() {
                             </label>
                             <Input
                                 type="text"
-                                placeholder="Ex: Treinamentos de Novembro"
+                                placeholder="Ex: Treinamentos de Maio"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 required
                             />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Data Início *
-                                </label>
-                                <Input
-                                    type="date"
-                                    value={formData.start_date}
-                                    onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Data Fim *
-                                </label>
-                                <Input
-                                    type="date"
-                                    value={formData.end_date}
-                                    onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                                    required
-                                />
-                            </div>
-                        </div>
+                        {/* ✅ REMOVIDO: campos de data */}
 
                         <div className="flex items-center gap-3">
                             <input
@@ -224,8 +190,9 @@ export function ManageTrainingCycles() {
                     {cycles.map((cycle) => (
                         <div
                             key={cycle.id}
-                            className={`bg-white border rounded-lg p-3 ${cycle.is_active ? 'border-gray-200' : 'border-gray-300 bg-gray-50'
-                                }`}
+                            className={`bg-white border rounded-lg p-3 ${
+                                cycle.is_active ? 'border-gray-200' : 'border-gray-300 bg-gray-50'
+                            }`}
                         >
                             <div className="flex justify-between items-start">
                                 <div className="flex-1">
@@ -240,13 +207,7 @@ export function ManageTrainingCycles() {
                                     {cycle.description && (
                                         <p className="text-sm text-gray-600 mb-2">{cycle.description}</p>
                                     )}
-                                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                                        <Calendar className="w-4 h-4" />
-                                        <span>
-                                            {new Date(cycle.start_date).toLocaleDateString('pt-BR')} - {' '}
-                                            {new Date(cycle.end_date).toLocaleDateString('pt-BR')}
-                                        </span>
-                                    </div>
+                                    {/* ✅ REMOVIDO: exibição das datas */}
                                 </div>
                                 <div className="flex gap-2">
                                     <Button
