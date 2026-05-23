@@ -272,7 +272,7 @@ export function TrainingSession() {
                                                         onClick={() => toggleExpand(training.id)}
                                                     >
                                                         <div className="flex flex-col gap-1 flex-1">
-                                                            <div className="flex items-center gap-2 text-gray-700 mr-2">
+                                                            <div className="flex items-center gap-2 text-gray-700 mr-1">
                                                                 <Calendar className="w-4 h-4" />
                                                                 <span className="text-sm font-semibold">{formattedDate}</span>
                                                                 {monitorsCount > 0 && (
