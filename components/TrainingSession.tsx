@@ -269,7 +269,7 @@ export function TrainingSession() {
                                                                 <span className="text-sm font-semibold capitalize">{formattedDate}</span>
                                                                 {monitorsCount > 0 && (
                                                                     <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
-                                                                        👥 {monitorsCount}
+                                                                        👤 {monitorsCount}
                                                                     </span>
                                                                 )}
                                                             </div>
