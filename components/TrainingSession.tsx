@@ -268,17 +268,18 @@ export function TrainingSession() {
                                                 <div key={training.id} className="bg-white border rounded-lg overflow-hidden">
                                                     {/* ✅ Header clicável */}
                                                     <div
-                                                        className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50 transition-colors"
+                                                        className="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50 transition-colors"
                                                         onClick={() => toggleExpand(training.id)}
                                                     >
                                                         <div className="flex flex-col gap-1 flex-1">
-                                                            <div className="flex items-center gap-2 text-gray-700 ml-1">
+                                                            <div className="flex items-center gap-2 text-gray-700 mr-10">
                                                                 <Calendar className="w-4 h-4" />
                                                                 <span className="text-sm font-semibold">{formattedDate}</span>
                                                                 {monitorsCount > 0 && (
-                                                                    <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                                                                    <span className="ml-auto px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
                                                                         👤 {monitorsCount}
                                                                     </span>
+                                                                
                                                                 )}
                                                             </div>
                                                             <div className="flex items-center gap-2 text-gray-600">
