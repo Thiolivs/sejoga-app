@@ -259,24 +259,24 @@ export function TrainingSession() {
                                             return (
                                                 <div key={training.id} className="bg-white border rounded-lg overflow-hidden">
                                                     {/* ✅ Header clicável */}
-                                                    <div 
+                                                    <div
                                                         className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50 transition-colors"
                                                         onClick={() => toggleExpand(training.id)}
                                                     >
-                                                        <div className="flex items-center gap-4 flex-1">
+                                                        <div className="flex flex-col gap-1 flex-1">
                                                             <div className="flex items-center gap-2 text-gray-700">
                                                                 <Calendar className="w-4 h-4" />
                                                                 <span className="text-sm font-semibold capitalize">{formattedDate}</span>
+                                                                {monitorsCount > 0 && (
+                                                                    <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                                                                        👥 {monitorsCount}
+                                                                    </span>
+                                                                )}
                                                             </div>
-                                                            <div className="flex items-center gap-2 text-gray-600">
+                                                            <div className="flex items-center gap-2 text-gray-600 ml-6">
                                                                 <MapPin className="w-3 h-3" />
                                                                 <span className="text-xs">{training.location}</span>
                                                             </div>
-                                                            {monitorsCount > 0 && (
-                                                                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
-                                                                    👥 {monitorsCount}
-                                                                </span>
-                                                            )}
                                                         </div>
 
                                                         <div className="flex items-center gap-2">
@@ -328,9 +328,6 @@ export function TrainingSession() {
                                                                                     />
                                                                                     <ShiftIcon className="w-4 h-4" />
                                                                                     <span className="text-sm font-semibold">{shiftData.label}</span>
-                                                                                    {participants.length > 0 && (
-                                                                                        <span className="text-xs">({participants.length})</span>
-                                                                                    )}
                                                                                 </label>
 
                                                                                 {/* ✅ Lista abaixo de cada turno */}
