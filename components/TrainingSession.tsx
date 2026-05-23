@@ -247,11 +247,18 @@ export function TrainingSession() {
                                         {cycleTrainings.map((training) => {
                                             const [year, month, day] = training.training_date.split('-');
                                             const trainingDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-                                            const formattedDate = trainingDate.toLocaleDateString('pt-BR', {
+
+                                            // ✅ Formata dia da semana separado
+                                            const weekday = trainingDate.toLocaleDateString('pt-BR', { weekday: 'long' });
+                                            const shortWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1, 3); // "Sexta", "Segunda"
+
+                                            // ✅ Formata dia e mês
+                                            const dayMonth = trainingDate.toLocaleDateString('pt-BR', {
                                                 day: '2-digit',
-                                                month: 'long',
-                                                weekday: 'long'
+                                                month: 'long'
                                             });
+
+                                            const formattedDate = `${shortWeekday}, ${dayMonth.replace(' de ', '/')}`; // "Sexta, 23/Maio"
 
                                             const isExpanded = expandedTrainings[training.id];
                                             const monitorsCount = getUniqueMonitorsCount(training.id);
@@ -266,32 +273,32 @@ export function TrainingSession() {
                                                         <div className="flex flex-col gap-1 flex-1">
                                                             <div className="flex items-center gap-2 text-gray-700">
                                                                 <Calendar className="w-4 h-4" />
-                                                                <span className="text-sm font-semibold capitalize">{formattedDate}</span>
+                                                                <span className="text-sm font-semibold">{formattedDate}</span>
                                                                 {monitorsCount > 0 && (
                                                                     <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
-                                                                        👤 {monitorsCount}
+                                                                        👥 {monitorsCount}
                                                                     </span>
                                                                 )}
                                                             </div>
                                                             <div className="flex items-center gap-2 text-gray-600 ml-6">
+                                                                {isAdmin && (
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handleDeleteTraining(training.id, formattedDate);
+                                                                        }}
+                                                                        className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
+                                                                        title="Excluir treinamento"
+                                                                    >
+                                                                        <X className="w-4 h-4" />
+                                                                    </button>
+                                                                )}
                                                                 <MapPin className="w-3 h-3" />
                                                                 <span className="text-xs">{training.location}</span>
                                                             </div>
                                                         </div>
 
                                                         <div className="flex items-center gap-2">
-                                                            {isAdmin && (
-                                                                <button
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        handleDeleteTraining(training.id, formattedDate);
-                                                                    }}
-                                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
-                                                                    title="Excluir treinamento"
-                                                                >
-                                                                    <X className="w-4 h-4" />
-                                                                </button>
-                                                            )}
                                                             {isExpanded ? (
                                                                 <ChevronUp className="w-5 h-5 text-gray-500" />
                                                             ) : (
