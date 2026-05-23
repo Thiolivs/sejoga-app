@@ -7,7 +7,7 @@ import { useUser } from '@/hooks/useUser';
 import { useUserRole } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase';
-import { Plus, Sun, Sunset, Moon, MapPin, Calendar, XCircle, X } from 'lucide-react';
+import { Plus, Sun, Sunset, Moon, MapPin, Calendar, X, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface TrainingAvailabilityWithProfile {
     id: string;
@@ -56,19 +56,17 @@ export function TrainingSession() {
     const [availabilities, setAvailabilities] = useState<Record<string, TrainingAvailabilityWithProfile[]>>({});
     const [cycleUnavailabilities, setCycleUnavailabilities] = useState<Record<string, boolean>>({});
     const [unavailableUsers, setUnavailableUsers] = useState<Record<string, CycleUnavailabilityWithProfile[]>>({});
+    const [expandedTrainings, setExpandedTrainings] = useState<Record<string, boolean>>({}); // ✅ NOVO
 
     const loadCycleData = useCallback(async (cycleId: string) => {
         if (!user) return;
 
-        // Verifica se o usuário está indisponível para o ciclo
         const isUnavailable = await isUserUnavailableForCycle(cycleId, user.id);
         setCycleUnavailabilities(prev => ({ ...prev, [cycleId]: isUnavailable }));
 
-        // Carrega lista de usuários indisponíveis
         const unavailable = await getCycleUnavailability(cycleId);
         setUnavailableUsers(prev => ({ ...prev, [cycleId]: unavailable }));
 
-        // Carrega disponibilidades dos treinamentos
         const cycleTrainings = getTrainingsByCycle(cycleId);
         for (const training of cycleTrainings) {
             const data = await getTrainingAvailability(training.id);
@@ -90,7 +88,6 @@ export function TrainingSession() {
         const result = await toggleCycleUnavailability(cycleId, user.id, !isCurrentlyUnavailable);
 
         if (result.success) {
-            // Atualiza apenas este ciclo específico
             await loadCycleData(cycleId);
         }
     };
@@ -105,7 +102,6 @@ export function TrainingSession() {
         const result = await toggleAvailability(trainingId, user.id, shift, !isChecked);
 
         if (result.success) {
-            // Atualiza apenas este treinamento específico, sem recarregar tudo
             const data = await getTrainingAvailability(trainingId);
             setAvailabilities(prev => ({ ...prev, [trainingId]: data }));
         }
@@ -123,7 +119,6 @@ export function TrainingSession() {
 
             if (error) throw error;
 
-            // Recarrega os dados do hook
             await refetch();
 
         } catch (err) {
@@ -138,6 +133,21 @@ export function TrainingSession() {
         return trainingAvail.some(
             (a: TrainingAvailabilityWithProfile) => a.user_id === user.id && a.shift === shift
         );
+    };
+
+    // ✅ NOVO: Conta monitores únicos
+    const getUniqueMonitorsCount = (trainingId: string) => {
+        const trainingAvail = availabilities[trainingId] || [];
+        const uniqueUserIds = new Set(trainingAvail.map(a => a.user_id));
+        return uniqueUserIds.size;
+    };
+
+    // ✅ NOVO: Toggle expansão
+    const toggleExpand = (trainingId: string) => {
+        setExpandedTrainings(prev => ({
+            ...prev,
+            [trainingId]: !prev[trainingId]
+        }));
     };
 
     if (loading) {
@@ -192,13 +202,13 @@ export function TrainingSession() {
                         const unavailableList = unavailableUsers[cycle.id] || [];
 
                         return (
-                            <div key={cycle.id} className="border-1 border-gray-300 rounded-xl p-2 bg-gradient-to-br from-white to-gray-50">
+                            <div key={cycle.id} className="border border-gray-300 rounded-xl p-2 bg-gradient-to-br from-white to-gray-50">
                                 {/* Cabeçalho do ciclo */}
                                 <div className="mb-4">
                                     <h3 className="text-[20px] flex flex-col text-center font-bold text-gray-900 mb-2">{cycle.name}</h3>
                                 </div>
 
-                                {/* Checkbox de indisponibilidade total (só monitores e só se houver treinamentos) */}
+                                {/* Checkbox de indisponibilidade total */}
                                 {isMonitor && cycleTrainings.length > 0 && (
                                     <div className={`mb-1 p-3 rounded-lg`}>
                                         <label className="flex items-center gap-3 cursor-pointer">
@@ -233,96 +243,136 @@ export function TrainingSession() {
 
                                 {/* Trainings do ciclo */}
                                 {!isUnavailable && cycleTrainings.length > 0 && (
-                                    <div className="space-y-4">
+                                    <div className="space-y-2">
                                         {cycleTrainings.map((training) => {
-                                            const trainingDate = new Date(training.training_date + 'T00:00:00');
+                                            const [year, month, day] = training.training_date.split('-');
+                                            const trainingDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
                                             const formattedDate = trainingDate.toLocaleDateString('pt-BR', {
                                                 day: '2-digit',
                                                 month: 'long',
                                                 weekday: 'long'
                                             });
 
+                                            const isExpanded = expandedTrainings[training.id];
+                                            const monitorsCount = getUniqueMonitorsCount(training.id);
+
                                             return (
-                                                <div key={training.id} className="bg-white border rounded-lg p-3">
-                                                    <div className="flex items-start justify-between mb-3">
-                                                        <div>
-                                                            <div className="flex items-center gap-2 text-gray-600 mb-1">
+                                                <div key={training.id} className="bg-white border rounded-lg overflow-hidden">
+                                                    {/* ✅ Header clicável */}
+                                                    <div 
+                                                        className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50 transition-colors"
+                                                        onClick={() => toggleExpand(training.id)}
+                                                    >
+                                                        <div className="flex items-center gap-4 flex-1">
+                                                            <div className="flex items-center gap-2 text-gray-700">
                                                                 <Calendar className="w-4 h-4" />
-                                                                <span className="text-[14px] font-semibold capitalize">{formattedDate}</span>
+                                                                <span className="text-sm font-semibold capitalize">{formattedDate}</span>
                                                             </div>
-                                                            <div className="flex items-center gap-2 text-gray-600 text-sm">
+                                                            <div className="flex items-center gap-2 text-gray-600">
                                                                 <MapPin className="w-3 h-3" />
-                                                                <span>{training.location}</span>
+                                                                <span className="text-xs">{training.location}</span>
                                                             </div>
+                                                            {monitorsCount > 0 && (
+                                                                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                                                                    👥 {monitorsCount}
+                                                                </span>
+                                                            )}
                                                         </div>
 
-                                                        {/* Botão deletar (só admin) */}
-                                                        {isAdmin && (
-                                                            <button
-                                                                onClick={() => handleDeleteTraining(training.id, formattedDate)}
-                                                                className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
-                                                                title="Excluir treinamento"
-                                                            >
-                                                                <X className="w-5 h-5" />
-                                                            </button>
-                                                        )}
+                                                        <div className="flex items-center gap-2">
+                                                            {isAdmin && (
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleDeleteTraining(training.id, formattedDate);
+                                                                    }}
+                                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
+                                                                    title="Excluir treinamento"
+                                                                >
+                                                                    <X className="w-4 h-4" />
+                                                                </button>
+                                                            )}
+                                                            {isExpanded ? (
+                                                                <ChevronUp className="w-5 h-5 text-gray-500" />
+                                                            ) : (
+                                                                <ChevronDown className="w-5 h-5 text-gray-500" />
+                                                            )}
+                                                        </div>
                                                     </div>
 
-                                                    {isMonitor && (
-                                                        <div className="flex gap-2 mb-3">
-                                                            {Object.entries(SHIFTS).map(([shiftKey, shiftData]) => {
-                                                                const ShiftIcon = shiftData.icon;
-                                                                const isChecked = isUserAvailable(training.id, shiftKey);
-                                                                const participants = (availabilities[training.id] || [])
-                                                                    .filter((a: TrainingAvailabilityWithProfile) => a.shift === shiftKey);
+                                                    {/* ✅ Conteúdo expansível */}
+                                                    {isExpanded && (
+                                                        <div className="border-t p-3 space-y-3">
+                                                            {/* Botões de turno */}
+                                                            {isMonitor && (
+                                                                <div className="flex gap-2">
+                                                                    {Object.entries(SHIFTS).map(([shiftKey, shiftData]) => {
+                                                                        const ShiftIcon = shiftData.icon;
+                                                                        const isChecked = isUserAvailable(training.id, shiftKey);
+                                                                        const participants = (availabilities[training.id] || [])
+                                                                            .filter((a: TrainingAvailabilityWithProfile) => a.shift === shiftKey);
 
-                                                                return (
-                                                                    <label
-                                                                        key={shiftKey}
-                                                                        className={`flex-1 flex items-center gap-2 p-2 rounded-lg border-1 cursor-pointer transition-all ${isChecked
-                                                                            ? shiftData.color
-                                                                            : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
-                                                                            }`}
-                                                                    >
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            checked={isChecked}
-                                                                            onChange={() => handleToggle(training.id, shiftKey as 'morning' | 'afternoon' | 'night', isChecked)}
-                                                                            className="w-5 h-5 hidden"
-                                                                        />
-                                                                        <div className="flex flex-col items-center gap-1 flex-1">
-                                                                            <ShiftIcon className="w-4 h-4" />
-                                                                            <span className="text-sm font-semibold">{shiftData.label}</span>
-                                                                            {participants.length > 0 && (
-                                                                                <span className="text-xs">{participants.length}</span>
-                                                                            )}
-                                                                        </div>
-                                                                    </label>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    )}
+                                                                        return (
+                                                                            <div key={shiftKey} className="flex-1">
+                                                                                <label
+                                                                                    className={`flex items-center justify-center gap-2 p-2 rounded-lg border cursor-pointer transition-all ${isChecked
+                                                                                        ? shiftData.color
+                                                                                        : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                                                                                        }`}
+                                                                                >
+                                                                                    <input
+                                                                                        type="checkbox"
+                                                                                        checked={isChecked}
+                                                                                        onChange={() => handleToggle(training.id, shiftKey as 'morning' | 'afternoon' | 'night', isChecked)}
+                                                                                        className="hidden"
+                                                                                    />
+                                                                                    <ShiftIcon className="w-4 h-4" />
+                                                                                    <span className="text-sm font-semibold">{shiftData.label}</span>
+                                                                                    {participants.length > 0 && (
+                                                                                        <span className="text-xs">({participants.length})</span>
+                                                                                    )}
+                                                                                </label>
 
-                                                    {/* Mini tabela de participantes */}
-                                                    {availabilities[training.id]?.length > 0 && (
-                                                        <div className="mt-3 pt-3 border-t grid grid-cols-3 gap-2">
-                                                            {Object.entries(SHIFTS).map(([shiftKey, shiftData]) => {
-                                                                const participants = (availabilities[training.id] || [])
-                                                                    .filter((a: TrainingAvailabilityWithProfile) => a.shift === shiftKey)
-                                                                    .map((a: TrainingAvailabilityWithProfile) => a.profiles?.first_name)
-                                                                    .filter((name): name is string => Boolean(name));
+                                                                                {/* ✅ Lista abaixo de cada turno */}
+                                                                                {participants.length > 0 && (
+                                                                                    <div className="mt-2 text-xs bg-gray-50 rounded p-2">
+                                                                                        {participants.map((a: TrainingAvailabilityWithProfile, i: number) => (
+                                                                                            <div key={i} className="text-gray-600">
+                                                                                                • {a.profiles?.first_name}
+                                                                                            </div>
+                                                                                        ))}
+                                                                                    </div>
+                                                                                )}
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            )}
 
-                                                                return participants.length > 0 ? (
-                                                                    <div key={shiftKey} className="text-xs">
-                                                                        <div className="font-semibold text-gray-700 mb-1">{shiftData.label}:</div>
-                                                                        <div className="text-gray-600 space-y-0.5">
-                                                                            {participants.map((name: string, i: number) => (
-                                                                                <div key={i}>• {name}</div>
-                                                                            ))}
-                                                                        </div>
-                                                                    </div>
-                                                                ) : null;
-                                                            })}
+                                                            {/* ✅ Lista para quem não é monitor */}
+                                                            {!isMonitor && availabilities[training.id]?.length > 0 && (
+                                                                <div className="grid grid-cols-3 gap-2">
+                                                                    {Object.entries(SHIFTS).map(([shiftKey, shiftData]) => {
+                                                                        const participants = (availabilities[training.id] || [])
+                                                                            .filter((a: TrainingAvailabilityWithProfile) => a.shift === shiftKey)
+                                                                            .map((a: TrainingAvailabilityWithProfile) => a.profiles?.first_name)
+                                                                            .filter((name): name is string => Boolean(name));
+
+                                                                        return participants.length > 0 ? (
+                                                                            <div key={shiftKey}>
+                                                                                <div className="font-semibold text-xs text-gray-700 mb-1">
+                                                                                    {shiftData.label}:
+                                                                                </div>
+                                                                                <div className="text-xs text-gray-600 space-y-0.5">
+                                                                                    {participants.map((name: string, i: number) => (
+                                                                                        <div key={i}>• {name}</div>
+                                                                                    ))}
+                                                                                </div>
+                                                                            </div>
+                                                                        ) : null;
+                                                                    })}
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     )}
                                                 </div>
