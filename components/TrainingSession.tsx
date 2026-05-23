@@ -250,15 +250,16 @@ export function TrainingSession() {
 
                                             // ✅ Formata dia da semana separado
                                             const weekday = trainingDate.toLocaleDateString('pt-BR', { weekday: 'long' });
-                                            const shortWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1, 3); // "Sexta", "Segunda"
-
+                                            const shortWeekday = weekday
+                                                .replace("-feira", "")
+                                                .replace(/^./, c => c.toUpperCase());
                                             // ✅ Formata dia e mês
                                             const dayMonth = trainingDate.toLocaleDateString('pt-BR', {
                                                 day: '2-digit',
                                                 month: 'long'
                                             });
 
-                                            const formattedDate = `${shortWeekday}, ${dayMonth.replace(' de ', '/')}`; // "Sexta, 23/Maio"
+                                            const formattedDate = `${shortWeekday}, ${dayMonth.replace(' De ', ' de ')}`; // "Sexta, 23/Maio"
 
                                             const isExpanded = expandedTrainings[training.id];
                                             const monitorsCount = getUniqueMonitorsCount(training.id);
@@ -271,16 +272,16 @@ export function TrainingSession() {
                                                         onClick={() => toggleExpand(training.id)}
                                                     >
                                                         <div className="flex flex-col gap-1 flex-1">
-                                                            <div className="flex items-center gap-2 text-gray-700">
+                                                            <div className="flex items-center gap-2 text-gray-700 ml-1">
                                                                 <Calendar className="w-4 h-4" />
                                                                 <span className="text-sm font-semibold">{formattedDate}</span>
                                                                 {monitorsCount > 0 && (
                                                                     <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
-                                                                        👥 {monitorsCount}
+                                                                        👤 {monitorsCount}
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <div className="flex items-center gap-2 text-gray-600 ml-6">
+                                                            <div className="flex items-center gap-2 text-gray-600">
                                                                 {isAdmin && (
                                                                     <button
                                                                         onClick={(e) => {
