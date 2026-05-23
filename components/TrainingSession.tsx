@@ -274,9 +274,9 @@ export function TrainingSession() {
                                                         <div className="flex flex-col gap-1 flex-1">
                                                             <div className="flex items-center gap-2 text-gray-700 mr-1">
                                                                 <Calendar className="w-4 h-4" />
-                                                                <span className="text-sm font-semibold">{formattedDate}</span>
+                                                                <span className="text-xs font-semibold">{formattedDate}</span>
                                                                 {monitorsCount > 0 && (
-                                                                    <span className="ml-auto px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                                                                    <span className="ml-auto px-0.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
                                                                         👤 {monitorsCount}
                                                                     </span>
                                                                 
