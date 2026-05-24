@@ -273,14 +273,15 @@ export function TrainingSession() {
                                                     >
                                                         <div className="flex flex-col gap-1 flex-1">
                                                             <div className="flex items-center gap-2 text-gray-700 mr-2">
-                                                                <Calendar className="w-4 h-4" />
-                                                                <span className="text-sm font-semibold">{formattedDate}</span>
-                                                                {monitorsCount > 0 && (
-                                                                    <span className="ml-auto px-0.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
-                                                                        👤 {monitorsCount}
+                                                                {/* <Calendar className="w-4 h-4" /> */}
+                                                                {monitorsCount >= 0 && (
+                                                                    <span className="px-2 py-0.5 bg-blue-200 text-gray-800 text-xs rounded">
+                                                                        👤{monitorsCount}
                                                                     </span>
-                                                                
+
                                                                 )}
+                                                                <span className="text-sm font-semibold">{formattedDate}</span>
+
                                                             </div>
                                                             <div className="flex items-center gap-2 text-gray-600">
                                                                 {isAdmin && (
