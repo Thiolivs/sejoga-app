@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useBoardgames } from '@/hooks/useBoardgames';
 import { useUser } from '@/hooks/useUser';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -9,6 +9,12 @@ import { useGameMechanics } from '@/hooks/useGameMechanics';
 import type { BoardgameWithTeachers, Profile } from '@/types/database';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { createClient } from '@/lib/supabase';
+
+interface Publisher {
+    id: string;
+    name: string;
+}
 
 export function BoardgameList() {
     const { user, loading: userLoading } = useUser();
@@ -22,6 +28,7 @@ export function BoardgameList() {
     const [loadingTeachers, setLoadingTeachers] = useState(false);
     const [borrower, setBorrower] = useState<Profile | null>(null);
     const [loadingBorrower, setLoadingBorrower] = useState(false);
+    const [publishers, setPublishers] = useState<Publisher[]>([]); // ✅ NOVO
 
     // Estados de filtros
     const [searchTerm, setSearchTerm] = useState('');
@@ -29,8 +36,24 @@ export function BoardgameList() {
     const [filters, setFilters] = useState({
         minPlayers: null as number | null,
         maxPlayers: null as number | null,
-        selectedMechanics: [] as string[], // IDs das mecânicas selecionadas
+        selectedMechanics: [] as string[],
+        selectedPublishers: [] as string[], // ✅ NOVO
     });
+
+    // ✅ NOVO: Buscar editoras
+    useEffect(() => {
+        fetchPublishers();
+    }, []);
+
+    const fetchPublishers = async () => {
+        const supabase = createClient();
+        const { data } = await supabase
+            .from('publishers')
+            .select('*')
+            .order('name');
+        
+        setPublishers(data || []);
+    };
 
     // Agrupar mecânicas por tipo
     const mechanicsByType = useMemo(() => {
@@ -57,9 +80,15 @@ export function BoardgameList() {
                 return false;
             }
 
+            // ✅ NOVO: Filtro por editoras
+            if (filters.selectedPublishers.length > 0) {
+                if (!game.publisher || !filters.selectedPublishers.includes(game.publisher)) {
+                    return false;
+                }
+            }
+
             // Filtro por mecânicas selecionadas
             if (filters.selectedMechanics.length > 0) {
-                // Verifica se o jogo tem TODAS as mecânicas selecionadas (AND)
                 const hasAllMechanics = filters.selectedMechanics.every(selectedId =>
                     game.mechanics?.some(mechanic => mechanic.id === selectedId)
                 );
@@ -78,7 +107,8 @@ export function BoardgameList() {
         searchTerm !== '' ||
         filters.minPlayers !== null ||
         filters.maxPlayers !== null ||
-        filters.selectedMechanics.length > 0;
+        filters.selectedMechanics.length > 0 ||
+        filters.selectedPublishers.length > 0; // ✅ NOVO
 
     // Resetar filtros
     const clearFilters = () => {
@@ -87,6 +117,7 @@ export function BoardgameList() {
             minPlayers: null,
             maxPlayers: null,
             selectedMechanics: [],
+            selectedPublishers: [], // ✅ NOVO
         });
     };
 
@@ -96,6 +127,16 @@ export function BoardgameList() {
             selectedMechanics: prev.selectedMechanics.includes(mechanicId)
                 ? prev.selectedMechanics.filter(id => id !== mechanicId)
                 : [...prev.selectedMechanics, mechanicId]
+        }));
+    };
+
+    // ✅ NOVO
+    const togglePublisher = (publisherId: string) => {
+        setFilters(prev => ({
+            ...prev,
+            selectedPublishers: prev.selectedPublishers.includes(publisherId)
+                ? prev.selectedPublishers.filter(id => id !== publisherId)
+                : [...prev.selectedPublishers, publisherId]
         }));
     };
 
@@ -175,11 +216,8 @@ export function BoardgameList() {
 
     return (
         <div className='space-y-4'>
-
-
             {/* Barra de Busca e Filtros */}
             <div className="bg-white/90 mt-3 rounded-lg border shadow-md p-2 mb-5">
-
                 <div className="flex gap-3 items-center">
                     {/* Campo de busca */}
                     <div className="flex-1 relative">
@@ -216,23 +254,11 @@ export function BoardgameList() {
                             <span className="ml-2 px-2 py-0.5 bg-blue-600 text-white rounded-full text-xs">
                                 {(filters.minPlayers !== null ? 1 : 0) +
                                     (filters.maxPlayers !== null ? 1 : 0) +
+                                    filters.selectedPublishers.length +
                                     filters.selectedMechanics.length}
                             </span>
                         )}
                     </Button>
-
-                {/* 
-                    Botão limpar 
-                    {hasActiveFilters && (
-                        <Button
-                            onClick={clearFilters}
-                            variant="ghost"
-                            className="text-gray-600 hover:text-gray-800"
-                        >
-                            ❌ Limpar
-                        </Button>
-                    )}
-                */}
                 </div>
 
                 {/* Painel de Filtros Avançados */}
@@ -240,14 +266,14 @@ export function BoardgameList() {
                     <div className="mt-4 pt-4 border-t space-y-4">
                         {/* Filtro por número de jogadores */}
                         <div>
-                            <p className="text-sm font-medium text-gray-700 mb-2">Jogadores:</p>
-                            <div className="flex gap-4 items-center">
-                                <div className="flex-1">
+                            <div className="flex items-center gap-4">
+                                <p className="text-sm font-medium text-gray-700 whitespace-nowrap">Jogadores:</p>
+                                <div className="flex gap-2 flex-1">
                                     <Input
                                         className="text-sm placeholder:text-xs"
                                         type="number"
                                         min="1"
-                                        placeholder='Min:'
+                                        placeholder='Min'
                                         value={filters.minPlayers || ''}
                                         onChange={(e) =>
                                             setFilters({
@@ -256,13 +282,11 @@ export function BoardgameList() {
                                             })
                                         }
                                     />
-                                </div>
-                                <div className="flex-1">
                                     <Input
                                         className="text-sm placeholder:text-xs"
                                         type="number"
                                         min="1"
-                                        placeholder='Max:'
+                                        placeholder='Max'
                                         value={filters.maxPlayers || ''}
                                         onChange={(e) =>
                                             setFilters({
@@ -274,6 +298,33 @@ export function BoardgameList() {
                                 </div>
                             </div>
                         </div>
+
+                        {/* ✅ NOVO: Editoras */}
+                        {publishers.length > 0 && (
+                            <div>
+                                <p className="text-sm font-medium text-gray-700 mb-2">Editoras:</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {publishers.map((publisher) => (
+                                        <label
+                                            key={publisher.id}
+                                            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${
+                                                filters.selectedPublishers.includes(publisher.id)
+                                                    ? 'bg-sejoga-laranja-oficial text-white'
+                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                            }`}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                className="hidden"
+                                                checked={filters.selectedPublishers.includes(publisher.id)}
+                                                onChange={() => togglePublisher(publisher.id)}
+                                            />
+                                            {publisher.name}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Categorias */}
                         {mechanicsByType.category.length > 0 && (
@@ -397,30 +448,20 @@ export function BoardgameList() {
                     >
                         <div className="flex gap-2">
                             {/* Conteúdo principal - esquerda */}
-                            <div className="flex-1 p-3"> {/* ✅ reduzido de p-4 para p-3 */}
+                            <div className="flex-1 p-3">
                                 {/* LINHA 1 - Nome + Tag */}
                                 <div
                                     className="flex items-center justify-between gap-4 cursor-pointer"
                                     onClick={() => handleGameClick(game)}
                                 >
                                     <div className="flex items-center gap-2 flex-wrap">
-                                        <h3 className="font-semibold text-base">{game.name}</h3> {/* ✅ reduzido de text-lg para text-base */}
-
-                                        
-                                        {/* LINHA 1 - Nome + Tag 
-                                        {(isMonitor || isAdmin) && game.isLoaned && (
-                                            <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs font-semibold rounded"> 
-                                                ⚔️ Emprestado
-                                            </span>
-                                        )}
-                                        */}
-
+                                        <h3 className="font-semibold text-base">{game.name}</h3>
                                     </div>
                                 </div>
 
                                 {/* LINHA 2 - Checkbox */}
                                 {isMonitor && (
-                                    <div className="flex items-center gap-2 text-left pt-1.5 border-t-2 border-gray-100 mt-1.5"> {/* ✅ reduzido pt-2/mt-2 para pt-1.5/mt-1.5 */}
+                                    <div className="flex items-center gap-2 text-left pt-1.5 border-t-2 border-gray-100 mt-1.5">
                                         <input
                                             type="checkbox"
                                             id={`teach-${game.id}`}
@@ -468,14 +509,12 @@ export function BoardgameList() {
                                         </button>
                                     )}
                                 </div>
-
                             )}
                         </div>
                     </div>
-
                 ))}
 
-                {/* Modal - mantém sua formatação */}
+                {/* Modal */}
                 {selectedGame && (
                     <div
                         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
@@ -547,11 +586,10 @@ export function BoardgameList() {
                                                 <span>{selectedGame.copies}</span>
                                             </>
                                         )}
-
                                     </div>
                                 </div>
 
-                                <div className="bg-green-50 border  border-green-200 rounded-lg p-4">
+                                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                                     <h4 className="font-semibold mb-2">Quem sabe ensinar:</h4>
                                     {loadingTeachers ? (
                                         <p className="text-sm text-gray-600">Carregando...</p>
@@ -578,5 +616,4 @@ export function BoardgameList() {
             </div>
         </div>
     );
-
 }
