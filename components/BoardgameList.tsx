@@ -178,7 +178,7 @@ export function BoardgameList() {
 
 
             {/* Barra de Busca e Filtros */}
-            <div className="bg-white/90 mt-3 rounded-lg border-1 shadow-md p-2 mb-5">
+            <div className="bg-white/90 mt-3 rounded-lg border shadow-md p-2 mb-5">
 
                 <div className="flex gap-3 items-center">
                     {/* Campo de busca */}
@@ -407,12 +407,13 @@ export function BoardgameList() {
                                         <h3 className="font-semibold text-base">{game.name}</h3> {/* ✅ reduzido de text-lg para text-base */}
 
                                         
+                                        {/* LINHA 1 - Nome + Tag 
                                         {(isMonitor || isAdmin) && game.isLoaned && (
-                                            <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs font-semibold rounded"> {/* ✅ reduzido py-1 para py-0.5 */}
+                                            <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs font-semibold rounded"> 
                                                 ⚔️ Emprestado
                                             </span>
                                         )}
-
+                                        */}
 
                                     </div>
                                 </div>
@@ -496,20 +497,20 @@ export function BoardgameList() {
 
                             <div className="space-y-4">
                                 {(isMonitor || isAdmin) && selectedGame.isLoaned && (
-                                    <div className="bg-red-50 border text-center border-red-200 rounded-lg p-4">
+                                    <div className="bg-red-50 border text-center border-red-200 rounded-lg p-2">
                                         <h4 className="font-semibold text-red-800 mb-2">
-                                            ⚔️ Jogo Emprestado
+                                            ⚔️ Jogo emprestado
                                         </h4>
                                         {loadingBorrower ? (
                                             <p className="text-sm text-red-600">Carregando...</p>
                                         ) : borrower ? (
                                             <div>
                                                 <p className="text-sm text-red-700">
-                                                    Para: 👤<strong>{borrower.first_name}</strong>
+                                                    Para: <strong>{borrower.first_name}</strong>
                                                 </p>
                                                 {selectedGame.borrowedAt && (
-                                                    <p className="text-xs text-red-600 mt-1">
-                                                        Desde: {new Date(selectedGame.borrowedAt).toLocaleString('pt-BR').slice(0, 10)}
+                                                    <p className="text-sm text-red-700 mt-1">
+                                                        Desde: <strong>{new Date(selectedGame.borrowedAt).toLocaleString('pt-BR').slice(0, 10)}</strong>
                                                     </p>
                                                 )}
                                             </div>
@@ -555,7 +556,7 @@ export function BoardgameList() {
                                     {loadingTeachers ? (
                                         <p className="text-sm text-gray-600">Carregando...</p>
                                     ) : teachers.length > 0 ? (
-                                        <ul className="space-y-2">
+                                        <ul className="space-y-1">
                                             {teachers.map((teacher) => (
                                                 <li key={teacher.id} className="flex items-center gap-2">
                                                     <div className="flex-1">
@@ -565,8 +566,8 @@ export function BoardgameList() {
                                             ))}
                                         </ul>
                                     ) : (
-                                        <p className="text-sm text-gray-600">
-                                            Ninguém marcou que sabe ensinar este jogo ainda.
+                                        <p className="text-xs text-gray-600">
+                                            Nenhum monitor informou que sabe ensinar este jogo.
                                         </p>
                                     )}
                                 </div>
