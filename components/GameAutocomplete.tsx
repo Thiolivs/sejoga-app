@@ -107,6 +107,8 @@ const supabase = createClient();
                 }}
                 placeholder="Digite para buscar um jogo..."
                 required={required}
+                className="text-sm placeholder:text-sm"
+
             />
 
             {/* Dropdown com resultados */}

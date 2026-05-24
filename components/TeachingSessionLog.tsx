@@ -18,7 +18,20 @@ export function TeachingSessionLog() {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [resetAutocomplete, setResetAutocomplete] = useState(false); // ✅ estado para resetar
-const supabase = createClient();
+  const supabase = createClient();
+
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchEvents();
+    fetchBoardgames();
+    fetchCurrentUser();
+  }, []);
+
+  const fetchCurrentUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setCurrentUserId(user?.id || null);
+  };
 
   const [formData, setFormData] = useState({
     boardgame_id: '',
@@ -168,7 +181,7 @@ const supabase = createClient();
     <div className="space-y-6">
       {/* Formulário */}
       <form onSubmit={handleSubmit} className="bg-white/95 rounded-lg shadow p-6 space-y-4">
-                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Registro de Jogos Ensinados</div>
+        <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Jogos ensinados</div>
 
 
         {/* Seletor de Evento */}
@@ -178,7 +191,7 @@ const supabase = createClient();
             <select
               value={selectedEvent}
               onChange={(e) => setSelectedEvent(e.target.value)}
-              className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full max-w-md px-2 py-2 border border-gray-300 rounded-lg text-sm"
             >
               {events.map((event) => (
                 <option key={event.id} value={event.id}>
@@ -264,7 +277,7 @@ const supabase = createClient();
 
       {/* Lista por Monitor */}
       <div className="space-y-6">
-                <div className="text-[35px] bg-white/95 rounded-xl font-aladin text-center text-blue-800 flex-1 mb-5">Registro por Monitor</div>
+        <div className="text-[35px] bg-white/95 rounded-xl font-aladin text-center text-blue-800 flex-1 mb-5">Registro por Monitor</div>
 
 
         {Object.keys(sessionsByMonitor).length === 0 ? (
@@ -322,16 +335,18 @@ const supabase = createClient();
                     </div>
 
                     {/* Divisor vertical + botão deletar */}
-                    <div className="flex flex-col justify-center items-center border-l border-gray-200 pl-1 ml-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleDelete(session.id)}
-                        className="text-red-600 hover:text-red-800 translate-x-1"
-                      >
-                        ❌
-                      </Button>
-                    </div>
+                    {session.monitor_id === currentUserId && (
+                      <div className="flex flex-col justify-center items-center border-l border-gray-200 pl-1 ml-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDelete(session.id)}
+                          className="text-red-600 hover:text-red-800 translate-x-1"
+                        >
+                          ❌
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
