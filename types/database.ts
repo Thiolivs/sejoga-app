@@ -65,6 +65,8 @@ export interface BoardgameWithTeachers extends Boardgame {
     borrowedAt?: string;
     dueDate?: string;
     mechanics?: GameMechanic[];
+    publisher_id?: string | null;
+
 }
 
 export interface Event {

@@ -28,7 +28,9 @@ export function BoardgameList() {
     const [loadingTeachers, setLoadingTeachers] = useState(false);
     const [borrower, setBorrower] = useState<Profile | null>(null);
     const [loadingBorrower, setLoadingBorrower] = useState(false);
-    const [publishers, setPublishers] = useState<Publisher[]>([]); // ✅ NOVO
+    const [publishers, setPublishers] = useState<Publisher[]>([]); 
+    const [openSections, setOpenSections] = useState<string[]>([]);
+
 
     // Estados de filtros
     const [searchTerm, setSearchTerm] = useState('');
@@ -51,7 +53,7 @@ export function BoardgameList() {
             .from('publishers')
             .select('*')
             .order('name');
-        
+
         setPublishers(data || []);
     };
 
@@ -82,7 +84,7 @@ export function BoardgameList() {
 
             // ✅ NOVO: Filtro por editoras
             if (filters.selectedPublishers.length > 0) {
-                if (!game.publisher || !filters.selectedPublishers.includes(game.publisher)) {
+                if (!game.publisher_id || !filters.selectedPublishers.includes(game.publisher_id)) {
                     return false;
                 }
             }
@@ -181,6 +183,15 @@ export function BoardgameList() {
         }
     };
 
+
+    const toggleSection = (section: string) => {
+        setOpenSections(prev =>
+            prev.includes(section)
+                ? prev.filter(s => s !== section)
+                : [...prev, section]
+        );
+    };
+
     if (userLoading || loading || roleLoading || mechanicsLoading) {
         return (
             <div className="p-4">
@@ -263,144 +274,190 @@ export function BoardgameList() {
 
                 {/* Painel de Filtros Avançados */}
                 {showFilters && (
-                    <div className="mt-4 pt-4 border-t space-y-4">
+                    <div className="mt-4 pt-4 border-t space-y-2">
                         {/* Filtro por número de jogadores */}
-                        <div>
-                            <div className="flex items-center gap-4">
-                                <p className="text-sm font-medium text-gray-700 whitespace-nowrap">Jogadores:</p>
-                                <div className="flex gap-2 flex-1">
-                                    <Input
-                                        className="text-sm placeholder:text-xs"
-                                        type="number"
-                                        min="1"
-                                        placeholder='Min'
-                                        value={filters.minPlayers || ''}
-                                        onChange={(e) =>
-                                            setFilters({
-                                                ...filters,
-                                                minPlayers: e.target.value ? parseInt(e.target.value) : null,
-                                            })
-                                        }
-                                    />
-                                    <Input
-                                        className="text-sm placeholder:text-xs"
-                                        type="number"
-                                        min="1"
-                                        placeholder='Max'
-                                        value={filters.maxPlayers || ''}
-                                        onChange={(e) =>
-                                            setFilters({
-                                                ...filters,
-                                                maxPlayers: e.target.value ? parseInt(e.target.value) : null,
-                                            })
-                                        }
-                                    />
+                        <div className="border rounded-lg overflow-hidden">
+                            <button
+                                onClick={() => toggleSection('players')}
+                                className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                            >
+                                <span>👥 Jogadores</span>
+                                <span>{openSections.includes('players') ? '▲' : '▼'}</span>
+                            </button>
+
+                            {openSections.includes('players') && (
+                                <div className="px-3 pb-3">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex gap-2 flex-1">
+                                            <Input
+                                                className="text-sm placeholder:text-xs"
+                                                type="number"
+                                                min="1"
+                                                placeholder='Min'
+                                                value={filters.minPlayers || ''}
+                                                onChange={(e) =>
+                                                    setFilters({
+                                                        ...filters,
+                                                        minPlayers: e.target.value ? parseInt(e.target.value) : null,
+                                                    })
+                                                }
+                                            />
+                                            <Input
+                                                className="text-sm placeholder:text-xs"
+                                                type="number"
+                                                min="1"
+                                                placeholder='Max'
+                                                value={filters.maxPlayers || ''}
+                                                onChange={(e) =>
+                                                    setFilters({
+                                                        ...filters,
+                                                        maxPlayers: e.target.value ? parseInt(e.target.value) : null,
+                                                    })
+                                                }
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
 
-                        {/* ✅ NOVO: Editoras */}
+                        {/* Editoras */}
                         {publishers.length > 0 && (
-                            <div>
-                                <p className="text-sm font-medium text-gray-700 mb-2">Editoras:</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {publishers.map((publisher) => (
-                                        <label
-                                            key={publisher.id}
-                                            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${
-                                                filters.selectedPublishers.includes(publisher.id)
+                            <div className="border rounded-lg overflow-hidden">
+                                <button
+                                    onClick={() => toggleSection('publishers')}
+                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                >
+                                    <span>🏢 Editoras</span>
+                                    <span>{openSections.includes('publishers') ? '▲' : '▼'}</span>
+                                </button>
+
+                                {openSections.includes('publishers') && (
+                                    <div className="flex flex-wrap gap-2 px-3 pb-3">
+                                        {publishers.map((publisher) => (
+                                            <label
+                                                key={publisher.id}
+                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedPublishers.includes(publisher.id)
                                                     ? 'bg-sejoga-laranja-oficial text-white'
                                                     : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                            }`}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                className="hidden"
-                                                checked={filters.selectedPublishers.includes(publisher.id)}
-                                                onChange={() => togglePublisher(publisher.id)}
-                                            />
-                                            {publisher.name}
-                                        </label>
-                                    ))}
-                                </div>
+                                                    }`}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    className="hidden"
+                                                    checked={filters.selectedPublishers.includes(publisher.id)}
+                                                    onChange={() => togglePublisher(publisher.id)}
+                                                />
+                                                {publisher.name}
+                                            </label>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
 
                         {/* Categorias */}
                         {mechanicsByType.category.length > 0 && (
-                            <div>
-                                <p className="text-sm font-medium text-gray-700 mb-2">Categorias:</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {mechanicsByType.category.map((mechanic) => (
-                                        <label
-                                            key={mechanic.id}
-                                            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
-                                                ? 'bg-sejoga-azul-oficial text-white'
-                                                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                                }`}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                className="hidden"
-                                                checked={filters.selectedMechanics.includes(mechanic.id)}
-                                                onChange={() => toggleMechanic(mechanic.id)}
-                                            />
-                                            {mechanic.name}
-                                        </label>
-                                    ))}
-                                </div>
+                            <div className="border rounded-lg overflow-hidden">
+                                <button
+                                    onClick={() => toggleSection('categories')}
+                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                >
+                                    <span>🎲 Categorias</span>
+                                    <span>{openSections.includes('categories') ? '▲' : '▼'}</span>
+                                </button>
+
+                                {openSections.includes('categories') && (
+                                    <div className="flex flex-wrap gap-2 px-3 pb-3">
+                                        {mechanicsByType.category.map((mechanic) => (
+                                            <label
+                                                key={mechanic.id}
+                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
+                                                    ? 'bg-sejoga-azul-oficial text-white'
+                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                                    }`}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    className="hidden"
+                                                    checked={filters.selectedMechanics.includes(mechanic.id)}
+                                                    onChange={() => toggleMechanic(mechanic.id)}
+                                                />
+                                                {mechanic.name}
+                                            </label>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
 
                         {/* Mecânicas */}
                         {mechanicsByType.mechanic.length > 0 && (
-                            <div>
-                                <p className="text-sm font-medium text-gray-700 mb-2">Mecânicas:</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {mechanicsByType.mechanic.map((mechanic) => (
-                                        <label
-                                            key={mechanic.id}
-                                            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
-                                                ? 'bg-sejoga-verde-oficial text-white'
-                                                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                                }`}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                className="hidden"
-                                                checked={filters.selectedMechanics.includes(mechanic.id)}
-                                                onChange={() => toggleMechanic(mechanic.id)}
-                                            />
-                                            {mechanic.name}
-                                        </label>
-                                    ))}
-                                </div>
+                            <div className="border rounded-lg overflow-hidden">
+                                <button
+                                    onClick={() => toggleSection('mechanics')}
+                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                >
+                                    <span>⚙️ Mecânicas</span>
+                                    <span>{openSections.includes('mechanics') ? '▲' : '▼'}</span>
+                                </button>
+
+                                {openSections.includes('mechanics') && (
+                                    <div className="flex flex-wrap gap-2 px-3 pb-3">
+                                        {mechanicsByType.mechanic.map((mechanic) => (
+                                            <label
+                                                key={mechanic.id}
+                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
+                                                    ? 'bg-sejoga-verde-oficial text-white'
+                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                                    }`}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    className="hidden"
+                                                    checked={filters.selectedMechanics.includes(mechanic.id)}
+                                                    onChange={() => toggleMechanic(mechanic.id)}
+                                                />
+                                                {mechanic.name}
+                                            </label>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
 
                         {/* Modos */}
                         {mechanicsByType.mode.length > 0 && (
-                            <div>
-                                <p className="text-sm font-medium text-gray-700 mb-2">Modos:</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {mechanicsByType.mode.map((mechanic) => (
-                                        <label
-                                            key={mechanic.id}
-                                            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
-                                                ? 'bg-sejoga-rosa-oficial text-white'
-                                                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                                }`}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                className="hidden"
-                                                checked={filters.selectedMechanics.includes(mechanic.id)}
-                                                onChange={() => toggleMechanic(mechanic.id)}
-                                            />
-                                            {mechanic.name}
-                                        </label>
-                                    ))}
-                                </div>
+                            <div className="border rounded-lg overflow-hidden">
+                                <button
+                                    onClick={() => toggleSection('modes')}
+                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                >
+                                    <span>🎮 Modos</span>
+                                    <span>{openSections.includes('modes') ? '▲' : '▼'}</span>
+                                </button>
+
+                                {openSections.includes('modes') && (
+                                    <div className="flex flex-wrap gap-2 px-3 pb-3">
+                                        {mechanicsByType.mode.map((mechanic) => (
+                                            <label
+                                                key={mechanic.id}
+                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
+                                                    ? 'bg-sejoga-rosa-oficial text-white'
+                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                                    }`}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    className="hidden"
+                                                    checked={filters.selectedMechanics.includes(mechanic.id)}
+                                                    onChange={() => toggleMechanic(mechanic.id)}
+                                                />
+                                                {mechanic.name}
+                                            </label>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
