@@ -42,18 +42,19 @@ export default function UserApp() {
             {/* ✅ Header + Tabs fixos fora do scroll */}
             <div className="flex-none">
                 <UserAppHeader />
-                <UserAppTabs 
-                    activeTab={activeTab} 
-                    onTabChange={handleTabChange}
-                    isMonitor={isMonitor}
-                    isAdmin={isAdmin}
-                />
+                
             </div>
             
             {/* ✅ Conteúdo com scroll - começa ABAIXO das tabs */}
             <div className="flex-1 overflow-y-auto overflow-x-hidden">
                 <UserAppContent activeTab={activeTab} />
             </div>
+            <UserAppTabs 
+                    activeTab={activeTab} 
+                    onTabChange={handleTabChange}
+                    isMonitor={isMonitor}
+                    isAdmin={isAdmin}
+                />
         </div>
     );
 }
