@@ -28,7 +28,7 @@ export function BoardgameList() {
     const [loadingTeachers, setLoadingTeachers] = useState(false);
     const [borrower, setBorrower] = useState<Profile | null>(null);
     const [loadingBorrower, setLoadingBorrower] = useState(false);
-    const [publishers, setPublishers] = useState<Publisher[]>([]); 
+    const [publishers, setPublishers] = useState<Publisher[]>([]);
     const [openSections, setOpenSections] = useState<string[]>([]);
 
 
@@ -110,7 +110,7 @@ export function BoardgameList() {
         filters.minPlayers !== null ||
         filters.maxPlayers !== null ||
         filters.selectedMechanics.length > 0 ||
-        filters.selectedPublishers.length > 0; 
+        filters.selectedPublishers.length > 0;
 
     // Resetar filtros
     const clearFilters = () => {
@@ -119,7 +119,7 @@ export function BoardgameList() {
             minPlayers: null,
             maxPlayers: null,
             selectedMechanics: [],
-            selectedPublishers: [], 
+            selectedPublishers: [],
         });
     };
 
@@ -227,249 +227,249 @@ export function BoardgameList() {
 
     return (
         <div className='space-y-4'>
-            
-            <div className="space-y-2 bg-white/90 rounded-xl p-3 flex flex-col max-h-[calc(100vh-145px)] overflow-hidden"> 
-                <div className="text-[35px] font-aladin text-center text-blue-800">Lista de Jogos</div>
 
-            {/* Barra de Busca e Filtros */}
-            <div className="bg-white/90 rounded-lg border shadow-md p-2 mb-5 flex-none"> 
-                <div className="flex gap-3 items-center">
-                    {/* Campo de busca */}
-                    <div className="flex-1 relative">
-                        <Input
-                            type="text"
-                            placeholder="🔍 Buscar jogos..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pr-10 bg-white/10"
-                        />
-                        {searchTerm && (
-                            <button
-                                onClick={() => setSearchTerm('')}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                            >
-                                ✕
-                            </button>
-                        )}
-                    </div>
+            <div className="space-y-2 bg-white/90 rounded-xl p-4 flex flex-col max-h-[calc(100vh-145px)] overflow-hidden">
+                <div className="text-[35px] font-aladin text-center text-blue-800 mb-1">Lista de Jogos</div>
 
-                    {/* Botão de filtros */}
-                    <Button
-                        onClick={() => setShowFilters(!showFilters)}
-                        variant={showFilters ? "default" : "outline"}
-                        className={`whitespace-nowrap bg-white/10 ${showFilters
-                            ? 'bg-sejoga-vermelho-oficial hover:bg-red-600 text-white'
-                            : hasActiveFilters
-                                ? 'border-blue-500 text-blue-600'
-                                : ''
-                            }`}
-                    >
-                        {showFilters ? '▲' : '▼'} Filtros
-                        {hasActiveFilters && !showFilters && (
-                            <span className="ml-2 px-2 py-0.5 bg-blue-600 text-white rounded-full text-xs">
-                                {(filters.minPlayers !== null ? 1 : 0) +
-                                    (filters.maxPlayers !== null ? 1 : 0) +
-                                    filters.selectedPublishers.length +
-                                    filters.selectedMechanics.length}
-                            </span>
-                        )}
-                    </Button>
-                </div>
-
-                {/* Painel de Filtros Avançados */}
-                {showFilters && (
-                    <div className="mt-4 pt-4 border-t space-y-2">
-                        {/* Filtro por número de jogadores */}
-                        <div className="border rounded-lg overflow-hidden">
-                            <button
-                                onClick={() => toggleSection('players')}
-                                className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
-                            >
-                                <span>👤 Jogadores</span>
-                                <span>{openSections.includes('players') ? '▲' : '▼'}</span>
-                            </button>
-
-                            {openSections.includes('players') && (
-                                <div className="px-3 pb-3">
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex gap-2 flex-1">
-                                            <Input
-                                                className="text-sm placeholder:text-xs"
-                                                type="number"
-                                                min="1"
-                                                placeholder='Min'
-                                                value={filters.minPlayers || ''}
-                                                onChange={(e) =>
-                                                    setFilters({
-                                                        ...filters,
-                                                        minPlayers: e.target.value ? parseInt(e.target.value) : null,
-                                                    })
-                                                }
-                                            />
-                                            <Input
-                                                className="text-sm placeholder:text-xs"
-                                                type="number"
-                                                min="1"
-                                                placeholder='Max'
-                                                value={filters.maxPlayers || ''}
-                                                onChange={(e) =>
-                                                    setFilters({
-                                                        ...filters,
-                                                        maxPlayers: e.target.value ? parseInt(e.target.value) : null,
-                                                    })
-                                                }
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
+                {/* Barra de Busca e Filtros */}
+                <div className="bg-white/90 rounded-lg border shadow-md p-2 mb-5 flex-none">
+                    <div className="flex gap-3 items-center">
+                        {/* Campo de busca */}
+                        <div className="flex-1 relative">
+                            <Input
+                                type="text"
+                                placeholder="🔍 Buscar jogos..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pr-10 bg-white/10"
+                            />
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm('')}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                >
+                                    ✕
+                                </button>
                             )}
                         </div>
 
-                        {/* Editoras */}
-                        {publishers.length > 0 && (
-                            <div className="border rounded-lg overflow-hidden">
-                                <button
-                                    onClick={() => toggleSection('publishers')}
-                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
-                                >
-                                    <span>🏢 Editoras</span>
-                                    <span>{openSections.includes('publishers') ? '▲' : '▼'}</span>
-                                </button>
-
-                                {openSections.includes('publishers') && (
-                                    <div className="flex flex-wrap gap-2 px-3 pb-3">
-                                        {publishers.map((publisher) => (
-                                            <label
-                                                key={publisher.id}
-                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedPublishers.includes(publisher.id)
-                                                    ? 'bg-sejoga-laranja-oficial text-white'
-                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                                    }`}
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    className="hidden"
-                                                    checked={filters.selectedPublishers.includes(publisher.id)}
-                                                    onChange={() => togglePublisher(publisher.id)}
-                                                />
-                                                {publisher.name}
-                                            </label>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Categorias */}
-                        {mechanicsByType.category.length > 0 && (
-                            <div className="border rounded-lg overflow-hidden">
-                                <button
-                                    onClick={() => toggleSection('categories')}
-                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
-                                >
-                                    <span>📚Categorias</span>
-                                    <span>{openSections.includes('categories') ? '▲' : '▼'}</span>
-                                </button>
-
-                                {openSections.includes('categories') && (
-                                    <div className="flex flex-wrap gap-2 px-3 pb-3">
-                                        {mechanicsByType.category.map((mechanic) => (
-                                            <label
-                                                key={mechanic.id}
-                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
-                                                    ? 'bg-sejoga-azul-oficial text-white'
-                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                                    }`}
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    className="hidden"
-                                                    checked={filters.selectedMechanics.includes(mechanic.id)}
-                                                    onChange={() => toggleMechanic(mechanic.id)}
-                                                />
-                                                {mechanic.name}
-                                            </label>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Mecânicas */}
-                        {mechanicsByType.mechanic.length > 0 && (
-                            <div className="border rounded-lg overflow-hidden">
-                                <button
-                                    onClick={() => toggleSection('mechanics')}
-                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
-                                >
-                                    <span>⚙️ Mecânicas</span>
-                                    <span>{openSections.includes('mechanics') ? '▲' : '▼'}</span>
-                                </button>
-
-                                {openSections.includes('mechanics') && (
-                                    <div className="flex flex-wrap gap-2 px-3 pb-3">
-                                        {mechanicsByType.mechanic.map((mechanic) => (
-                                            <label
-                                                key={mechanic.id}
-                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
-                                                    ? 'bg-sejoga-verde-oficial text-white'
-                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                                    }`}
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    className="hidden"
-                                                    checked={filters.selectedMechanics.includes(mechanic.id)}
-                                                    onChange={() => toggleMechanic(mechanic.id)}
-                                                />
-                                                {mechanic.name}
-                                            </label>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Modos */}
-                        {mechanicsByType.mode.length > 0 && (
-                            <div className="border rounded-lg overflow-hidden">
-                                <button
-                                    onClick={() => toggleSection('modes')}
-                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
-                                >
-                                    <span>👾 Modos</span>
-                                    <span>{openSections.includes('modes') ? '▲' : '▼'}</span>
-                                </button>
-
-                                {openSections.includes('modes') && (
-                                    <div className="flex flex-wrap gap-2 px-3 pb-3">
-                                        {mechanicsByType.mode.map((mechanic) => (
-                                            <label
-                                                key={mechanic.id}
-                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
-                                                    ? 'bg-sejoga-rosa-oficial text-white'
-                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                                    }`}
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    className="hidden"
-                                                    checked={filters.selectedMechanics.includes(mechanic.id)}
-                                                    onChange={() => toggleMechanic(mechanic.id)}
-                                                />
-                                                {mechanic.name}
-                                            </label>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                        {/* Botão de filtros */}
+                        <Button
+                            onClick={() => setShowFilters(!showFilters)}
+                            variant={showFilters ? "default" : "outline"}
+                            className={`whitespace-nowrap bg-white/10 ${showFilters
+                                ? 'bg-sejoga-vermelho-oficial hover:bg-red-600 text-white'
+                                : hasActiveFilters
+                                    ? 'border-blue-500 text-blue-600'
+                                    : ''
+                                }`}
+                        >
+                            {showFilters ? '▲' : '▼'} Filtros
+                            {hasActiveFilters && !showFilters && (
+                                <span className="ml-2 px-2 py-0.5 bg-blue-600 text-white rounded-full text-xs">
+                                    {(filters.minPlayers !== null ? 1 : 0) +
+                                        (filters.maxPlayers !== null ? 1 : 0) +
+                                        filters.selectedPublishers.length +
+                                        filters.selectedMechanics.length}
+                                </span>
+                            )}
+                        </Button>
                     </div>
-                )}
-            </div>
+
+                    {/* Painel de Filtros Avançados */}
+                    {showFilters && (
+                        <div className="mt-4 pt-4 border-t space-y-2">
+                            {/* Filtro por número de jogadores */}
+                            <div className="border rounded-lg overflow-hidden">
+                                <button
+                                    onClick={() => toggleSection('players')}
+                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                >
+                                    <span>👤 Jogadores</span>
+                                    <span>{openSections.includes('players') ? '▲' : '▼'}</span>
+                                </button>
+
+                                {openSections.includes('players') && (
+                                    <div className="px-3 pb-3">
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex gap-2 flex-1">
+                                                <Input
+                                                    className="text-sm placeholder:text-xs"
+                                                    type="number"
+                                                    min="1"
+                                                    placeholder='Min'
+                                                    value={filters.minPlayers || ''}
+                                                    onChange={(e) =>
+                                                        setFilters({
+                                                            ...filters,
+                                                            minPlayers: e.target.value ? parseInt(e.target.value) : null,
+                                                        })
+                                                    }
+                                                />
+                                                <Input
+                                                    className="text-sm placeholder:text-xs"
+                                                    type="number"
+                                                    min="1"
+                                                    placeholder='Max'
+                                                    value={filters.maxPlayers || ''}
+                                                    onChange={(e) =>
+                                                        setFilters({
+                                                            ...filters,
+                                                            maxPlayers: e.target.value ? parseInt(e.target.value) : null,
+                                                        })
+                                                    }
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Editoras */}
+                            {publishers.length > 0 && (
+                                <div className="border rounded-lg overflow-hidden">
+                                    <button
+                                        onClick={() => toggleSection('publishers')}
+                                        className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                    >
+                                        <span>🏢 Editoras</span>
+                                        <span>{openSections.includes('publishers') ? '▲' : '▼'}</span>
+                                    </button>
+
+                                    {openSections.includes('publishers') && (
+                                        <div className="flex flex-wrap gap-2 px-3 pb-3">
+                                            {publishers.map((publisher) => (
+                                                <label
+                                                    key={publisher.id}
+                                                    className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedPublishers.includes(publisher.id)
+                                                        ? 'bg-sejoga-laranja-oficial text-white'
+                                                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                                        }`}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        className="hidden"
+                                                        checked={filters.selectedPublishers.includes(publisher.id)}
+                                                        onChange={() => togglePublisher(publisher.id)}
+                                                    />
+                                                    {publisher.name}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Categorias */}
+                            {mechanicsByType.category.length > 0 && (
+                                <div className="border rounded-lg overflow-hidden">
+                                    <button
+                                        onClick={() => toggleSection('categories')}
+                                        className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                    >
+                                        <span>📚Categorias</span>
+                                        <span>{openSections.includes('categories') ? '▲' : '▼'}</span>
+                                    </button>
+
+                                    {openSections.includes('categories') && (
+                                        <div className="flex flex-wrap gap-2 px-3 pb-3">
+                                            {mechanicsByType.category.map((mechanic) => (
+                                                <label
+                                                    key={mechanic.id}
+                                                    className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
+                                                        ? 'bg-sejoga-azul-oficial text-white'
+                                                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                                        }`}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        className="hidden"
+                                                        checked={filters.selectedMechanics.includes(mechanic.id)}
+                                                        onChange={() => toggleMechanic(mechanic.id)}
+                                                    />
+                                                    {mechanic.name}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Mecânicas */}
+                            {mechanicsByType.mechanic.length > 0 && (
+                                <div className="border rounded-lg overflow-hidden">
+                                    <button
+                                        onClick={() => toggleSection('mechanics')}
+                                        className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                    >
+                                        <span>⚙️ Mecânicas</span>
+                                        <span>{openSections.includes('mechanics') ? '▲' : '▼'}</span>
+                                    </button>
+
+                                    {openSections.includes('mechanics') && (
+                                        <div className="flex flex-wrap gap-2 px-3 pb-3">
+                                            {mechanicsByType.mechanic.map((mechanic) => (
+                                                <label
+                                                    key={mechanic.id}
+                                                    className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
+                                                        ? 'bg-sejoga-verde-oficial text-white'
+                                                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                                        }`}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        className="hidden"
+                                                        checked={filters.selectedMechanics.includes(mechanic.id)}
+                                                        onChange={() => toggleMechanic(mechanic.id)}
+                                                    />
+                                                    {mechanic.name}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Modos */}
+                            {mechanicsByType.mode.length > 0 && (
+                                <div className="border rounded-lg overflow-hidden">
+                                    <button
+                                        onClick={() => toggleSection('modes')}
+                                        className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                    >
+                                        <span>👾 Modos</span>
+                                        <span>{openSections.includes('modes') ? '▲' : '▼'}</span>
+                                    </button>
+
+                                    {openSections.includes('modes') && (
+                                        <div className="flex flex-wrap gap-2 px-3 pb-3">
+                                            {mechanicsByType.mode.map((mechanic) => (
+                                                <label
+                                                    key={mechanic.id}
+                                                    className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
+                                                        ? 'bg-sejoga-rosa-oficial text-white'
+                                                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                                        }`}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        className="hidden"
+                                                        checked={filters.selectedMechanics.includes(mechanic.id)}
+                                                        onChange={() => toggleMechanic(mechanic.id)}
+                                                    />
+                                                    {mechanic.name}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
 
                 {/* Contador de resultados */}
-                <div className="flex justify-between items-center mb-2">
+                <div className="flex justify-between items-center mb-2 flex-none">
                     <p className="text-sm text-gray-600">
                         {filteredGames.length === boardgames.length ? (
                             <>
@@ -484,9 +484,9 @@ export function BoardgameList() {
                         )}
                     </p>
                 </div>
-                
+
                 {/* CONTAINER COM SCROLL - Lista de jogos */}
-                <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+                <div className="flex-1 overflow-y-scroll space-y-2 pr-2 pointer-events-auto">
 
                     {/* Mensagem se não houver resultados */}
                     {filteredGames.length === 0 && (
