@@ -82,7 +82,7 @@ export function BoardgameList() {
                 return false;
             }
 
-            // ✅ NOVO: Filtro por editoras
+            // Filtro por editoras
             if (filters.selectedPublishers.length > 0) {
                 if (!game.publisher_id || !filters.selectedPublishers.includes(game.publisher_id)) {
                     return false;
@@ -110,7 +110,7 @@ export function BoardgameList() {
         filters.minPlayers !== null ||
         filters.maxPlayers !== null ||
         filters.selectedMechanics.length > 0 ||
-        filters.selectedPublishers.length > 0; // ✅ NOVO
+        filters.selectedPublishers.length > 0; 
 
     // Resetar filtros
     const clearFilters = () => {
@@ -119,7 +119,7 @@ export function BoardgameList() {
             minPlayers: null,
             maxPlayers: null,
             selectedMechanics: [],
-            selectedPublishers: [], // ✅ NOVO
+            selectedPublishers: [], 
         });
     };
 
@@ -227,8 +227,12 @@ export function BoardgameList() {
 
     return (
         <div className='space-y-4'>
+            
+            <div className="space-y-2 bg-white/90 rounded-xl p-3 flex flex-col max-h-[calc(100vh-145px)] overflow-hidden"> 
+                <div className="text-[35px] font-aladin text-center text-blue-800">Lista de Jogos</div>
+
             {/* Barra de Busca e Filtros */}
-            <div className="bg-white/90 mt-3 rounded-lg border shadow-md p-2 mb-5">
+            <div className="bg-white/90 rounded-lg border shadow-md p-2 mb-5 flex-none"> 
                 <div className="flex gap-3 items-center">
                     {/* Campo de busca */}
                     <div className="flex-1 relative">
@@ -281,7 +285,7 @@ export function BoardgameList() {
                                 onClick={() => toggleSection('players')}
                                 className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
                             >
-                                <span>👥 Jogadores</span>
+                                <span>👤 Jogadores</span>
                                 <span>{openSections.includes('players') ? '▲' : '▼'}</span>
                             </button>
 
@@ -363,7 +367,7 @@ export function BoardgameList() {
                                     onClick={() => toggleSection('categories')}
                                     className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
                                 >
-                                    <span>🎲 Categorias</span>
+                                    <span>📚Categorias</span>
                                     <span>{openSections.includes('categories') ? '▲' : '▼'}</span>
                                 </button>
 
@@ -433,7 +437,7 @@ export function BoardgameList() {
                                     onClick={() => toggleSection('modes')}
                                     className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
                                 >
-                                    <span>🎮 Modos</span>
+                                    <span>👾 Modos</span>
                                     <span>{openSections.includes('modes') ? '▲' : '▼'}</span>
                                 </button>
 
@@ -464,11 +468,8 @@ export function BoardgameList() {
                 )}
             </div>
 
-            <div className="space-y-2 bg-white/90 rounded-xl p-4">
-                <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Lista de Jogos</div>
-
                 {/* Contador de resultados */}
-                <div className="flex justify-between items-center mb">
+                <div className="flex justify-between items-center mb-2">
                     <p className="text-sm text-gray-600">
                         {filteredGames.length === boardgames.length ? (
                             <>
@@ -483,93 +484,97 @@ export function BoardgameList() {
                         )}
                     </p>
                 </div>
+                
+                {/* CONTAINER COM SCROLL - Lista de jogos */}
+                <div className="flex-1 overflow-y-auto space-y-2 pr-1">
 
-                {/* Mensagem se não houver resultados */}
-                {filteredGames.length === 0 && (
-                    <div className="text-center py-12 bg-gray-50 rounded-lg">
-                        <p className="text-gray-600 mb-4">
-                            🙁 Nenhum jogo encontrado
-                        </p>
-                        <Button onClick={clearFilters} variant="outline">
-                            ❌ Limpar filtros
-                        </Button>
-                    </div>
-                )}
+                    {/* Mensagem se não houver resultados */}
+                    {filteredGames.length === 0 && (
+                        <div className="text-center py-12 bg-gray-50 rounded-lg">
+                            <p className="text-gray-600 mb-4">
+                                🙁 Nenhum jogo encontrado
+                            </p>
+                            <Button onClick={clearFilters} variant="outline">
+                                ❌ Limpar filtros
+                            </Button>
+                        </div>
+                    )}
 
-                {/* Lista de jogos */}
-                {filteredGames.map((game) => (
-                    <div
-                        key={game.id}
-                        className={`border rounded-lg transition-all ${(isMonitor || isAdmin) && game.isLoaned ? 'bg-red-50 border-red-300' : 'bg-white hover:shadow-md'
-                            }`}
-                    >
-                        <div className="flex gap-2">
-                            {/* Conteúdo principal - esquerda */}
-                            <div className="flex-1 p-3">
-                                {/* LINHA 1 - Nome + Tag */}
-                                <div
-                                    className="flex items-center justify-between gap-4 cursor-pointer"
-                                    onClick={() => handleGameClick(game)}
-                                >
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                        <h3 className="font-semibold text-base">{game.name}</h3>
+                    {/* Lista de jogos */}
+                    {filteredGames.map((game) => (
+                        <div
+                            key={game.id}
+                            className={`border rounded-lg transition-all ${(isMonitor || isAdmin) && game.isLoaned ? 'bg-red-50 border-red-300' : 'bg-white hover:shadow-md'
+                                }`}
+                        >
+                            <div className="flex gap-2">
+                                {/* Conteúdo principal - esquerda */}
+                                <div className="flex-1 p-3">
+                                    {/* LINHA 1 - Nome + Tag */}
+                                    <div
+                                        className="flex items-center justify-between gap-4 cursor-pointer"
+                                        onClick={() => handleGameClick(game)}
+                                    >
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <h3 className="font-semibold text-base">{game.name}</h3>
+                                        </div>
                                     </div>
+
+                                    {/* LINHA 2 - Checkbox */}
+                                    {isMonitor && (
+                                        <div className="flex items-center gap-2 text-left pt-1.5 border-t-2 border-gray-100 mt-1.5">
+                                            <input
+                                                type="checkbox"
+                                                id={`teach-${game.id}`}
+                                                checked={game.canTeach}
+                                                onChange={() => toggleTeach(game.id, game.canTeach || false)}
+                                                className="custom-check"
+                                            />
+                                            <label
+                                                htmlFor={`teach-${game.id}`}
+                                                className="text-sm cursor-pointer select-none"
+                                            >
+                                                Sei ensinar
+                                            </label>
+                                        </div>
+                                    )}
                                 </div>
 
-                                {/* LINHA 2 - Checkbox */}
+                                {/* Botão - direita (ocupa altura toda) */}
                                 {isMonitor && (
-                                    <div className="flex items-center gap-2 text-left pt-1.5 border-t-2 border-gray-100 mt-1.5">
-                                        <input
-                                            type="checkbox"
-                                            id={`teach-${game.id}`}
-                                            checked={game.canTeach}
-                                            onChange={() => toggleTeach(game.id, game.canTeach || false)}
-                                            className="custom-check"
-                                        />
-                                        <label
-                                            htmlFor={`teach-${game.id}`}
-                                            className="text-sm cursor-pointer select-none"
-                                        >
-                                            Sei ensinar
-                                        </label>
+                                    <div className="flex items-stretch">
+                                        {game.isLoaned ? (
+                                            game.loanedBy === user?.id ? (
+                                                <button
+                                                    onClick={() => handleReturn(game.id)}
+                                                    className="w-22 h-full py-4 bg-green-50 text-sejoga-verde-oficial border-l-2 border-sejoga-verde-oficial hover:bg-green-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
+                                                >
+                                                    <span className="text-base">⬅️</span>
+                                                    <span>Devolver</span>
+                                                </button>
+                                            ) : (
+                                                <div className="w-22 h-full py-4 bg-gray-100 text-gray-500 border-l-2 border-gray-300 text-xs font-medium cursor-not-allowed flex flex-col items-center justify-center gap-1 rounded-r-lg">
+                                                    <span className="text-lg">⚔️</span>
+                                                    <span className="text-center">Indisponível</span>
+                                                </div>
+                                            )
+                                        ) : (
+                                            <button
+                                                onClick={() => handleBorrow(game.id)}
+                                                className="w-22 h-full py-4 bg-blue-50 text-sejoga-azul-oficial border-l-2 border-sejoga-azul-oficial hover:bg-blue-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
+                                            >
+                                                <span className="text-base">➡️</span>
+                                                <span className="text-center leading-tight">
+                                                    Pegar<br />Emprestado
+                                                </span>
+                                            </button>
+                                        )}
                                     </div>
                                 )}
                             </div>
-
-                            {/* Botão - direita (ocupa altura toda) */}
-                            {isMonitor && (
-                                <div className="flex items-stretch">
-                                    {game.isLoaned ? (
-                                        game.loanedBy === user?.id ? (
-                                            <button
-                                                onClick={() => handleReturn(game.id)}
-                                                className="w-22 h-full py-4 bg-green-50 text-sejoga-verde-oficial border-l-2 border-sejoga-verde-oficial hover:bg-green-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
-                                            >
-                                                <span className="text-base">⬅️</span>
-                                                <span>Devolver</span>
-                                            </button>
-                                        ) : (
-                                            <div className="w-22 h-full py-4 bg-gray-100 text-gray-500 border-l-2 border-gray-300 text-xs font-medium cursor-not-allowed flex flex-col items-center justify-center gap-1 rounded-r-lg">
-                                                <span className="text-lg">⚔️</span>
-                                                <span className="text-center">Indisponível</span>
-                                            </div>
-                                        )
-                                    ) : (
-                                        <button
-                                            onClick={() => handleBorrow(game.id)}
-                                            className="w-22 h-full py-4 bg-blue-50 text-sejoga-azul-oficial border-l-2 border-sejoga-azul-oficial hover:bg-blue-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
-                                        >
-                                            <span className="text-base">➡️</span>
-                                            <span className="text-center leading-tight">
-                                                Pegar<br />Emprestado
-                                            </span>
-                                        </button>
-                                    )}
-                                </div>
-                            )}
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
 
                 {/* Modal */}
                 {selectedGame && (
