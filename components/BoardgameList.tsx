@@ -487,7 +487,7 @@ export function BoardgameList() {
 
                 {/* ✅ Container com scroll - com classe boardgame-list */}
                 <div
-                    className="boardgame-list flex-1 overflow-y-scroll space-y-2 pr-3"
+                    className="boardgame-list flex-1 overflow-y-scroll space-y-2 pr-1"
                     style={{
                         WebkitOverflowScrolling: 'touch', // ✅ Smooth scroll no iOS
                         scrollbarWidth: 'thin', // ✅ Scrollbar fina no Firefox
