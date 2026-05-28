@@ -485,9 +485,12 @@ export function BoardgameList() {
                     </p>
                 </div>
 
-                {/* CONTAINER COM SCROLL - Lista de jogos */}
-                <div className="flex-1 overflow-y-scroll space-y-2 pr-2 pointer-events-auto">
-
+                {/* ✅ Container com scroll - desativa pull-to-refresh */}
+                <div
+                    className="flex-1 overflow-y-scroll space-y-2 pr-2"
+                    style={{ overscrollBehavior: 'contain' }} 
+                    onTouchStart={(e) => e.stopPropagation()} 
+                >
                     {/* Mensagem se não houver resultados */}
                     {filteredGames.length === 0 && (
                         <div className="text-center py-12 bg-gray-50 rounded-lg">
@@ -499,6 +502,7 @@ export function BoardgameList() {
                             </Button>
                         </div>
                     )}
+
 
                     {/* Lista de jogos */}
                     {filteredGames.map((game) => (
