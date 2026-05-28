@@ -485,11 +485,13 @@ export function BoardgameList() {
                     </p>
                 </div>
 
-                {/* ✅ Container com scroll - desativa pull-to-refresh */}
+                {/* ✅ Container com scroll - com classe boardgame-list */}
                 <div
-                    className="flex-1 overflow-y-scroll space-y-2 pr-2"
-                    style={{ overscrollBehavior: 'contain' }} 
-                    onTouchStart={(e) => e.stopPropagation()} 
+                    className="boardgame-list flex-1 overflow-y-scroll space-y-2 pr-4"
+                    style={{
+                        WebkitOverflowScrolling: 'touch', // ✅ Smooth scroll no iOS
+                        scrollbarWidth: 'thin', // ✅ Scrollbar fina no Firefox
+                    }}
                 >
                     {/* Mensagem se não houver resultados */}
                     {filteredGames.length === 0 && (

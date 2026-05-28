@@ -10,6 +10,10 @@ export function PullToRefresh() {
         const threshold = 100;
 
         const handleTouchStart = (e: TouchEvent) => {
+            // ✅ Ignora se o toque começou em .boardgame-list (lista de jogos)
+            const target = e.target as HTMLElement;
+            if (target?.closest('.boardgame-list')) return;
+
             const scrollableElement = document.querySelector('.overflow-y-auto') as HTMLElement;
             const isAtTop = scrollableElement ? scrollableElement.scrollTop === 0 : window.scrollY === 0;
 
