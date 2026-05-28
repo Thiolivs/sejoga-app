@@ -248,3 +248,28 @@ input[type="checkbox"].custom-check:checked::after {
 .font-aladin {
   font-family: var(--font-aladin);
 }
+
+/* ✅ Scrollbar customizada para Android */
+.boardgame-list {
+  scrollbar-width: thin;
+  scrollbar-color: #3AC3DF #f0f0f0;
+}
+
+/* Chrome, Safari, Edge */
+.boardgame-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.boardgame-list::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.boardgame-list::-webkit-scrollbar-thumb {
+  background: #3AC3DF;
+  border-radius: 10px;
+}
+
+.boardgame-list::-webkit-scrollbar-thumb:hover {
+  background: #0096FF;
+}
