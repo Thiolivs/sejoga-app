@@ -257,7 +257,7 @@ input[type="checkbox"].custom-check:checked::after {
 
 /* Chrome, Safari, Edge */
 .boardgame-list::-webkit-scrollbar {
-  width: 14px;
+  width: 40px;
 }
 
 .boardgame-list::-webkit-scrollbar-track {
