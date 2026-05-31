@@ -13,13 +13,13 @@ export default function UserApp() {
     const { isAdmin, isMonitor } = useUserRole();
 
     useEffect(() => {
-        const headerEl = document.querySelector('.flex-none') as HTMLElement;
+        const tabsEl = document.querySelectorAll('.flex-none')[1] as HTMLElement;
         const info = `
-header height: ${headerEl?.clientHeight}
-header offsetTop: ${headerEl?.offsetTop}
-html style: ${document.documentElement.getAttribute('style')}
-body style: ${document.body.getAttribute('style')}
-        `;
+tabs offsetTop: ${tabsEl?.offsetTop}
+tabs height: ${tabsEl?.clientHeight}
+tabs offsetParent height: ${(tabsEl?.offsetParent as HTMLElement)?.clientHeight}
+div.flex-col height: ${(document.querySelector('.flex.flex-col') as HTMLElement)?.clientHeight}
+    `;
         setDebugInfo(info);
     }, []);
 
@@ -63,6 +63,15 @@ body style: ${document.body.getAttribute('style')}
 
             <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
                 <div style={{ background: 'blue', height: '100px' }}>TESTE</div>
+            </div>
+
+            <div className="flex-none">
+                <UserAppTabs
+                    activeTab={activeTab}
+                    onTabChange={handleTabChange}
+                    isMonitor={isMonitor}
+                    isAdmin={isAdmin}
+                />
             </div>
         </div>
     );
