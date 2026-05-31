@@ -2,7 +2,6 @@
 
 import { UserAppHeader } from "@/components/UserAppHeader"
 import { UserAppTabs } from "@/components/UserAppTabs"
-import { UserAppContent } from "@/components/UserAppContent"
 import { useEffect, useState } from 'react';
 import { useUserRole } from '@/hooks/useUserRole';
 
@@ -62,10 +61,9 @@ body style: ${document.body.getAttribute('style')}
                 <UserAppHeader />
             </div>
 
-<div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
-    {/* ✅ REMOVA UserAppContent completamente */}
-    <div style={{ background: 'blue', height: '100px' }}>TESTE</div>
-</div>
+            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+                <div style={{ background: 'blue', height: '100px' }}>TESTE</div>
+            </div>
 
             <div className="flex-none">
                 <UserAppTabs
