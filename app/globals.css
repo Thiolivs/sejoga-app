@@ -150,17 +150,18 @@
 
   /* ✅ Android 15+: padding top e bottom */
   html.android-modern body {
-    padding-bottom: env(safe-area-inset-bottom, 20px) !important;
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
   }
 
   html.android-modern body::before {
     top: 40px !important;
-    bottom: env(safe-area-inset-bottom, 20px) !important;
+    bottom: 40px !important;
   }
 
   /* ✅ Android moderno: ajusta estrutura de layout */
   html.android-modern .h-screen {
-    height: calc(100vh) !important;
+    height: calc(100vh - 40px - 40px) !important;
   }
 }
 
