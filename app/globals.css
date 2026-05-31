@@ -150,7 +150,6 @@
 
   /* ✅ Android 15+: padding top e bottom */
   html.android-modern body {
-    padding-top: 40px !important;
     padding-bottom: env(safe-area-inset-bottom, 20px) !important;
   }
 
