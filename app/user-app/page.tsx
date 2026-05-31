@@ -49,14 +49,15 @@ div.flex-col height: ${(document.querySelector('.flex.flex-col') as HTMLElement)
     }, []);
 
     return (
-        <div className="flex flex-col h-screen overflow-hidden">
-            {/* ✅ Debug visual */}
+        <div
+            className="flex flex-col h-screen overflow-hidden"
+            style={{ height: '100vh', maxHeight: '100vh' }}
+        >
             {debugInfo && (
                 <div className="fixed top-0 left-0 bg-red-500 text-white text-xs p-2 z-50 font-mono max-w-xs whitespace-pre">
                     {debugInfo}
                 </div>
             )}
-
 
             <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{ height: '0px' }}>
                 <div style={{ background: 'blue', height: '100px' }}>TESTE</div>
