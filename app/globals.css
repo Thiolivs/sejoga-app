@@ -146,6 +146,7 @@
     background-position: center;
     background-attachment: fixed;
     z-index: -1;
+    display: none;
   }
 
   /* ✅ Android 15+: padding top e bottom */
