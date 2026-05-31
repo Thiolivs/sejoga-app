@@ -62,9 +62,10 @@ body style: ${document.body.getAttribute('style')}
                 <UserAppHeader />
             </div>
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{ maxHeight: 'calc(100vh - 100px)' }}>
-                <UserAppContent activeTab={activeTab} />
-            </div>
+<div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+    {/* ✅ REMOVA UserAppContent completamente */}
+    <div style={{ background: 'blue', height: '100px' }}>TESTE</div>
+</div>
 
             <div className="flex-none">
                 <UserAppTabs
