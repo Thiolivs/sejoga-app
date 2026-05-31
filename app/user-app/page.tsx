@@ -62,7 +62,7 @@ body style: ${document.body.getAttribute('style')}
                 <UserAppHeader />
             </div>
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{ maxHeight: 'calc(100vh - 100px)' }}>
                 <UserAppContent activeTab={activeTab} />
             </div>
 
