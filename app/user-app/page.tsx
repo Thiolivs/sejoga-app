@@ -57,9 +57,6 @@ div.flex-col height: ${(document.querySelector('.flex.flex-col') as HTMLElement)
                 </div>
             )}
 
-            <div className="flex-none">
-                <UserAppHeader />
-            </div>
 
             <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{ height: '0px' }}>
                 <div style={{ background: 'blue', height: '100px' }}>TESTE</div>
