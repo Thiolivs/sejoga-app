@@ -64,15 +64,6 @@ body style: ${document.body.getAttribute('style')}
             <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
                 <div style={{ background: 'blue', height: '100px' }}>TESTE</div>
             </div>
-
-            <div className="flex-none">
-                <UserAppTabs
-                    activeTab={activeTab}
-                    onTabChange={handleTabChange}
-                    isMonitor={isMonitor}
-                    isAdmin={isAdmin}
-                />
-            </div>
         </div>
     );
 }
