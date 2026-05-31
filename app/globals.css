@@ -161,7 +161,7 @@
 
   /* ✅ Android moderno: ajusta estrutura de layout */
   html.android-modern .h-screen {
-    height: calc(100vh - 20px - env(safe-area-inset-bottom, 20px)) !important;
+    height: calc(100vh) !important;
   }
 }
 
