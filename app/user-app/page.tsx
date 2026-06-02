@@ -10,7 +10,18 @@ type Tab = 'training' | 'profile' | 'jogos' | 'register' | 'statistics';
 
 export default function UserApp() {
     const [activeTab, setActiveTab] = useState<Tab>('jogos');
+    const [debugInfo, setDebugInfo] = useState('');
     const { isAdmin, isMonitor } = useUserRole();
+
+    useEffect(() => {
+        const info = `
+html height: ${document.documentElement.clientHeight}
+body height: ${document.body.clientHeight}
+body scrollHeight: ${document.body.scrollHeight}
+window.innerHeight: ${window.innerHeight}
+        `;
+        setDebugInfo(info);
+    }, []);
 
     useEffect(() => {
         const isActiveSession = sessionStorage.getItem('sejoga-session-active');
@@ -39,6 +50,13 @@ export default function UserApp() {
 
     return (
         <div className="flex flex-col h-screen overflow-hidden">
+            {/* ✅ Debug visual */}
+            {debugInfo && (
+                <div className="fixed top-0 left-0 bg-red-500 text-white text-xs p-2 z-50 font-mono max-w-xs whitespace-pre">
+                    {debugInfo}
+                </div>
+            )}
+
             <div className="flex-none">
                 <UserAppHeader />
             </div>
