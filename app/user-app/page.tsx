@@ -27,13 +27,15 @@ window.innerHeight: ${window.innerHeight}
 
     useEffect(() => {
         const observer = new MutationObserver(() => {
-            const msg = `Body mudou! height: ${document.body.clientHeight} | style: ${document.body.getAttribute('style')}`;
-            setDebugMessages(prev => [...prev.slice(-5), msg]); // Últimas 5 mensagens
+            const bodyHeight = document.body.clientHeight;
+            const msg = `Body height: ${bodyHeight} | scrollHeight: ${document.body.scrollHeight}`;
+            setDebugMessages(prev => [...prev.slice(-3), msg]);
         });
 
         observer.observe(document.body, {
             attributes: true,
-            attributeFilter: ['style']
+            subtree: true,
+            childList: true
         });
 
         return () => observer.disconnect();
