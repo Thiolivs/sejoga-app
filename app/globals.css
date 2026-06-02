@@ -131,6 +131,9 @@
     min-height: 100vh;
     position: relative;
     background-color: transparent !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
   }
 
   /* ✅ Background via pseudo-elemento */
@@ -268,7 +271,8 @@ input[type="checkbox"].custom-check:checked::after {
 .boardgame-list::-webkit-scrollbar-thumb {
   background: #3AC3DF;
   border-radius: 10px;
-  min-height: 40px; /*Altura mínima do thumb */
+  min-height: 40px;
+  /*Altura mínima do thumb */
 
 }
 
