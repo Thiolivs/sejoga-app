@@ -26,19 +26,15 @@ window.innerHeight: ${window.innerHeight}
     }, []);
 
     useEffect(() => {
-        const observer = new MutationObserver(() => {
-            const bodyHeight = document.body.clientHeight;
-            const msg = `Body height: ${bodyHeight} | scrollHeight: ${document.body.scrollHeight}`;
-            setDebugMessages(prev => [...prev.slice(-3), msg]);
-        });
-
-        observer.observe(document.body, {
-            attributes: true,
-            subtree: true,
-            childList: true
-        });
-
-        return () => observer.disconnect();
+        setTimeout(() => {
+            const contentDiv = document.querySelector('.flex-1') as HTMLElement;
+            const info = `
+flex-1 height: ${contentDiv?.clientHeight}
+flex-1 scrollHeight: ${contentDiv?.scrollHeight}
+body scrollHeight: ${document.body.scrollHeight}
+        `;
+            setDebugInfo(info);
+        }, 100);
     }, []);
 
     useEffect(() => {
