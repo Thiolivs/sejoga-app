@@ -72,6 +72,20 @@ export function SidebarMenu({
         }
     }, [open, isAndroidModern]);
 
+    useEffect(() => {
+        if (open) {
+            // Quando abre, remove pointer-events: none após a animação
+            const timeoutId = setTimeout(() => {
+                document.body.style.pointerEvents = 'auto';
+            }, 300);
+
+            return () => clearTimeout(timeoutId);
+        } else {
+            // Quando fecha, garante que está 'auto'
+            document.body.style.pointerEvents = 'auto';
+        }
+    }, [open]);
+
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -87,11 +101,10 @@ export function SidebarMenu({
                 <nav className="flex flex-col gap-2 mt-6">
                     <button
                         onClick={() => handleNavigation('/user-app')}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                            currentPage === 'user-app'
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'user-app'
                                 ? 'bg-blue-100 text-blue-700'
                                 : 'hover:bg-gray-100 text-gray-700'
-                        }`}
+                            }`}
                     >
                         <Dices className="w-5 h-5" />
                         <span className="font-medium">Acervo</span>
@@ -99,11 +112,10 @@ export function SidebarMenu({
 
                     <button
                         onClick={() => handleNavigation('/user-app/profile')}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                            currentPage === 'perfil'
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'perfil'
                                 ? 'bg-blue-100 text-blue-700'
                                 : 'hover:bg-gray-100 text-gray-700'
-                        }`}
+                            }`}
                     >
                         <User className="w-5 h-5" />
                         <span className="font-medium">Perfil</span>
@@ -114,11 +126,10 @@ export function SidebarMenu({
                     {(isMonitor || isAdmin) && (
                         <button
                             onClick={() => handleNavigation('/user-app/administration/event-selection')}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                                currentPage === 'event-selection'
+                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'event-selection'
                                     ? 'bg-blue-100 text-blue-700'
                                     : 'hover:bg-gray-100 text-gray-700'
-                            }`}
+                                }`}
                         >
                             <Check className="w-5 h-5" />
                             <span className="font-medium">Seleção para Eventos</span>
@@ -128,11 +139,10 @@ export function SidebarMenu({
                     {(isMonitor || isAdmin) && (
                         <button
                             onClick={() => handleNavigation('/user-app/reports')}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                                currentPage === 'reports'
+                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'reports'
                                     ? 'bg-blue-100 text-blue-700'
                                     : 'hover:bg-gray-100 text-gray-700'
-                            }`}
+                                }`}
                         >
                             <BarChart className="w-5 h-5" />
                             <span className="font-medium">Relatórios</span>
@@ -144,11 +154,10 @@ export function SidebarMenu({
                     {isAdmin && (
                         <button
                             onClick={() => handleNavigation('/user-app/administration')}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                                currentPage === 'manage'
+                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'manage'
                                     ? 'bg-red-100 text-red-700'
                                     : 'hover:bg-gray-100 text-gray-700'
-                            }`}
+                                }`}
                         >
                             <Settings className="w-5 h-5" />
                             <span className="font-medium">Gerenciar</span>
@@ -158,11 +167,10 @@ export function SidebarMenu({
                     {isAdmin && (
                         <button
                             onClick={() => handleNavigation('/user-app/administration/manage-users')}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                                currentPage === 'users'
+                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'users'
                                     ? 'bg-red-100 text-red-700'
                                     : 'hover:bg-gray-100 text-gray-700'
-                            }`}
+                                }`}
                         >
                             <Users className="w-5 h-5" />
                             <span className="font-medium">Usuários</span>
