@@ -12,6 +12,8 @@ export default function UserApp() {
     const [activeTab, setActiveTab] = useState<Tab>('jogos');
     const [debugInfo, setDebugInfo] = useState('');
     const { isAdmin, isMonitor } = useUserRole();
+    const [debugMessages, setDebugMessages] = useState<string[]>([]);
+
 
     useEffect(() => {
         const info = `
@@ -21,6 +23,20 @@ body scrollHeight: ${document.body.scrollHeight}
 window.innerHeight: ${window.innerHeight}
         `;
         setDebugInfo(info);
+    }, []);
+
+    useEffect(() => {
+        const observer = new MutationObserver(() => {
+            const msg = `Body mudou! height: ${document.body.clientHeight} | style: ${document.body.getAttribute('style')}`;
+            setDebugMessages(prev => [...prev.slice(-5), msg]); // Últimas 5 mensagens
+        });
+
+        observer.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+
+        return () => observer.disconnect();
     }, []);
 
     useEffect(() => {
@@ -50,12 +66,12 @@ window.innerHeight: ${window.innerHeight}
 
     return (
         <div className="flex flex-col h-screen overflow-hidden">
-            {/* ✅ Debug visual */}
-            {debugInfo && (
-                <div className="fixed top-0 left-0 bg-red-500 text-white text-xs p-2 z-50 font-mono max-w-xs whitespace-pre">
-                    {debugInfo}
-                </div>
-            )}
+            {/* ✅ Debug visual das mudanças */}
+            <div className="fixed top-0 left-0 bg-yellow-500 text-black text-xs p-2 z-50 font-mono max-w-xs max-h-40 overflow-y-auto">
+                {debugMessages.map((msg, i) => (
+                    <div key={i}>{msg}</div>
+                ))}
+            </div>
 
             <div className="flex-none">
                 <UserAppHeader />

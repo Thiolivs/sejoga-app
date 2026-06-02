@@ -133,7 +133,6 @@
     background-color: transparent !important;
     height: 100vh !important;
     max-height: 100vh !important;
-    overflow: hidden !important;
   }
 
   /* ✅ Background via pseudo-elemento */
