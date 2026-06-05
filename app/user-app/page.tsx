@@ -13,17 +13,19 @@ export default function UserApp() {
     const [debugInfo, setDebugInfo] = useState('');
     const { isAdmin, isMonitor } = useUserRole();
 
-    useEffect(() => {
-        setTimeout(() => {
-            const userProfile = document.querySelector('main') as HTMLElement;
-            const info = `
-activeTab: ${activeTab}
-main height: ${userProfile?.clientHeight || 'N/A'}
-main scrollHeight: ${userProfile?.scrollHeight || 'N/A'}
-            `;
-            setDebugInfo(info);
-        }, 100);
-    }, [activeTab]);
+useEffect(() => {
+    setTimeout(() => {
+        const flexOne = document.querySelector('.flex-1') as HTMLElement;
+        const flexDiv = document.querySelector('.flex') as HTMLElement;
+        
+        const info = `
+flex-1 height: ${flexOne?.clientHeight}
+flex-1 scrollHeight: ${flexOne?.scrollHeight}
+flex container height: ${flexDiv?.clientHeight}
+        `;
+        setDebugInfo(info);
+    }, 500); // Aumentei para 500ms
+}, [activeTab]);
 
     useEffect(() => {
         const isActiveSession = sessionStorage.getItem('sejoga-session-active');
