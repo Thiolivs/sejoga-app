@@ -64,7 +64,10 @@ body scrollHeight: ${document.body.scrollHeight}
             </div>
             <div
                 className="flex-1 overflow-y-auto overflow-x-hidden min-h-0"
-                style={{ maxHeight: 'calc(100vh - 110px) !important', height: 'calc(100vh - 110px) !important' }}
+                style={{
+                    maxHeight: 'calc(100vh - 130px)',
+                    height: 'calc(100vh - 130px)'
+                }}
             >
                 <UserAppContent activeTab={activeTab} />
             </div>
