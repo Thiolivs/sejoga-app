@@ -13,15 +13,24 @@ export default function UserApp() {
     const [debugInfo, setDebugInfo] = useState('');
     const { isAdmin, isMonitor } = useUserRole();
 
-useEffect(() => {
-    const info = `
-html.classList: ${Array.from(document.documentElement.classList).join(', ')}
-body.style.paddingBottom: ${document.body.style.paddingBottom}
-body.style.paddingTop: ${document.body.style.paddingTop}
-html.style: ${document.documentElement.getAttribute('style')}
-    `;
-    setDebugInfo(info);
-}, []);
+    useEffect(() => {
+        setTimeout(() => {
+            const flexContainer = document.querySelector('.flex.flex-col') as HTMLElement;
+            const header = document.querySelector('.flex-none') as HTMLElement;
+            const content = document.querySelector('.flex-1') as HTMLElement;
+            const tabs = document.querySelectorAll('.flex-none')[1] as HTMLElement;
+            
+            const info = `
+flex.flex-col height: ${flexContainer?.clientHeight}
+header height: ${header?.clientHeight}
+content height: ${content?.clientHeight}
+tabs height: ${tabs?.clientHeight}
+tabs offsetTop: ${tabs?.offsetTop}
+total: ${(header?.clientHeight || 0) + (content?.clientHeight || 0) + (tabs?.clientHeight || 0)}
+            `;
+            setDebugInfo(info);
+        }, 1000);
+    }, []);
 
     useEffect(() => {
         const isActiveSession = sessionStorage.getItem('sejoga-session-active');
@@ -49,23 +58,30 @@ html.style: ${document.documentElement.getAttribute('style')}
     }, []);
 
     return (
-    <div className="flex flex-col h-screen overflow-hidden">
-        <div className="flex-none">
-            <UserAppHeader />
-        </div>
+        <div className="flex flex-col h-screen overflow-hidden">
+            {/* ✅ Debug visual */}
+            {debugInfo && (
+                <div className="fixed top-0 left-0 bg-red-500 text-white text-xs p-2 z-50 font-mono max-w-xs whitespace-pre">
+                    {debugInfo}
+                </div>
+            )}
 
-        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
-            <UserAppContent activeTab={activeTab} />
-        </div>
+            <div className="flex-none">
+                <UserAppHeader />
+            </div>
 
-        <div className="flex-none">
-            <UserAppTabs
-                activeTab={activeTab}
-                onTabChange={handleTabChange}
-                isMonitor={isMonitor}
-                isAdmin={isAdmin}
-            />
+            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+                <UserAppContent activeTab={activeTab} />
+            </div>
+
+            <div className="flex-none">
+                <UserAppTabs
+                    activeTab={activeTab}
+                    onTabChange={handleTabChange}
+                    isMonitor={isMonitor}
+                    isAdmin={isAdmin}
+                />
+            </div>
         </div>
-    </div>
-);
+    );
 }
