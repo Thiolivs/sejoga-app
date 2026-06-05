@@ -122,6 +122,8 @@
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
+    overflow: hidden;
+    height: 100%;
   }
 
   body {
@@ -131,8 +133,7 @@
     min-height: 100vh;
     position: relative;
     background-color: transparent !important;
-    height: 100vh !important;
-    max-height: 100vh !important;
+    overflow: hidden;
   }
 
   /* ✅ Background via pseudo-elemento */
