@@ -15,15 +15,15 @@ export default function UserApp() {
 
     useEffect(() => {
         setTimeout(() => {
-            const contentDiv = document.querySelector('.flex-1') as HTMLElement;
+            const userProfile = document.querySelector('main') as HTMLElement;
             const info = `
-flex-1 height: ${contentDiv?.clientHeight}
-flex-1 scrollHeight: ${contentDiv?.scrollHeight}
-body scrollHeight: ${document.body.scrollHeight}
+activeTab: ${activeTab}
+main height: ${userProfile?.clientHeight || 'N/A'}
+main scrollHeight: ${userProfile?.scrollHeight || 'N/A'}
             `;
             setDebugInfo(info);
         }, 100);
-    }, []);
+    }, [activeTab]);
 
     useEffect(() => {
         const isActiveSession = sessionStorage.getItem('sejoga-session-active');
@@ -52,7 +52,7 @@ body scrollHeight: ${document.body.scrollHeight}
 
     return (
         <div className="flex flex-col h-screen overflow-hidden">
-            {/* ✅ Debug visual*/}
+            {/* ✅ Debug visual */}
             {debugInfo && (
                 <div className="fixed top-0 left-0 bg-red-500 text-white text-xs p-2 z-50 font-mono max-w-xs whitespace-pre">
                     {debugInfo}
@@ -62,13 +62,11 @@ body scrollHeight: ${document.body.scrollHeight}
             <div className="flex-none">
                 <UserAppHeader />
             </div>
-            <div
-                className="flex-1 overflow-y-auto overflow-x-hidden min-h-0"
-                style={{
-                    maxHeight: 'calc(100vh - 130px)',
-                    height: 'calc(100vh - 130px)'
-                }}
-            >
+
+            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{ 
+                maxHeight: 'calc(100vh - 110px)', 
+                height: 'calc(100vh - 110px)' 
+            }}>
                 <UserAppContent activeTab={activeTab} />
             </div>
 
