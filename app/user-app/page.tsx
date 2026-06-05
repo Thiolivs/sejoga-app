@@ -19,7 +19,7 @@ export default function UserApp() {
             const header = document.querySelector('.flex-none') as HTMLElement;
             const content = document.querySelector('.flex-1') as HTMLElement;
             const tabs = document.querySelectorAll('.flex-none')[1] as HTMLElement;
-            
+
             const info = `
 flex.flex-col height: ${flexContainer?.clientHeight}
 header height: ${header?.clientHeight}
@@ -70,7 +70,10 @@ total: ${(header?.clientHeight || 0) + (content?.clientHeight || 0) + (tabs?.cli
                 <UserAppHeader />
             </div>
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+            <div
+                className="flex-1 overflow-y-auto overflow-x-hidden min-h-0"
+                style={{ maxHeight: '627px' }}
+            >
                 <UserAppContent activeTab={activeTab} />
             </div>
 
