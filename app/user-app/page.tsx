@@ -52,7 +52,7 @@ body scrollHeight: ${document.body.scrollHeight}
 
     return (
         <div className="flex flex-col h-screen overflow-hidden">
-            {/* ✅ Debug visual */}
+            {/* ✅ Debug visual*/}
             {debugInfo && (
                 <div className="fixed top-0 left-0 bg-red-500 text-white text-xs p-2 z-50 font-mono max-w-xs whitespace-pre">
                     {debugInfo}
