@@ -49,27 +49,23 @@ html.style: ${document.documentElement.getAttribute('style')}
     }, []);
 
     return (
-        <div className="flex flex-col h-screen overflow-hidden">
-            <div className="flex-none">
-                <UserAppHeader />
-            </div>
-
-                        <div className="flex-none">
-                <UserAppTabs
-                    activeTab={activeTab}
-                    onTabChange={handleTabChange}
-                    isMonitor={isMonitor}
-                    isAdmin={isAdmin}
-                />
-            </div>
-
-            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{ 
-                maxHeight: 'calc(100vh - 110px)', 
-                height: 'calc(100vh - 110px)' 
-            }}>
-                <UserAppContent activeTab={activeTab} />
-            </div>
-
+    <div className="flex flex-col h-screen overflow-hidden">
+        <div className="flex-none">
+            <UserAppHeader />
         </div>
-    );
+
+        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+            <UserAppContent activeTab={activeTab} />
+        </div>
+
+        <div className="flex-none">
+            <UserAppTabs
+                activeTab={activeTab}
+                onTabChange={handleTabChange}
+                isMonitor={isMonitor}
+                isAdmin={isAdmin}
+            />
+        </div>
+    </div>
+);
 }
