@@ -14,11 +14,13 @@ export default function UserApp() {
     const { isAdmin, isMonitor } = useUserRole();
 
 useEffect(() => {
-    // Force a safe area do menu após atualizar
-    const tabsDiv = document.querySelectorAll('.flex-none')[2] as HTMLElement;
-    if (tabsDiv) {
-        tabsDiv.style.paddingBottom = '80px';
-    }
+    const info = `
+html.classList: ${Array.from(document.documentElement.classList).join(', ')}
+body.style.paddingBottom: ${document.body.style.paddingBottom}
+body.style.paddingTop: ${document.body.style.paddingTop}
+html.style: ${document.documentElement.getAttribute('style')}
+    `;
+    setDebugInfo(info);
 }, []);
 
     useEffect(() => {

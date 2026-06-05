@@ -167,11 +167,6 @@
   }
 }
 
-/* ✅ PWA: força padding no menu */
-.flex-none:last-child {
-  padding-bottom: 80px !important;
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
