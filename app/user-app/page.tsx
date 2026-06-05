@@ -12,18 +12,6 @@ export default function UserApp() {
     const [activeTab, setActiveTab] = useState<Tab>('jogos');
     const [debugInfo, setDebugInfo] = useState('');
     const { isAdmin, isMonitor } = useUserRole();
-    const [debugMessages, setDebugMessages] = useState<string[]>([]);
-
-
-    useEffect(() => {
-        const info = `
-html height: ${document.documentElement.clientHeight}
-body height: ${document.body.clientHeight}
-body scrollHeight: ${document.body.scrollHeight}
-window.innerHeight: ${window.innerHeight}
-        `;
-        setDebugInfo(info);
-    }, []);
 
     useEffect(() => {
         setTimeout(() => {
@@ -32,7 +20,7 @@ window.innerHeight: ${window.innerHeight}
 flex-1 height: ${contentDiv?.clientHeight}
 flex-1 scrollHeight: ${contentDiv?.scrollHeight}
 body scrollHeight: ${document.body.scrollHeight}
-        `;
+            `;
             setDebugInfo(info);
         }, 100);
     }, []);
@@ -64,12 +52,12 @@ body scrollHeight: ${document.body.scrollHeight}
 
     return (
         <div className="flex flex-col h-screen overflow-hidden">
-            {/* ✅ Debug visual das mudanças */}
-            <div className="fixed top-0 left-0 bg-yellow-500 text-black text-xs p-2 z-50 font-mono max-w-xs max-h-40 overflow-y-auto">
-                {debugMessages.map((msg, i) => (
-                    <div key={i}>{msg}</div>
-                ))}
-            </div>
+            {/* ✅ Debug visual */}
+            {debugInfo && (
+                <div className="fixed top-0 left-0 bg-red-500 text-white text-xs p-2 z-50 font-mono max-w-xs whitespace-pre">
+                    {debugInfo}
+                </div>
+            )}
 
             <div className="flex-none">
                 <UserAppHeader />
