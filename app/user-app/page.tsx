@@ -14,18 +14,12 @@ export default function UserApp() {
     const { isAdmin, isMonitor } = useUserRole();
 
 useEffect(() => {
-    setTimeout(() => {
-        const flexOne = document.querySelector('.flex-1') as HTMLElement;
-        const flexDiv = document.querySelector('.flex') as HTMLElement;
-        
-        const info = `
-flex-1 height: ${flexOne?.clientHeight}
-flex-1 scrollHeight: ${flexOne?.scrollHeight}
-flex container height: ${flexDiv?.clientHeight}
-        `;
-        setDebugInfo(info);
-    }, 500); // Aumentei para 500ms
-}, [activeTab]);
+    // Force a safe area do menu após atualizar
+    const tabsDiv = document.querySelectorAll('.flex-none')[2] as HTMLElement;
+    if (tabsDiv) {
+        tabsDiv.style.paddingBottom = '80px';
+    }
+}, []);
 
     useEffect(() => {
         const isActiveSession = sessionStorage.getItem('sejoga-session-active');
