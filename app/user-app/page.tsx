@@ -42,14 +42,6 @@ export default function UserApp() {
         <div className="flex flex-col h-screen overflow-hidden" style={{ overflow: 'hidden' }}>
 
             <div className="flex-none">
-                <UserAppHeader />
-            </div>
-
-            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
-                <UserAppContent activeTab={activeTab} />
-            </div>
-
-            <div className="flex-none">
                 <UserAppTabs
                     activeTab={activeTab}
                     onTabChange={handleTabChange}
