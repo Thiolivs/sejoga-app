@@ -227,7 +227,7 @@ export function BoardgameList() {
 
     return (
 
-<div className="space-y-2 bg-white/90 rounded-xl p-4 flex flex-col overflow-hidden" style={{ maxHeight: 'calc(100vh - 300px)' }}>                
+<div className="space-y-2 bg-white/90 rounded-xl p-4 flex flex-col overflow-hidden" style={{ maxHeight: 'calc(100vh - 112px)' }}>                
                 <div className="text-[35px] font-aladin text-center text-blue-800 mb-1">
                     Lista de Jogos
                     </div>
