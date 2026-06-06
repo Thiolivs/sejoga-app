@@ -14,34 +14,10 @@ interface UserAppContentProps {
 
 export function UserAppContent({ activeTab }: UserAppContentProps) {
     return (
-        <main className="max-w-7xl px-4 mx-auto sm:px-6 lg:px-2 py-2">
+        <main className="max-w-7xl mx-auto">
             {activeTab === 'jogos' && (
                 <div>
                     <BoardgameList />
-                </div>
-            )}
-
-            {activeTab === 'profile' && (
-                <div>
-                    <MySeJogaSession />
-                </div>
-            )}
-
-            {activeTab === 'register' && (
-                <div>
-                    <TeachingSessionLog />
-                </div>
-            )}
-
-            {activeTab === 'training' && (
-                <div>
-                    <TrainingSession />
-                </div>
-            )}
-
-            {activeTab === 'statistics' && (
-                <div>
-                    <StatisticsSession />
                 </div>
             )}
         </main>
