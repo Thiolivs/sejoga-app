@@ -226,10 +226,11 @@ export function BoardgameList() {
     }
 
     return (
-        <div className='space-y-4'>
 
-            <div className="space-y-2 bg-white/90 rounded-xl p-4 flex flex-col max-h-screen overflow-hidden">
-                <div className="text-[35px] font-aladin text-center text-blue-800 mb-1">Lista de Jogos</div>
+<div className="space-y-2 bg-white/90 rounded-xl p-4 flex flex-col overflow-hidden" style={{ maxHeight: 'calc(100vh - 300px)' }}>                
+                <div className="text-[35px] font-aladin text-center text-blue-800 mb-1">
+                    Lista de Jogos
+                    </div>
 
                 {/* Barra de Busca e Filtros */}
                 <div className="bg-white/90 rounded-lg border shadow-md p-2 mb-5 flex-none">
@@ -682,6 +683,5 @@ export function BoardgameList() {
                     </div>
                 )}
             </div>
-        </div>
     );
 }
