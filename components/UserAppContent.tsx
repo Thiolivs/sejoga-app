@@ -14,7 +14,13 @@ interface UserAppContentProps {
 
 export function UserAppContent({ activeTab }: UserAppContentProps) {
     return (
-        <main>
+        <main style={{ 
+            height: '100%',
+            maxHeight: '100%',
+            overflow: 'hidden',
+            margin: 0,
+            padding: 0
+        }}>
 
         </main>
     );
