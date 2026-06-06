@@ -68,8 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className={poppins.className}>
-        <AndroidVersionDetector />
-        <BackgroundManager />
+
 
         {children}
       </body>
