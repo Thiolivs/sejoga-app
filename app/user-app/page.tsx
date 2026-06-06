@@ -14,6 +14,25 @@ export default function UserApp() {
     const { isAdmin, isMonitor } = useUserRole();
 
     useEffect(() => {
+    // ✅ Força html e body a nunca crescer
+    document.documentElement.style.height = '100vh';
+    document.documentElement.style.maxHeight = '100vh';
+    document.body.style.height = '100vh';
+    document.body.style.maxHeight = '100vh';
+    
+    // ✅ Se algo tentar mudar, força de volta
+    const observer = new MutationObserver(() => {
+        document.documentElement.style.height = '100vh';
+        document.body.style.height = '100vh';
+    });
+    
+    observer.observe(document.documentElement, { attributes: true });
+    observer.observe(document.body, { attributes: true });
+    
+    return () => observer.disconnect();
+}, []);
+
+    useEffect(() => {
         const isActiveSession = sessionStorage.getItem('sejoga-session-active');
 
         if (isActiveSession === 'true') {
