@@ -58,33 +58,32 @@ total: ${(header?.clientHeight || 0) + (content?.clientHeight || 0) + (tabs?.cli
     }, []);
 
     return (
-        <div className="flex flex-col h-screen overflow-hidden">
-            {/* ✅ Debug visual */}
-            {debugInfo && (
-                <div className="fixed top-0 left-0 bg-red-500 text-white text-xs p-2 z-50 font-mono max-w-xs whitespace-pre">
-                    {debugInfo}
-                </div>
-            )}
-
-            <div className="flex-none">
-                <UserAppHeader />
+    <div className="flex flex-col h-screen overflow-hidden" style={{ overflow: 'hidden' }}>
+        {debugInfo && (
+            <div className="fixed top-0 left-0 bg-red-500 text-white text-xs p-2 z-50 font-mono max-w-xs whitespace-pre">
+                {debugInfo}
             </div>
+        )}
 
-            <div
-                className="flex-1 overflow-y-auto overflow-x-hidden min-h-0"
-                style={{ maxHeight: '627px' }}
-            >
-                <UserAppContent activeTab={activeTab} />
-            </div>
-
-            <div className="flex-none">
-                <UserAppTabs
-                    activeTab={activeTab}
-                    onTabChange={handleTabChange}
-                    isMonitor={isMonitor}
-                    isAdmin={isAdmin}
-                />
-            </div>
+        <div className="flex-none">
+            <UserAppHeader />
         </div>
-    );
+
+        <div 
+            className="flex-1 overflow-y-auto overflow-x-hidden min-h-0"
+            style={{ maxHeight: '627px' }}
+        >
+            <UserAppContent activeTab={activeTab} />
+        </div>
+
+        <div className="flex-none">
+            <UserAppTabs
+                activeTab={activeTab}
+                onTabChange={handleTabChange}
+                isMonitor={isMonitor}
+                isAdmin={isAdmin}
+            />
+        </div>
+    </div>
+);
 }
