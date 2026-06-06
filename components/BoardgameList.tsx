@@ -491,7 +491,6 @@ export function BoardgameList() {
                 className="boardgame-list flex-1 overflow-y-scroll space-y-2 pr-1"
                 style={{
                     WebkitOverflowScrolling: 'touch', // ✅ Smooth scroll no iOS
-                    scrollbarWidth: 'thin', // ✅ Scrollbar fina no Firefox
                 }}
             >
                 {/* Mensagem se não houver resultados */}
