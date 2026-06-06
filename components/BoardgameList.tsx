@@ -490,7 +490,7 @@ export function BoardgameList() {
             <div
                 className="boardgame-list flex-1 overflow-y-scroll space-y-2 pr-1"
                 style={{
-                    WebkitOverflowScrolling: 'touch', // ✅ Smooth scroll no iOS
+                    //WebkitOverflowScrolling: 'touch', // ✅ Smooth scroll no iOS
                 }}
             >
                 {/* Mensagem se não houver resultados */}
