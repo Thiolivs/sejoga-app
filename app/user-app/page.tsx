@@ -42,7 +42,13 @@ export default function UserApp() {
         <div className="flex flex-col h-screen overflow-hidden" style={{ overflow: 'hidden' }}>
 
 
-            <div className="border-4 flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+            <div
+                className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 border-4 border-red-500"
+                style={{
+                    height: '100%',
+                    maxHeight: '100%'
+                }}
+            >
                 <UserAppContent activeTab={activeTab} />
             </div>
 
