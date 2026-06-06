@@ -14,11 +14,8 @@ interface UserAppContentProps {
 
 export function UserAppContent({ activeTab }: UserAppContentProps) {
     return (
-        <main className="max-w-7xl mx-auto" style={{ maxHeight: '100%', overflow: 'hidden' }}>
-            {activeTab === 'jogos' && (
-                <div>
-                </div>
-            )}
+        <main>
+
         </main>
     );
 }
