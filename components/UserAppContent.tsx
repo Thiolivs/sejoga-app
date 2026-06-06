@@ -14,7 +14,7 @@ interface UserAppContentProps {
 
 export function UserAppContent({ activeTab }: UserAppContentProps) {
     return (
-        <main className="max-w-7xl mx-auto">
+        <main className="max-w-7xl p-2 mx-auto">
             {activeTab === 'jogos' && (
                 <div>
                     <BoardgameList />
