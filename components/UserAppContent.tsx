@@ -17,7 +17,6 @@ export function UserAppContent({ activeTab }: UserAppContentProps) {
         <main className="max-w-7xl mx-auto">
             {activeTab === 'jogos' && (
                 <div>
-                    <BoardgameList />
                 </div>
             )}
         </main>
