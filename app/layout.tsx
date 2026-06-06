@@ -70,7 +70,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={poppins.className}>
         <AndroidVersionDetector />
         <BackgroundManager />
-        <PullToRefresh /> 
 
         {children}
       </body>
