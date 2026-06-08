@@ -149,37 +149,20 @@
     z-index: -1;
   }
 
-  /* ✅ Firefox mobile: remove safe-area padding */
-  @-moz-document url-prefix() {
-    html.android-modern body {
-      padding-top: 0 !important;
-      padding-bottom: 0 !important;
-    }
-
-    html.android-modern body::before {
-      top: 0 !important;
-      bottom: 0 !important;
-    }
-
-    html.android-modern .h-screen {
-      height: 100vh !important;
-    }
-  }
-
-  /* ✅ Android 15+ (outros navegadores): padding top apenas */
+  /* ✅ Android 15+: padding top e bottom */
   html.android-modern body {
     padding-top: 40px !important;
-    padding-bottom: 0 !important;
+    padding-bottom: env(safe-area-inset-bottom, 20px) !important;
   }
 
   html.android-modern body::before {
     top: 40px !important;
-    bottom: 0 !important;
+    bottom: env(safe-area-inset-bottom, 20px) !important;
   }
 
   /* ✅ Android moderno: ajusta estrutura de layout */
   html.android-modern .h-screen {
-    height: calc(100vh - 40px) !important;
+    height: calc(100vh - 40px - env(safe-area-inset-bottom, 20px)) !important;
   }
 }
 
@@ -287,6 +270,8 @@ input[type="checkbox"].custom-check:checked::after {
   background: #3AC3DF;
   border-radius: 10px;
   min-height: 40px;
+  /*Altura mínima do thumb */
+
 }
 
 .boardgame-list::-webkit-scrollbar-thumb:hover {
