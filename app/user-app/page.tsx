@@ -48,8 +48,9 @@ function UserAppComponent() {
                 <UserAppContent activeTab={activeTab} />
             </div>
 
-            <div className="flex-none">
-                <UserAppTabs
+            <div className="flex-none fixed bottom-0 left-0 right-0 z-50" style={{
+                paddingBottom: 'env(safe-area-inset-bottom)'
+            }}>                <UserAppTabs
                     activeTab={activeTab}
                     onTabChange={handleTabChange}
                     isMonitor={isMonitor}
