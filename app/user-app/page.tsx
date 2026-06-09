@@ -53,7 +53,7 @@ function UserAppComponent() {
             <div
                 className="flex-none fixed bottom-0 left-0 right-0 z-50"
                 style={{
-                    paddingBottom: '70px',
+                    paddingBottom: 'env(safe-area-inset-bottom)',
                     willChange: 'transform',
                     transform: 'translateZ(0)'
                 }}
