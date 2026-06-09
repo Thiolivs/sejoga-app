@@ -44,15 +44,15 @@ function UserAppComponent() {
                 <UserAppHeader />
             </div>
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{
-                paddingBottom: '70px' // altura aproximada das tabs + safe-area
-            }}>
+            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
                 <UserAppContent activeTab={activeTab} />
             </div>
 
             <div className="flex-none fixed bottom-0 left-0 right-0 z-50" style={{
-                paddingBottom: 'env(safe-area-inset-bottom)'
-            }}>                <UserAppTabs
+                bottom: '0px',
+                paddingBottom: '0px'
+            }}>
+                <UserAppTabs
                     activeTab={activeTab}
                     onTabChange={handleTabChange}
                     isMonitor={isMonitor}
