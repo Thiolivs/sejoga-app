@@ -44,7 +44,9 @@ function UserAppComponent() {
                 <UserAppHeader />
             </div>
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{
+                paddingBottom: '70px' // altura aproximada das tabs + safe-area
+            }}>
                 <UserAppContent activeTab={activeTab} />
             </div>
 

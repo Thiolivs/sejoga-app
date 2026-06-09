@@ -256,10 +256,10 @@ input[type="checkbox"].custom-check:checked::after {
   scrollbar-color: #3AC3DF #f0f0f0;
 }
 
-/* Chrome, Safari, Edge */
+/* Chrome, Safari, Edge 
 .boardgame-list::-webkit-scrollbar {
   width: 15px;
-}
+}*/
 
 .boardgame-list::-webkit-scrollbar-track {
   background: #f0f0f0;
