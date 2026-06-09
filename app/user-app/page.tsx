@@ -44,14 +44,20 @@ function UserAppComponent() {
                 <UserAppHeader />
             </div>
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{
+                paddingBottom: '70px'
+            }}>
                 <UserAppContent activeTab={activeTab} />
             </div>
 
-            <div className="flex-none fixed bottom-0 left-0 right-0 z-50" style={{
-                bottom: '0px',
-                paddingBottom: '0px'
-            }}>
+            <div
+                className="flex-none fixed bottom-0 left-0 right-0 z-50"
+                style={{
+                    paddingBottom: '70px',
+                    willChange: 'transform',
+                    transform: 'translateZ(0)'
+                }}
+            >
                 <UserAppTabs
                     activeTab={activeTab}
                     onTabChange={handleTabChange}
