@@ -45,7 +45,7 @@ function UserAppComponent() {
             </div>
 
             <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{
-                paddingBottom: '70px'
+                paddingBottom: 'env(safe-area-inset-bottom)'
             }}>
                 <UserAppContent activeTab={activeTab} />
             </div>
