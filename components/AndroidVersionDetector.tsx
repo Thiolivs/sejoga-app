@@ -11,8 +11,8 @@ export function AndroidVersionDetector() {
             window.matchMedia('(display-mode: standalone)').matches ||
             (window.navigator as any).standalone === true;
 
-        // Ajustes de status bar / safe-area só no app nativo ou PWA instalada.
-        // Navegador comum (Chrome/Firefox/Edge/Mi com barra de endereço) é ignorado.
+        // DEBUG temporário
+        document.documentElement.setAttribute('data-platform', `cap:${isCapacitor}|pwa:${isStandalone}|android-modern:${document.documentElement.classList.contains('android-modern')}`);
         if (!isCapacitor && !isStandalone) return;
 
         const androidMatch = navigator.userAgent.match(/Android (\d+)/);
