@@ -17,8 +17,10 @@ export function AndroidVersionDetector() {
             `native:${isNativeApp}|pwa:${isStandalone}`
         );
 
-        if (isNativeApp || isStandalone) {
-            document.documentElement.classList.add('android-modern');
+        if (isNativeApp) {
+            document.documentElement.classList.add('native-app');
+        } else if (isStandalone) {
+            document.documentElement.classList.add('pwa-standalone');
         }
     }, []);
 

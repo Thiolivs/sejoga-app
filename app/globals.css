@@ -149,19 +149,19 @@
     z-index: -1;
   }
 
-  /* ✅ Android 15+: padding top e bottom */
-  html.android-modern body {
+  /* ✅ App nativo (PlayStore): status bar 40px + safe-area embaixo */
+  html.native-app body {
     padding-top: 40px !important;
     padding-bottom: env(safe-area-inset-bottom, 20px) !important;
   }
 
-  html.android-modern body::before {
+  html.native-app body::before {
     top: 40px !important;
     bottom: env(safe-area-inset-bottom, 20px) !important;
   }
 
-  /* ✅ Android moderno: ajusta estrutura de layout */
-  html.android-modern .h-screen {
+  /* ✅ App nativo: ajusta estrutura de layout */
+  html.native-app .h-screen {
     height: calc(100dvh - 40px - env(safe-area-inset-bottom, 20px)) !important;
   }
 }
