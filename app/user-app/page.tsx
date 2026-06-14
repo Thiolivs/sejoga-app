@@ -39,24 +39,18 @@ function UserAppComponent() {
     }, []);
 
     return (
-        <div className="flex flex-col h-screen overflow-hidden">
+        <div className="flex flex-col h-screen overflow-hidden" style={{ height: '100dvh' }}>
             <div className="flex-none">
                 <UserAppHeader />
             </div>
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{
-                paddingBottom: 'env(safe-area-inset-bottom)'
-            }}>
+            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
                 <UserAppContent activeTab={activeTab} />
             </div>
 
             <div
-                className="flex-none fixed bottom-0 left-0 right-0 z-50"
-                style={{
-                    paddingBottom: 'env(safe-area-inset-bottom)',
-                    willChange: 'transform',
-                    transform: 'translateZ(0)'
-                }}
+                className="flex-none"
+                style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             >
                 <UserAppTabs
                     activeTab={activeTab}
