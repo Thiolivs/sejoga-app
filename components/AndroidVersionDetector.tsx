@@ -6,22 +6,20 @@ export function AndroidVersionDetector() {
     useEffect(() => {
         if (typeof window === 'undefined') return;
 
-        const userAgent = navigator.userAgent;
-        const androidMatch = userAgent.match(/Android (\d+)/);
+        const isCapacitor = !!(window as any).Capacitor?.isNativePlatform?.();
+        const isStandalone =
+            window.matchMedia('(display-mode: standalone)').matches ||
+            (window.navigator as any).standalone === true;
 
-        if (androidMatch) {
-            const androidVersion = parseInt(androidMatch[1]);
-            console.log('Android version:', androidVersion);
+        // Ajustes de status bar / safe-area só no app nativo ou PWA instalada.
+        // Navegador comum (Chrome/Firefox/Edge/Mi com barra de endereço) é ignorado.
+        if (!isCapacitor && !isStandalone) return;
 
-            if (androidVersion >= 15) {
-                document.documentElement.classList.add('android-modern');
-                console.log('✅ android-modern aplicado');
-                
-                // ✅ Força padding no body (para layout principal)
-                setTimeout(() => {
-                    document.body.style.paddingTop = '40px';
-                }, 100);
-            }
+        const androidMatch = navigator.userAgent.match(/Android (\d+)/);
+        const androidVersion = androidMatch ? parseInt(androidMatch[1]) : 0;
+
+        if (isCapacitor || androidVersion >= 15) {
+            document.documentElement.classList.add('android-modern');
         }
     }, []);
 
