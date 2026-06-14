@@ -3,14 +3,15 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'app.sejoga',
   appName: 'SeJoga',
-  webDir: 'public', 
+  webDir: 'public',
   server: {
-    url: 'https://sejoga.app', 
+    url: 'https://sejoga.app',
     cleartext: true,
     allowNavigation: ['sejoga.app', '*.sejoga.app']
   },
   android: {
-    allowMixedContent: true
+    allowMixedContent: true,
+    appendUserAgent: 'SeJogaApp'
   },
   plugins: {
     SplashScreen: {
