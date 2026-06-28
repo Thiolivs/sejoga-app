@@ -44,6 +44,10 @@ function UserAppComponent() {
                 <UserAppHeader />
             </div>
 
+            <div className="fixed top-0 right-0 bg-black text-white text-[10px] p-1 z-[9999]">
+                {typeof document !== 'undefined' ? document.documentElement.getAttribute('data-platform') : ''}
+            </div>
+
             <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
                 <UserAppContent activeTab={activeTab} />
             </div>
