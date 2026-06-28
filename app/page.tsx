@@ -14,13 +14,13 @@ export default function Home() {
   // Middleware já gerencia o redirecionamento
   return (
     <HomeWithSplash>
-      <div className="flex flex-col h-screen w-full justify-center items-center">
+      <div className="flex flex-col min-h-screen w-full justify-start items-center overflow-y-auto pt-12 pb-8">
         <Image
-          src="/sejoga-id/LogoHshadow.png"
+          src="/sejoga-id/MeepleColoridoNome.png"
           alt="Logo Horizontal"
-          width={360}
-          height={360}
-          className=""
+          width={130}
+          height={130}
+          className="pb-8"
         />
 
         <Tabs defaultValue="login" className="w-[300px] bg-white/95 border rounded-xl pb-4 shadow-2xl">

@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { User, Mail, Lock } from "lucide-react";
 
 import {
     Form,
@@ -45,7 +46,7 @@ export function CreateAccountForm() {
     const router = useRouter();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
-    
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -61,7 +62,7 @@ export function CreateAccountForm() {
         try {
             setErrorMessage(null);
             setSuccessMessage(null);
-            
+
             const { email, password, firstName, lastName } = values;
 
             // Confirmação antes de criar conta
@@ -97,7 +98,7 @@ export function CreateAccountForm() {
 
             if (error) {
                 console.error("Erro ao criar conta:", error);
-                
+
                 // Mensagens de erro personalizadas
                 if (error.message.includes('already registered') || error.message.includes('User already registered')) {
                     setErrorMessage('Este email já está cadastrado. Faça login ou use outro email.');
@@ -114,7 +115,7 @@ export function CreateAccountForm() {
             if (user) {
                 setSuccessMessage('Conta criada com sucesso! Verifique seu email para confirmar o cadastro.');
                 form.reset();
-                
+
                 setTimeout(() => {
                     router.refresh();
                     router.push("/user-app");
@@ -128,8 +129,8 @@ export function CreateAccountForm() {
     };
 
     return (
-        <div className="flex flex-col justify-items-center text-center items-center space-y-2 max-w-md mx-auto p-6">
-            <span className="text-[28px] text-blue-500 font-aladin mb-8 mt-2">
+        <div className="flex flex-col justify-items-center text-center items-center space-y-2 max-w-md mx-auto p-4">
+            <span className="text-[28px] text-blue-500 font-aladin mb-4">
                 Mais rápido que uma partida de Terra Mystica
             </span>
 
@@ -158,9 +159,13 @@ export function CreateAccountForm() {
                             name="firstName"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Nome</FormLabel>
+                                    <FormLabel className="sr-only">Nome</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input
+                                            placeholder="Nome"
+                                            className="pl-3 text-sm"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -172,9 +177,13 @@ export function CreateAccountForm() {
                             name="lastName"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Sobrenome</FormLabel>
+                                    <FormLabel className="sr-only">Sobrenome</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input
+                                            placeholder="Sobrenome"
+                                            className="pl-3 text-sm"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -187,12 +196,17 @@ export function CreateAccountForm() {
                         name="email"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>E-mail</FormLabel>
+                                <FormLabel className="sr-only">E-mail</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        type="email"
-                                        {...field}
-                                    />
+                                    <div className="relative">
+                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                                        <Input
+                                            type="email"
+                                            placeholder="E-mail"
+                                            className="pl-10 text-sm"
+                                            {...field}
+                                        />
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -204,12 +218,17 @@ export function CreateAccountForm() {
                         name="password"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Senha</FormLabel>
+                                <FormLabel className="sr-only">Senha</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        type="password"
-                                        {...field}
-                                    />
+                                    <div className="relative">
+                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                                        <Input
+                                            type="password"
+                                            placeholder="Senha"
+                                            className="pl-10 text-sm"
+                                            {...field}
+                                        />
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -221,12 +240,17 @@ export function CreateAccountForm() {
                         name="confirmPassword"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Confirmar Senha</FormLabel>
+                                <FormLabel className="sr-only">Confirmar Senha</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        type="password"
-                                        {...field}
-                                    />
+                                    <div className="relative">
+                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                                        <Input
+                                            type="password"
+                                            placeholder="Confirmar senha"
+                                            className="pl-10 text-sm"
+                                            {...field}
+                                        />
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -235,7 +259,7 @@ export function CreateAccountForm() {
 
                     <Button
                         type="submit"
-                        className="w-full mt-6 bg-sejoga-verde-oficial"
+                        className="w-full mt-1 bg-sejoga-verde-oficial"
                         disabled={form.formState.isSubmitting}
                     >
                         {form.formState.isSubmitting ? 'Criando conta...' : 'SeJoga!'}

@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Mail, Lock } from "lucide-react";
 
 import {
     Form,
@@ -56,7 +57,7 @@ export function LoginAccountForm() {
 
             if (error) {
                 console.error("Erro ao fazer login:", error);
-                
+
                 if (error.message.includes('Invalid login credentials')) {
                     setErrorMessage('Email ou senha incorretos. Tente novamente.');
                 } else if (error.message.includes('Email not confirmed')) {
@@ -79,7 +80,7 @@ export function LoginAccountForm() {
     return (
         <div className="flex flex-col justify-items-center text-center items-center space-y-2 max-w-md mx-auto p-6 relative">
             <span className="text-[28px] text-blue-500 font-aladin mb-8 mt-2">
-                Entra, vai ter Boardgame!
+                Entra, vai ter jogo!
             </span>
 
             {errorMessage && (
@@ -98,12 +99,17 @@ export function LoginAccountForm() {
                         name="email"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>E-mail</FormLabel>
+                                <FormLabel className="sr-only">E-mail</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        type="email"
-                                        {...field}
-                                    />
+                                    <div className="relative">
+                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                                        <Input
+                                            type="email"
+                                            placeholder="E-mail"
+                                            className="pl-10"
+                                            {...field}
+                                        />
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -115,12 +121,17 @@ export function LoginAccountForm() {
                         name="password"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Senha</FormLabel>
+                                <FormLabel className="sr-only">Senha</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        type="password"
-                                        {...field}
-                                    />
+                                    <div className="relative">
+                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                                        <Input
+                                            type="password"
+                                            placeholder="Senha"
+                                            className="pl-10"
+                                            {...field}
+                                        />
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
