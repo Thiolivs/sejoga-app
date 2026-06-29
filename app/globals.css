@@ -168,6 +168,7 @@
   /* Desloca o botão X de fechar do menu lateral somente no app nativo */
   html.native-app [data-slot="sheet-close"] {
     top: 40px !important;
+    background: red !important;
   }
 
 }
