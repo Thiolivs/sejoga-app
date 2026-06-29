@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, Caveat, Shadows_Into_Light, Joti_One, Aladin } from 'next/font/google';
+import { Poppins, Caveat, Shadows_Into_Light, Joti_One, Aladin, Marhey } from 'next/font/google';
 import "./globals.css";
 import { BackgroundManager } from "@/components/BackgroundManager";
 import { AndroidVersionDetector } from "@/components/AndroidVersionDetector";
@@ -10,6 +10,12 @@ const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-poppins',
+});
+
+const marhey = Marhey({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-marhey',
 });
 
 const caveat = Caveat({
@@ -60,6 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           ${shadowsIntoLight.variable} 
           ${jotiOne.variable}
           ${aladin.variable}
+          ${marhey.variable}
       `}>
       <head>
         <link rel="manifest" href="/manifest.json" />

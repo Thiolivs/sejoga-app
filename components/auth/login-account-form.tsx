@@ -78,8 +78,8 @@ export function LoginAccountForm() {
     };
 
     return (
-        <div className="flex flex-col justify-items-center text-center items-center space-y-2 max-w-md mx-auto p-6 relative">
-            <span className="text-[28px] text-blue-500 font-aladin mb-8 mt-2">
+        <div className="flex flex-col justify-items-center text-center items-center space-y-2 max-w-md mx-auto pr-5 pl-5 relative">
+            <span className="text-[28px] text-orange-500 font-aladin mb-5 mt-5">
                 Entra, vai ter jogo!
             </span>
 

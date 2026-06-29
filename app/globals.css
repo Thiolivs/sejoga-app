@@ -240,6 +240,10 @@ input[type="checkbox"].custom-check:checked::after {
   transform: translate(-50%, -50%);
 }
 
+.font-marhey {
+  font-family: var(--font-marhey);
+}
+
 .font-caveat {
   font-family: var(--font-caveat);
 }
