@@ -191,7 +191,7 @@ export function TrainingSession() {
             {cycles.length === 0 ? (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
                     <h3 className="text-yellow-800 font-semibold text-lg">
-                        Nenhum ciclo de treinamento disponível
+                        Nenhum treinamento disponível
                     </h3>
                 </div>
             ) : (
