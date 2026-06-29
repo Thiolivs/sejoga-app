@@ -167,7 +167,7 @@
 
   /* Desloca o botão X de fechar do menu lateral somente no app nativo */
   [data-slot="sheet-content"]>button.absolute {
-    top: 56px !important;
+    top: 60px !important;
   }
 
 }
