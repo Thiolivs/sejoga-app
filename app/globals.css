@@ -134,7 +134,7 @@
     background-color: transparent !important;
   }
 
-  /* ✅ Background via pseudo-elemento */
+  /* Background via pseudo-elemento */
   body::before {
     content: '';
     position: fixed;
@@ -149,7 +149,7 @@
     z-index: -1;
   }
 
-  /* ✅ App nativo (PlayStore): status bar 40px + safe-area embaixo */
+  /* App nativo: status bar 40px + safe-area embaixo */
   html.native-app body {
     padding-top: 40px !important;
     padding-bottom: env(safe-area-inset-bottom, 20px) !important;
@@ -160,10 +160,16 @@
     bottom: env(safe-area-inset-bottom, 20px) !important;
   }
 
-  /* ✅ App nativo: ajusta estrutura de layout */
+  /* App nativo: ajusta estrutura de layout */
   html.native-app .h-screen {
     height: calc(100dvh - 40px - env(safe-area-inset-bottom, 20px)) !important;
   }
+
+  /* Desloca o botão X de fechar do menu lateral somente no app nativo */
+  html.native-app [data-slot="sheet-close"] {
+    top: 40px !important;
+  }
+
 }
 
 @keyframes fadeIn {
