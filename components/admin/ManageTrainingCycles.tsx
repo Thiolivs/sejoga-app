@@ -187,7 +187,7 @@ export function ManageTrainingCycles() {
                                     <div className="flex items-center gap-3 mb-2">
                                         <h3 className="text-sm">{cycle.name}</h3>
                                         {!cycle.is_active && (
-                                            <span className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded">
+                                            <span className="px-2 mr-1 py-1 bg-gray-200 text-gray-600 text-xs rounded">
                                                 Oculto
                                             </span>
                                         )}
