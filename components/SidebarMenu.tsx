@@ -90,7 +90,7 @@ export function SidebarMenu({
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
                 <Button variant="outline" size="icon">
-                    <Menu className="h-5" />
+                    <Menu className="w-5 h-5" />
                 </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-64 pt-10">
