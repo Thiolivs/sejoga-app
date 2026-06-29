@@ -90,10 +90,10 @@ export function SidebarMenu({
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
                 <Button variant="outline" size="icon">
-                    <Menu className="h-5 h-5" />
+                    <Menu className="h-5" />
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64">
+            <SheetContent side="left" className="w-64 pt-10">
                 <SheetHeader>
                     <SheetTitle>Menu</SheetTitle>
                 </SheetHeader>
@@ -102,8 +102,8 @@ export function SidebarMenu({
                     <button
                         onClick={() => handleNavigation('/user-app')}
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'user-app'
-                                ? 'bg-blue-100 text-blue-700'
-                                : 'hover:bg-gray-100 text-gray-700'
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'hover:bg-gray-100 text-gray-700'
                             }`}
                     >
                         <Dices className="w-5 h-5" />
@@ -113,8 +113,8 @@ export function SidebarMenu({
                     <button
                         onClick={() => handleNavigation('/user-app/profile')}
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'perfil'
-                                ? 'bg-blue-100 text-blue-700'
-                                : 'hover:bg-gray-100 text-gray-700'
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'hover:bg-gray-100 text-gray-700'
                             }`}
                     >
                         <User className="w-5 h-5" />
@@ -127,8 +127,8 @@ export function SidebarMenu({
                         <button
                             onClick={() => handleNavigation('/user-app/administration/event-selection')}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'event-selection'
-                                    ? 'bg-blue-100 text-blue-700'
-                                    : 'hover:bg-gray-100 text-gray-700'
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'hover:bg-gray-100 text-gray-700'
                                 }`}
                         >
                             <Check className="w-5 h-5" />
@@ -140,8 +140,8 @@ export function SidebarMenu({
                         <button
                             onClick={() => handleNavigation('/user-app/reports')}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'reports'
-                                    ? 'bg-blue-100 text-blue-700'
-                                    : 'hover:bg-gray-100 text-gray-700'
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'hover:bg-gray-100 text-gray-700'
                                 }`}
                         >
                             <BarChart className="w-5 h-5" />
@@ -155,8 +155,8 @@ export function SidebarMenu({
                         <button
                             onClick={() => handleNavigation('/user-app/administration')}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'manage'
-                                    ? 'bg-red-100 text-red-700'
-                                    : 'hover:bg-gray-100 text-gray-700'
+                                ? 'bg-red-100 text-red-700'
+                                : 'hover:bg-gray-100 text-gray-700'
                                 }`}
                         >
                             <Settings className="w-5 h-5" />
@@ -168,8 +168,8 @@ export function SidebarMenu({
                         <button
                             onClick={() => handleNavigation('/user-app/administration/manage-users')}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'users'
-                                    ? 'bg-red-100 text-red-700'
-                                    : 'hover:bg-gray-100 text-gray-700'
+                                ? 'bg-red-100 text-red-700'
+                                : 'hover:bg-gray-100 text-gray-700'
                                 }`}
                         >
                             <Users className="w-5 h-5" />
