@@ -1,20 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Calendar, ArrowLeft } from 'lucide-react';
+import { Calendar, Eye, EyeOff } from 'lucide-react';
 import type { TrainingCycle } from '@/types/database';
 
 export function ManageTrainingCycles() {
-    const router = useRouter();
     const supabase = createClient();
     const [cycles, setCycles] = useState<TrainingCycle[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [showAddForm, setShowAddForm] = useState(false);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -31,7 +28,7 @@ export function ManageTrainingCycles() {
             const { data, error } = await supabase
                 .from('training_cycles')
                 .select('*')
-                .order('created_at', { ascending: false }); // ✅ Mudou de start_date para created_at
+                .order('created_at', { ascending: false });
 
             if (error) throw error;
             setCycles(data || []);
@@ -42,32 +39,23 @@ export function ManageTrainingCycles() {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!editingId) return;
         setLoading(true);
 
         try {
-            if (editingId) {
-                // Atualizar
-                const { error } = await supabase
-                    .from('training_cycles')
-                    .update({
-                        name: formData.name,
-                        description: formData.description,
-                        is_active: formData.is_active,
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', editingId);
+            const { error } = await supabase
+                .from('training_cycles')
+                .update({
+                    name: formData.name,
+                    description: formData.description,
+                    is_active: formData.is_active,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', editingId);
 
-                if (error) throw error;
-            } else {
-                // Criar novo
-                const { error } = await supabase
-                    .from('training_cycles')
-                    .insert([formData]);
-
-                if (error) throw error;
-            }
+            if (error) throw error;
 
             resetForm();
             await fetchCycles();
@@ -79,6 +67,25 @@ export function ManageTrainingCycles() {
         }
     };
 
+    // ✅ Toggle de visibilidade direto no card (sem abrir formulário)
+    const toggleVisibility = async (cycle: TrainingCycle) => {
+        try {
+            const { error } = await supabase
+                .from('training_cycles')
+                .update({
+                    is_active: !cycle.is_active,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', cycle.id);
+
+            if (error) throw error;
+            await fetchCycles();
+        } catch (err) {
+            console.error('Erro ao alterar visibilidade:', err);
+            alert('Erro ao alterar visibilidade do ciclo.');
+        }
+    };
+
     const handleEdit = (cycle: TrainingCycle) => {
         setFormData({
             name: cycle.name,
@@ -86,7 +93,6 @@ export function ManageTrainingCycles() {
             is_active: cycle.is_active
         });
         setEditingId(cycle.id);
-        setShowAddForm(true);
     };
 
     const handleDelete = async (id: string) => {
@@ -113,7 +119,6 @@ export function ManageTrainingCycles() {
             is_active: true
         });
         setEditingId(null);
-        setShowAddForm(false);
     };
 
     if (loading && cycles.length === 0) {
@@ -125,22 +130,11 @@ export function ManageTrainingCycles() {
             <div className='bg-white/95 p-3 rounded-lg'>
                 <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">Ciclos de Treinamentos</div>
 
-                {!showAddForm && (
-                    <div className="flex justify-center mb-4">
-                        <Button onClick={() => setShowAddForm(true)} className="bg-sejoga-azul-oficial flex items-center gap-2">
-                            <Plus className="w-4 h-4" />
-                            Cadastrar Novo Ciclo
-                        </Button>
-                    </div>
-                )}
-
-                {/* Formulário */}
-                {showAddForm && (
-                    <form onSubmit={handleSubmit} className="bg-white border-2 border-blue-200 mb-3 rounded-lg p-6 space-y-4">
+                {/* Formulário de edição (aparece só ao clicar em Editar) */}
+                {editingId && (
+                    <form onSubmit={handleUpdate} className="bg-white border-2 border-blue-200 mb-3 rounded-lg p-6 space-y-4">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">
-                                {editingId ? 'Editar Ciclo' : 'Novo Ciclo'}
-                            </h3>
+                            <h3 className="text-lg font-semibold">Editar Ciclo</h3>
                             <Button type="button" variant="ghost" size="icon" onClick={resetForm}>
                                 ❌
                             </Button>
@@ -159,8 +153,6 @@ export function ManageTrainingCycles() {
                             />
                         </div>
 
-                        {/* ✅ REMOVIDO: campos de data */}
-
                         <div className="flex items-center gap-3">
                             <input
                                 type="checkbox"
@@ -175,20 +167,10 @@ export function ManageTrainingCycles() {
                         </div>
 
                         <div className="flex gap-3 pt-4">
-                            
-                            {/*
-                            <Button type="button" variant="outline" onClick={resetForm} className="flex-1">
-                                Cancelar
-                            </Button>
-                            */}
-
                             <Button type="submit" disabled={loading} className="bg-sejoga-verde-oficial flex-1">
-                                {editingId ? 'Atualizar' : 'Criar Ciclo'}
+                                Atualizar
                             </Button>
                         </div>
-                        
-
-
                     </form>
                 )}
 
@@ -197,9 +179,8 @@ export function ManageTrainingCycles() {
                     {cycles.map((cycle) => (
                         <div
                             key={cycle.id}
-                            className={`bg-white border rounded-lg p-3 ${
-                                cycle.is_active ? 'border-gray-200' : 'border-gray-300 bg-gray-50'
-                            }`}
+                            className={`bg-white border rounded-lg p-3 ${cycle.is_active ? 'border-gray-200' : 'border-gray-300 bg-gray-50'
+                                }`}
                         >
                             <div className="flex justify-between items-start">
                                 <div className="flex-1">
@@ -207,16 +188,34 @@ export function ManageTrainingCycles() {
                                         <h3 className="font-semibold text-lg">{cycle.name}</h3>
                                         {!cycle.is_active && (
                                             <span className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded">
-                                                Inativo
+                                                Oculto
                                             </span>
                                         )}
                                     </div>
                                     {cycle.description && (
                                         <p className="text-sm text-gray-600 mb-2">{cycle.description}</p>
                                     )}
-                                    {/* ✅ REMOVIDO: exibição das datas */}
                                 </div>
                                 <div className="flex gap-2">
+                                    {/* ✅ Toggle de visibilidade */}
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={() => toggleVisibility(cycle)}
+                                        className={cycle.is_active
+                                            ? 'text-sejoga-verde-oficial hover:bg-green-50'
+                                            : 'text-gray-400 hover:bg-gray-100'
+                                        }
+                                        title={cycle.is_active ? 'Visível para monitores' : 'Oculto para monitores'}
+                                    >
+                                        {cycle.is_active ? (
+                                            <Eye className="w-4 h-4" />
+                                        ) : (
+                                            <EyeOff className="w-4 h-4" />
+                                        )}
+                                    </Button>
+
+                                {/* Botão de editar
                                     <Button
                                         className='p-3'
                                         variant="outline"
@@ -224,6 +223,9 @@ export function ManageTrainingCycles() {
                                     >
                                         ✏️ Editar
                                     </Button>
+                                 */}
+
+
                                     <Button
                                         variant="outline"
                                         size="icon"
@@ -237,16 +239,12 @@ export function ManageTrainingCycles() {
                         </div>
                     ))}
 
-                    {cycles.length === 0 && !showAddForm && (
+                    {cycles.length === 0 && (
                         <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
                             <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                            <p className="text-gray-600 mb-4">
-                                Nenhum ciclo cadastrado ainda.
+                            <p className="text-gray-600">
+                                Nenhum ciclo cadastrado ainda. Crie um pelo botão &quot;Novo Treinamento&quot;.
                             </p>
-                            <Button onClick={() => setShowAddForm(true)} className="mx-auto">
-                                <Plus className="w-4 h-4 mr-2" />
-                                Criar Primeiro Ciclo
-                            </Button>
                         </div>
                     )}
                 </div>
