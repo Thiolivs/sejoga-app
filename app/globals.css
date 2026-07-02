@@ -271,7 +271,8 @@ input[type="checkbox"].custom-check:checked::after {
 /* Scrollbar customizada para Android */
 .boardgame-list {
   scrollbar-width: auto;
-  scrollbar-color: #3AC3DF #f0f0f0;
+  scrollbar-color: #3AC3DF;
+  
 }
 
 /* Chrome, Safari, Edge */
