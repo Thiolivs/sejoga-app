@@ -1,15 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, Caveat, Shadows_Into_Light, Joti_One, Aladin, Marhey } from 'next/font/google';
+import { Poppins, Caveat, Shadows_Into_Light, Joti_One, Aladin, Marhey, Bebas_Neue, Boogaloo } from 'next/font/google';
 import "./globals.css";
 import { BackgroundManager } from "@/components/BackgroundManager";
 import { AndroidVersionDetector } from "@/components/AndroidVersionDetector";
 import { PullToRefresh } from '@/components/PullToRefresh'
 
+const boogaloo = Boogaloo({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-boogaloo',
+});
 
 const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-poppins',
+});
+
+const bebasNeue = Bebas_Neue({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-bebas',
 });
 
 const marhey = Marhey({
@@ -67,6 +78,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           ${jotiOne.variable}
           ${aladin.variable}
           ${marhey.variable}
+          ${bebasNeue.variable}
+          ${boogaloo.variable}
+
       `}>
       <head>
         <link rel="manifest" href="/manifest.json" />
@@ -77,7 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={poppins.className}>
         <AndroidVersionDetector />
         <BackgroundManager />
-        <PullToRefresh /> 
+        <PullToRefresh />
 
         {children}
       </body>

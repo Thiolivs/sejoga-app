@@ -130,8 +130,8 @@ export function CreateAccountForm() {
 
     return (
         <div className="flex flex-col justify-items-center text-center items-center space-y-2 max-w-md mx-auto p-4">
-            <span className="text-[28px] text-blue-500 font-aladin mb-4">
-                Mais rápido que uma partida de Terra Mystica
+            <span className="text-[28px] text-sejoga-rosa-oficial font-marhey mb-4">
+                É bem rapidinho!
             </span>
 
             {/* Mensagem de erro */}
@@ -259,7 +259,7 @@ export function CreateAccountForm() {
 
                     <Button
                         type="submit"
-                        className="w-full mt-1 bg-sejoga-verde-oficial"
+                        className="w-full mt-1 bg-sejoga-azul-oficial"
                         disabled={form.formState.isSubmitting}
                     >
                         {form.formState.isSubmitting ? 'Criando conta...' : 'SeJoga!'}

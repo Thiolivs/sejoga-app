@@ -240,6 +240,14 @@ input[type="checkbox"].custom-check:checked::after {
   transform: translate(-50%, -50%);
 }
 
+.font-boogaloo {
+  font-family: var(--font-boogaloo);
+}
+
+.font-bebas {
+  font-family: var(--font-bebas);
+}
+
 .font-marhey {
   font-family: var(--font-marhey);
 }
@@ -260,16 +268,16 @@ input[type="checkbox"].custom-check:checked::after {
   font-family: var(--font-aladin);
 }
 
-/* ✅ Scrollbar customizada para Android */
+/* Scrollbar customizada para Android */
 .boardgame-list {
   scrollbar-width: auto;
   scrollbar-color: #3AC3DF #f0f0f0;
 }
 
-/* Chrome, Safari, Edge 
+/* Chrome, Safari, Edge */
 .boardgame-list::-webkit-scrollbar {
   width: 15px;
-}*/
+}
 
 .boardgame-list::-webkit-scrollbar-track {
   background: #f0f0f0;
