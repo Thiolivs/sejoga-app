@@ -17,7 +17,7 @@ export function TeachingSessionLog() {
   const [boardgames, setBoardgames] = useState<Boardgame[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [resetAutocomplete, setResetAutocomplete] = useState(false); // ✅ estado para resetar
+  const [resetAutocomplete, setResetAutocomplete] = useState(false); // estado para resetar
   const supabase = createClient();
 
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -119,13 +119,13 @@ export function TeachingSessionLog() {
           event_id: selectedEvent,
           monitor_id: user.id,
           boardgame_id: formData.boardgame_id,
-          players_count: parseInt(formData.players_count), // ✅ converte para número
+          players_count: parseInt(formData.players_count), // converte para número
           notes: formData.notes || null,
         });
 
       if (error) throw error;
 
-      // ✅ Resetar formulário e autocomplete
+      // Resetar formulário e autocomplete
       setFormData({ boardgame_id: '', players_count: '', notes: '' });
       setResetAutocomplete(true);
       setTimeout(() => setResetAutocomplete(false), 100);

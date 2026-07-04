@@ -7,7 +7,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { User, Mail, Lock } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 import {
     Form,
@@ -31,11 +31,12 @@ const formSchema = z.object({
     email: z.string().email({
         message: "Email inválido",
     }),
-    password: z.string().min(6, {
-        message: "Senha deve ter no mínimo 6 caracteres"
-    }).max(12, {
-        message: "Senha deve ter no máximo 12 caracteres"
-    }),
+    password: z.string()
+        .min(6, { message: "Senha deve ter no mínimo 6 caracteres" })
+        .max(12, { message: "Senha deve ter no máximo 12 caracteres" })
+        .regex(/[A-Z]/, { message: "Deve conter ao menos uma letra maiúscula" })
+        .regex(/[0-9]/, { message: "Deve conter ao menos um número" })
+        .regex(/[^A-Za-z0-9]/, { message: "Deve conter ao menos um caractere especial" }),
     confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "As senhas não coincidem",
@@ -46,6 +47,8 @@ export function CreateAccountForm() {
     const router = useRouter();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -57,6 +60,16 @@ export function CreateAccountForm() {
             confirmPassword: "",
         },
     });
+
+    // ✅ Observa a senha em tempo real para o indicador de requisitos
+    const passwordValue = form.watch("password") || "";
+
+    const requirements = [
+        { label: "Entre 6 e 12 caracteres", met: passwordValue.length >= 6 && passwordValue.length <= 12 },
+        { label: "Uma letra maiúscula", met: /[A-Z]/.test(passwordValue) },
+        { label: "Um número", met: /[0-9]/.test(passwordValue) },
+        { label: "Um caractere especial", met: /[^A-Za-z0-9]/.test(passwordValue) },
+    ];
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
@@ -223,13 +236,41 @@ export function CreateAccountForm() {
                                     <div className="relative">
                                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                                         <Input
-                                            type="password"
+                                            type={showPassword ? "text" : "password"}
                                             placeholder="Senha"
-                                            className="pl-10 text-sm"
+                                            className="pl-10 pr-10 text-sm"
                                             {...field}
                                         />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                            aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                                        >
+                                            {showPassword ? (
+                                                <EyeOff className="h-4 w-4" />
+                                            ) : (
+                                                <Eye className="h-4 w-4" />
+                                            )}
+                                        </button>
                                     </div>
                                 </FormControl>
+
+                                {/* ✅ Indicador de requisitos em tempo real */}
+                                {passwordValue.length > 0 && (
+                                    <ul className="text-xs space-y-1 mt-2 text-left">
+                                        {requirements.map((req, i) => (
+                                            <li
+                                                key={i}
+                                                className={`flex items-center gap-1.5 ${req.met ? 'text-sejoga-verde-oficial' : 'text-gray-400'}`}
+                                            >
+                                                <span>{req.met ? '✓' : '○'}</span>
+                                                {req.label}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -245,11 +286,23 @@ export function CreateAccountForm() {
                                     <div className="relative">
                                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                                         <Input
-                                            type="password"
+                                            type={showConfirmPassword ? "text" : "password"}
                                             placeholder="Confirmar senha"
-                                            className="pl-10 text-sm"
+                                            className="pl-10 pr-10 text-sm"
                                             {...field}
                                         />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                            aria-label={showConfirmPassword ? "Ocultar senha" : "Mostrar senha"}
+                                        >
+                                            {showConfirmPassword ? (
+                                                <EyeOff className="h-4 w-4" />
+                                            ) : (
+                                                <Eye className="h-4 w-4" />
+                                            )}
+                                        </button>
                                     </div>
                                 </FormControl>
                                 <FormMessage />
