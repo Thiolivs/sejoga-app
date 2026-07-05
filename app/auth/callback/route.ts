@@ -10,10 +10,12 @@ export async function GET(request: NextRequest) {
     const token_hash = requestUrl.searchParams.get("token_hash");
     const type = requestUrl.searchParams.get("type");
 
+    let confirmed = false;
+
     try {
         if (code || token_hash) {
             const cookieStore = await cookies();
-            
+
             const supabase = createServerClient(
                 process.env.NEXT_PUBLIC_SUPABASE_URL!,
                 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -32,24 +34,24 @@ export async function GET(request: NextRequest) {
                     },
                 }
             );
-            
-            // Se tem code (OAuth flow)
+
             if (code) {
-                await supabase.auth.exchangeCodeForSession(code);
-            }
-            // Se tem token_hash (email verification via custom scheme)
-            else if (token_hash && type) {
-                await supabase.auth.verifyOtp({ 
-                    token_hash, 
+                const { error } = await supabase.auth.exchangeCodeForSession(code);
+                if (!error) confirmed = true;
+            } else if (token_hash && type) {
+                const { error } = await supabase.auth.verifyOtp({
+                    token_hash,
                     type: type as 'signup' | 'email' | 'recovery' | 'invite' | 'magiclink'
                 });
+                if (!error) confirmed = true;
             }
-            
-            return NextResponse.redirect(`${requestUrl.origin}/user-app`);
         }
     } catch (error) {
         console.log("Auth_Callback", error);
     }
-    
-    return NextResponse.redirect(`${requestUrl.origin}/`);
+
+    // Não cria sessão automática. Manda para o login.
+    // Se confirmou, sinaliza sucesso para a tela de login exibir uma mensagem.
+    const destination = confirmed ? `${requestUrl.origin}/?confirmed=1` : `${requestUrl.origin}/`;
+    return NextResponse.redirect(destination);
 }
