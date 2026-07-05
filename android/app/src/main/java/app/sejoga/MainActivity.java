@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Window;
 import android.view.WindowManager;
 import androidx.core.view.WindowCompat;
@@ -19,7 +21,6 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         configureStatusBar();
-        // App aberto a partir de um deep link (estava fechado)
         handleDeepLink(getIntent());
     }
 
@@ -27,7 +28,6 @@ public class MainActivity extends BridgeActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        // App já estava aberto e recebeu um deep link
         handleDeepLink(intent);
     }
 
@@ -46,26 +46,54 @@ public class MainActivity extends BridgeActivity {
     }
 
     private void handleDeepLink(Intent intent) {
-        if (intent == null) return;
+        String debugInfo;
 
-        Uri data = intent.getData();
-        if (data == null) return;
+        if (intent == null) {
+            debugInfo = "intent NULL";
+        } else {
+            Uri data = intent.getData();
+            if (data == null) {
+                debugInfo = "data NULL, action=" + intent.getAction();
+            } else {
+                debugInfo = "scheme=" + data.getScheme()
+                    + " host=" + data.getHost()
+                    + " query=" + data.getQuery()
+                    + " frag=" + data.getFragment();
 
-        // Só trata o esquema customizado app.sejoga://
-        if (!"app.sejoga".equals(data.getScheme())) return;
+                String scheme = data.getScheme();
+                String query = data.getQuery();
 
-        String query = data.getQuery(); // ex: token_hash=...&type=signup
-        if (query == null || query.isEmpty()) return;
+                if (query == null && data.getFragment() != null) {
+                    query = data.getFragment();
+                }
 
-        // Redireciona o webview para a rota server-side de callback,
-        // que processa o token e cria a sessão.
-        final String webUrl = WEB_BASE + "/auth/callback?" + query;
+                if (("app.sejoga".equals(scheme) || "https".equals(scheme))
+                        && query != null && !query.isEmpty()
+                        && (query.contains("token_hash") || query.contains("code"))) {
 
-        runOnUiThread(() -> {
-            if (bridge != null && bridge.getWebView() != null) {
-                bridge.getWebView().loadUrl(webUrl);
+                    final String webUrl = WEB_BASE + "/auth/callback?" + query;
+
+                    // Atraso para rodar DEPOIS que o Capacitor carregou a home
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        if (bridge != null && bridge.getWebView() != null) {
+                            bridge.getWebView().loadUrl(webUrl);
+                        }
+                    }, 1200);
+
+                    return;
+                }
             }
-        });
+        }
+
+        // DEBUG: mostra o que foi capturado, carregando uma página de teste visual
+        final String dbg = debugInfo;
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (bridge != null && bridge.getWebView() != null) {
+                String html = "data:text/html,<body style='font-family:monospace;padding:20px;font-size:14px'>"
+                    + "<h3>DEEP LINK DEBUG</h3><p>" + Uri.encode(dbg) + "</p></body>";
+                bridge.getWebView().loadUrl(html);
+            }
+        }, 1200);
     }
 
     private void configureStatusBar() {
