@@ -248,12 +248,12 @@ export function TrainingSession() {
                                             const [year, month, day] = training.training_date.split('-');
                                             const trainingDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
 
-                                            // ✅ Formata dia da semana separado
+                                            // Formata dia da semana separado
                                             const weekday = trainingDate.toLocaleDateString('pt-BR', { weekday: 'long' });
                                             const shortWeekday = weekday
                                                 .replace("-feira", "")
                                                 .replace(/^./, c => c.toUpperCase());
-                                            // ✅ Formata dia e mês
+                                            // Formata dia e mês
                                             const dayMonth = trainingDate.toLocaleDateString('pt-BR', {
                                                 day: '2-digit',
                                                 month: 'long'
@@ -266,7 +266,7 @@ export function TrainingSession() {
 
                                             return (
                                                 <div key={training.id} className="bg-white border rounded-lg overflow-hidden">
-                                                    {/* ✅ Header clicável */}
+                                                    {/* Header clicável */}
                                                     <div
                                                         className="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50 transition-colors"
                                                         onClick={() => toggleExpand(training.id)}

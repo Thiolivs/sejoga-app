@@ -118,7 +118,7 @@
   }
 
   html {
-    background-color: #FFFFFF;
+    background-color: #000000 ; /*#FFFFFF*/
     background-size: cover;
     background-position: center;
     background-attachment: fixed;

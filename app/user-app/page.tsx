@@ -60,7 +60,7 @@ function UserAppComponent() {
     );
 }
 
-// ✅ Desativa SSR
+// Desativa SSR
 const UserApp = dynamic(() => Promise.resolve(UserAppComponent), {
     ssr: false
 });

@@ -30,7 +30,7 @@ const formSchema = z.object({
     })
 });
 
-// ✅ Defina a versão aqui manualmente (sincronize com build.gradle)
+// Defina a versão aqui manualmente (sincronize com build.gradle)
 const APP_VERSION = "1.39";
 
 export function LoginAccountForm() {
