@@ -14,21 +14,21 @@ import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
 
-    private static final int STATUS_BAR_COLOR = 0xFF0096FF; // #0096FF
+    private static final int STATUS_BAR_COLOR = 0xFF0096FF;
     private static final String WEB_BASE = "https://sejoga.app";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         configureStatusBar();
-        handleDeepLink(getIntent());
+        handleDeepLink(getIntent(), "onCreate");
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        handleDeepLink(intent);
+        handleDeepLink(intent, "onNewIntent");
     }
 
     @Override
@@ -45,55 +45,58 @@ public class MainActivity extends BridgeActivity {
         }
     }
 
-    private void handleDeepLink(Intent intent) {
-        String debugInfo;
+    private void handleDeepLink(Intent intent, String origem) {
+        String scheme = null, host = null, query = null, frag = null, action = null;
+        String dataStr = null;
 
-        if (intent == null) {
-            debugInfo = "intent NULL";
-        } else {
+        if (intent != null) {
+            action = intent.getAction();
             Uri data = intent.getData();
-            if (data == null) {
-                debugInfo = "data NULL, action=" + intent.getAction();
-            } else {
-                debugInfo = "scheme=" + data.getScheme()
-                    + " host=" + data.getHost()
-                    + " query=" + data.getQuery()
-                    + " frag=" + data.getFragment();
-
-                String scheme = data.getScheme();
-                String query = data.getQuery();
-
-                if (query == null && data.getFragment() != null) {
-                    query = data.getFragment();
-                }
-
-                if (("app.sejoga".equals(scheme) || "https".equals(scheme))
-                        && query != null && !query.isEmpty()
-                        && (query.contains("token_hash") || query.contains("code"))) {
-
-                    final String webUrl = WEB_BASE + "/auth/callback?" + query;
-
-                    // Atraso para rodar DEPOIS que o Capacitor carregou a home
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        if (bridge != null && bridge.getWebView() != null) {
-                            bridge.getWebView().loadUrl(webUrl);
-                        }
-                    }, 1200);
-
-                    return;
-                }
+            if (data != null) {
+                scheme = data.getScheme();
+                host = data.getHost();
+                query = data.getQuery();
+                frag = data.getFragment();
+                dataStr = data.toString();
             }
         }
 
-        // DEBUG: mostra o que foi capturado, carregando uma página de teste visual
-        final String dbg = debugInfo;
+        // Se tem token no query OU no fragmento, redireciona pro callback
+        String tokenPart = null;
+        if (query != null && (query.contains("token_hash") || query.contains("code"))) {
+            tokenPart = query;
+        } else if (frag != null && (frag.contains("token_hash") || frag.contains("code"))) {
+            tokenPart = frag;
+        }
+
+        if (tokenPart != null) {
+            final String webUrl = WEB_BASE + "/auth/callback?" + tokenPart;
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                if (bridge != null && bridge.getWebView() != null) {
+                    bridge.getWebView().loadUrl(webUrl);
+                }
+            }, 1500);
+            return;
+        }
+
+        // Só mostra debug se veio de um deep link real (não da abertura normal MAIN)
+        if (dataStr == null) {
+            // abertura normal, sem URL — nao faz nada
+            return;
+        }
+
+        final String dbg = "origem=" + origem + " action=" + action
+            + " | scheme=" + scheme + " host=" + host
+            + " | query=" + query + " | frag=" + frag
+            + " | full=" + dataStr;
+
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (bridge != null && bridge.getWebView() != null) {
-                String html = "data:text/html,<body style='font-family:monospace;padding:20px;font-size:14px'>"
+                String html = "data:text/html,<body style='font-family:monospace;padding:20px;font-size:13px;word-break:break-all'>"
                     + "<h3>DEEP LINK DEBUG</h3><p>" + Uri.encode(dbg) + "</p></body>";
                 bridge.getWebView().loadUrl(html);
             }
-        }, 1200);
+        }, 1500);
     }
 
     private void configureStatusBar() {
@@ -103,9 +106,7 @@ public class MainActivity extends BridgeActivity {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-
             window.setStatusBarColor(STATUS_BAR_COLOR);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
