@@ -36,7 +36,7 @@
                     android:host="sejoga.app" />
             </intent-filter>
 
-            <!-- ✅ URL Scheme personalizado (fallback garantido) -->
+            <!-- URL Scheme personalizado (fallback garantido) -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

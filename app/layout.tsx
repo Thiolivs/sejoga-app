@@ -4,6 +4,8 @@ import "./globals.css";
 import { BackgroundManager } from "@/components/BackgroundManager";
 import { AndroidVersionDetector } from "@/components/AndroidVersionDetector";
 import { PullToRefresh } from '@/components/PullToRefresh'
+import { DeepLinkHandler } from "@/components/DeepLinkHandler";
+
 
 const boogaloo = Boogaloo({
   weight: '400',
@@ -92,6 +94,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AndroidVersionDetector />
         <BackgroundManager />
         <PullToRefresh />
+        <DeepLinkHandler />
 
         {children}
       </body>
