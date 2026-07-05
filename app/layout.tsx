@@ -94,8 +94,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AndroidVersionDetector />
         <BackgroundManager />
         <PullToRefresh />
-        <DeepLinkHandler />
-
+        
         {children}
       </body>
     </html>
