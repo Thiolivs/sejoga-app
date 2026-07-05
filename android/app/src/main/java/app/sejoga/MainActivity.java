@@ -14,21 +14,21 @@ import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
 
-    private static final int STATUS_BAR_COLOR = 0xFF0096FF;
+    private static final int STATUS_BAR_COLOR = 0xFF0096FF; // #0096FF
     private static final String WEB_BASE = "https://sejoga.app";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         configureStatusBar();
-        handleDeepLink(getIntent(), "onCreate");
+        handleDeepLink(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        handleDeepLink(intent, "onNewIntent");
+        handleDeepLink(intent);
     }
 
     @Override
@@ -45,56 +45,28 @@ public class MainActivity extends BridgeActivity {
         }
     }
 
-    private void handleDeepLink(Intent intent, String origem) {
-        String scheme = null, host = null, query = null, frag = null, action = null;
-        String dataStr = null;
+    // Captura o deep link de confirmação de e-mail e leva o webview
+    // para a rota de callback, que confirma a conta e cria a sessão.
+    private void handleDeepLink(Intent intent) {
+        if (intent == null) return;
 
-        if (intent != null) {
-            action = intent.getAction();
-            Uri data = intent.getData();
-            if (data != null) {
-                scheme = data.getScheme();
-                host = data.getHost();
-                query = data.getQuery();
-                frag = data.getFragment();
-                dataStr = data.toString();
-            }
+        Uri data = intent.getData();
+        if (data == null) return;
+
+        String query = data.getQuery();
+        if (query == null && data.getFragment() != null) {
+            query = data.getFragment();
         }
 
-        // Se tem token no query OU no fragmento, redireciona pro callback
-        String tokenPart = null;
-        if (query != null && (query.contains("token_hash") || query.contains("code"))) {
-            tokenPart = query;
-        } else if (frag != null && (frag.contains("token_hash") || frag.contains("code"))) {
-            tokenPart = frag;
-        }
+        if (query == null || query.isEmpty()) return;
+        if (!query.contains("token_hash") && !query.contains("code")) return;
 
-        if (tokenPart != null) {
-            final String webUrl = WEB_BASE + "/auth/callback?" + tokenPart;
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                if (bridge != null && bridge.getWebView() != null) {
-                    bridge.getWebView().loadUrl(webUrl);
-                }
-            }, 1500);
-            return;
-        }
+        final String webUrl = WEB_BASE + "/auth/callback?" + query;
 
-        // Só mostra debug se veio de um deep link real (não da abertura normal MAIN)
-        if (dataStr == null) {
-            // abertura normal, sem URL — nao faz nada
-            return;
-        }
-
-        final String dbg = "origem=" + origem + " action=" + action
-            + " | scheme=" + scheme + " host=" + host
-            + " | query=" + query + " | frag=" + frag
-            + " | full=" + dataStr;
-
+        // Pequeno atraso para rodar depois que o Capacitor carrega a home.
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (bridge != null && bridge.getWebView() != null) {
-                String html = "data:text/html,<body style='font-family:monospace;padding:20px;font-size:13px;word-break:break-all'>"
-                    + "<h3>DEEP LINK DEBUG</h3><p>" + Uri.encode(dbg) + "</p></body>";
-                bridge.getWebView().loadUrl(html);
+                bridge.getWebView().loadUrl(webUrl);
             }
         }, 1500);
     }
@@ -106,7 +78,9 @@ public class MainActivity extends BridgeActivity {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
             window.setStatusBarColor(STATUS_BAR_COLOR);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
