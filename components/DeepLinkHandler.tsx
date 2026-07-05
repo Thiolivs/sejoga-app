@@ -6,23 +6,21 @@ import { createClient } from '@/lib/supabase';
 
 export function DeepLinkHandler() {
     const router = useRouter();
-    const [debug, setDebug] = useState<string>('');
+    const [debug, setDebug] = useState<string>('iniciando...');
 
     useEffect(() => {
         let listenerHandle: { remove: () => void } | undefined;
 
-        // Processa uma URL de deep link (extrai token e cria sessão)
-        const processUrl = async (rawUrl: string) => {
-            setDebug(`URL: ${rawUrl}`);
+        const processUrl = async (rawUrl: string, origem: string) => {
+            setDebug(`[${origem}] URL: ${rawUrl}`);
             try {
                 const url = new URL(rawUrl);
-
                 const token_hash = url.searchParams.get('token_hash');
                 const type = url.searchParams.get('type');
                 const code = url.searchParams.get('code');
 
                 if (!token_hash && !code) {
-                    setDebug(`sem token/code na URL: ${rawUrl}`);
+                    setDebug(`[${origem}] sem token/code\nsearch: ${url.search}\nhash: ${url.hash}`);
                     return;
                 }
 
@@ -54,22 +52,27 @@ export function DeepLinkHandler() {
             try {
                 App = (await import('@capacitor/app')).App;
             } catch {
+                setDebug('plugin NAO carregou (web pura)');
                 return;
             }
 
-            // 1. App aberto a partir do link (app estava fechado): getLaunchUrl
+            let msg = 'plugin OK. ';
+
             try {
                 const launch = await App.getLaunchUrl();
+                msg += `launchUrl: ${launch?.url ?? 'vazio'}`;
+                setDebug(msg);
                 if (launch?.url) {
-                    await processUrl(launch.url);
+                    await processUrl(launch.url, 'launch');
+                    return;
                 }
-            } catch {
-                // sem launch url, segue normal
+            } catch (e) {
+                msg += `launchUrl erro: ${e instanceof Error ? e.message : String(e)}`;
+                setDebug(msg);
             }
 
-            // 2. Link clicado com o app já aberto: appUrlOpen
             listenerHandle = await App.addListener('appUrlOpen', async (event: { url: string }) => {
-                await processUrl(event.url);
+                await processUrl(event.url, 'appUrlOpen');
             });
         };
 
@@ -80,11 +83,9 @@ export function DeepLinkHandler() {
         };
     }, [router]);
 
-    if (!debug) return null;
-
     return (
         <div className="fixed bottom-2 left-2 right-2 bg-black text-white text-[10px] p-2 rounded z-[9999] font-mono whitespace-pre-wrap max-h-48 overflow-auto">
-            {debug}
+            DEBUG: {debug}
         </div>
     );
 }
