@@ -132,7 +132,7 @@ export function ManageGames() {
                 )}
             </div>
 
-            {/* 🔹 Linha com título e botão lado a lado */}
+            {/* Linha com título e botão lado a lado */}
             <div className="flex items-center justify-between mb-6 mt-8 ">
                 <h2 className="text-sm font-semibold">
                     {searchTerm
@@ -172,7 +172,7 @@ export function ManageGames() {
                                     </div>
                                 </div>
 
-                                <div className="flex gap-1 flex-shrink-0">
+                                <div className="flex gap-1 shrink-0">
                                     <Button
                                         variant="outline"
                                         size="sm"
