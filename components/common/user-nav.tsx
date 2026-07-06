@@ -99,7 +99,7 @@ export function UserNav() {
     }, [supabase]);
 
     const handleSignOut = async () => {
-        await supabase.auth.signOut();
+        await supabase.auth.signOut({ scope: 'local' });
         sessionStorage.removeItem('sejoga-session-active');
         localStorage.removeItem('userapp-active-tab');
         router.refresh();

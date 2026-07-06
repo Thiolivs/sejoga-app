@@ -64,7 +64,7 @@ export function SidebarMenu({
 
     const handleLogout = async () => {
         try {
-            await supabase.auth.signOut();
+            await supabase.auth.signOut({ scope: 'local' });
             setOpen(false);
             sessionStorage.removeItem('sejoga-session-active');
             localStorage.removeItem('userapp-active-tab');
