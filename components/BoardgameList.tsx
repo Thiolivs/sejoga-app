@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useBoardgames } from '@/hooks/useBoardgames';
 import { useUser } from '@/hooks/useUser';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -10,6 +10,7 @@ import type { BoardgameWithTeachers, Profile } from '@/types/database';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase';
+import { ArrowUp } from 'lucide-react';
 
 interface Publisher {
     id: string;
@@ -41,6 +42,25 @@ export function BoardgameList() {
         selectedMechanics: [] as string[],
         selectedPublishers: [] as string[], // ✅ NOVO
     });
+
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [showScrollTop, setShowScrollTop] = useState(false);
+
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        const handleScroll = () => {
+            setShowScrollTop(container.scrollTop > 300);
+        };
+
+        container.addEventListener('scroll', handleScroll);
+        return () => container.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const scrollToTop = () => {
+        scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     // ✅ NOVO: Buscar editoras
     useEffect(() => {
@@ -486,13 +506,24 @@ export function BoardgameList() {
                 </p>
             </div>
 
-            {/* ✅ Container com scroll - com classe boardgame-list */}
-            <div
+            {/* Container com scroll - com classe boardgame-list */}
+            <div ref={scrollContainerRef}
                 className="boardgame-list flex-1 overflow-y-scroll space-y-2 pr-1"
                 style={{
                     WebkitOverflowScrolling: 'touch', // ✅ Smooth scroll no iOS
                 }}
             >
+
+                {showScrollTop && (
+                    <button
+                        onClick={scrollToTop}
+                        className="fixed bottom-24 right-4 z-40 bg-sejoga-azul-oficial text-white rounded-full p-3 shadow-lg hover:bg-blue-500 transition-opacity"
+                        aria-label="Voltar ao topo"
+                    >
+                        <ArrowUp className="w-5 h-5" />
+                    </button>
+                )}
+                
                 {/* Mensagem se não houver resultados */}
                 {filteredGames.length === 0 && (
                     <div className="text-center py-12 bg-gray-50 rounded-lg">
