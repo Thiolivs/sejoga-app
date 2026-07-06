@@ -61,7 +61,7 @@ export function CreateAccountForm() {
         },
     });
 
-    // ✅ Observa a senha em tempo real para o indicador de requisitos
+    // Observa a senha em tempo real para o indicador de requisitos
     const passwordValue = form.watch("password") || "";
 
     const requirements = [
@@ -125,6 +125,11 @@ export function CreateAccountForm() {
                 return;
             }
 
+            if (user && user.identities && user.identities.length === 0) {
+                setErrorMessage('Este email já está cadastrado. Faça login ou use outro email.');
+                return;
+            }
+
             if (user) {
                 setSuccessMessage('Conta criada com sucesso! Verifique seu email para confirmar o cadastro.');
                 form.reset();
@@ -164,7 +169,7 @@ export function CreateAccountForm() {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col space-y-4 w-full"
+                    className="flex flex-col space-y-2 w-full"
                 >
                     <div className="grid grid-cols-2 gap-4">
                         <FormField

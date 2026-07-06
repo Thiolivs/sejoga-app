@@ -92,7 +92,7 @@ export function LoginAccountForm() {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col space-y-4 w-full"
+                    className="flex flex-col space-y-2 w-full"
                 >
                     <FormField
                         control={form.control}
@@ -138,7 +138,7 @@ export function LoginAccountForm() {
                         )}
                     />
 
-                    <Button type="submit" className="w-full mt-6 bg-sejoga-verde-oficial">
+                    <Button type="submit" className="w-full mt-1 bg-sejoga-verde-oficial">
                         SeJoga!
                     </Button>
 
