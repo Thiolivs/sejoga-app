@@ -27,7 +27,7 @@ const supabase = createClient();
     const router = useRouter();
 
     const fetchGames = useCallback(async () => {
-        // ✅ CORREÇÃO: Fazer JOIN com publishers
+
         const { data, error } = await supabase
             .from('boardgames')
             .select(`
@@ -44,7 +44,6 @@ const supabase = createClient();
             .order('name');
 
         if (!error && data) {
-            // ✅ Type assertion para garantir tipagem correta
             setGames(data as unknown as Game[]);
         }
         setLoading(false);
@@ -70,20 +69,15 @@ const supabase = createClient();
         }
     };
 
-    // ✅ Função para pegar o nome da editora (prioriza o novo sistema)
     const getPublisherName = (game: Game): string | undefined => {
-        // Prioriza o nome da editora via JOIN (novo sistema)
         if (game.publishers) {
-            // Se for array, pega o primeiro elemento
             if (Array.isArray(game.publishers) && game.publishers.length > 0) {
                 return game.publishers[0].name;
             }
-            // Se for objeto único
             if (typeof game.publishers === 'object' && 'name' in game.publishers) {
                 return game.publishers.name;
             }
         }
-        // Fallback para o campo antigo (texto)
         return game.publisher;
     };
 
@@ -110,7 +104,7 @@ const supabase = createClient();
                 Gerenciamento de Jogos
             </div>
 
-            <div className="flex flex-col items-center rounded-lg border-1 p-2 gap-4 mb-4">
+            <div className="flex flex-col items-center rounded-lg border p-2 gap-4 mb-4">
                 <div className="flex gap-5 justify-center">
                     <Button
                         variant="outline"
@@ -140,7 +134,7 @@ const supabase = createClient();
                     className="flex items-center gap-2 bg-sejoga-azul-oficial hover:bg-blue-500"
                 >
                     <Plus className="w-4 h-4" />
-                    Cadastrar Novo Jogo
+                    Novo Jogo
                 </Button>
             </div>
 
@@ -157,12 +151,12 @@ const supabase = createClient();
                                 <div className="flex-1 min-w-0">
                                     <div className="flex flex-wrap items-baseline gap-x-2">
                                         <h3 className="font-semibold text-md">{game.name}</h3>
-                                        {publisherName && (
+                                        {/* {publisherName && (
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-gray-400">•</span>
                                                 <p className="text-sm text-gray-500 italic">{publisherName}</p>
                                             </div>
-                                        )}
+                                        )}*/}
                                     </div>
                                     <div className="flex gap-2 mt-1">
                                         {!game.active && (

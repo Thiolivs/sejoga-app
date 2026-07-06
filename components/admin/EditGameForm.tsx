@@ -58,7 +58,7 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: '',
-            publisher_id: undefined, // ✅ mudado
+            publisher_id: undefined, 
             year_received: undefined,
             year_release: undefined,
             players_min: undefined,
@@ -87,14 +87,14 @@ export function EditGameForm({ gameId, onSuccess, onCancel }: EditGameFormProps)
 
                 if (gameError) throw gameError;
 
-                // ✅ Extrair nome da editora se existir
+                // Extrair nome da editora se existir
                 const publisherData = game.publishers as { id: string; name: string } | null;
 
 
                 // Preencher formulário
                 form.reset({
                     name: game.name,
-                    publisher_id: game.publisher_id || undefined, // ✅ usar publisher_id
+                    publisher_id: game.publisher_id || undefined, // usar publisher_id
                     year_received: game.year_received || undefined,
                     year_release: game.year_release || undefined,
                     players_min: game.players_min || undefined,
