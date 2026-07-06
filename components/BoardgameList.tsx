@@ -47,16 +47,16 @@ export function BoardgameList() {
     const [showScrollTop, setShowScrollTop] = useState(false);
 
     useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
-        const handleScroll = () => {
-            setShowScrollTop(container.scrollTop > 300);
-        };
+    const handleScroll = () => {
+        setShowScrollTop(container.scrollTop > 300);
+    };
 
-        container.addEventListener('scroll', handleScroll);
-        return () => container.removeEventListener('scroll', handleScroll);
-    }, []);
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+}, [loading, userLoading, roleLoading, mechanicsLoading]);
 
     const scrollToTop = () => {
         scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
@@ -523,7 +523,7 @@ export function BoardgameList() {
                         <ArrowUp className="w-5 h-5" />
                     </button>
                 )}
-                
+
                 {/* Mensagem se não houver resultados */}
                 {filteredGames.length === 0 && (
                     <div className="text-center py-12 bg-gray-50 rounded-lg">
