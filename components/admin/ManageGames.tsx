@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { EditGameForm } from './EditGameForm';
 import { useRouter } from 'next/navigation';
 import { Plus } from 'lucide-react';
@@ -12,7 +13,7 @@ interface Game {
     name: string;
     publisher?: string; // campo antigo (texto)
     publisher_id?: string; // campo novo (UUID)
-    publishers?: { // ✅ Supabase retorna como array ou objeto único
+    publishers?: { // Supabase retorna como array ou objeto único
         name: string;
     }[] | { name: string; } | null;
     active: boolean;
@@ -23,7 +24,8 @@ export function ManageGames() {
     const [games, setGames] = useState<Game[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingGameId, setEditingGameId] = useState<string | null>(null);
-const supabase = createClient();
+    const [searchTerm, setSearchTerm] = useState('');
+    const supabase = createClient();
     const router = useRouter();
 
     const fetchGames = useCallback(async () => {
@@ -52,6 +54,13 @@ const supabase = createClient();
     useEffect(() => {
         fetchGames();
     }, [fetchGames]);
+
+    // Filtra os jogos por nome em tempo real
+    const filteredGames = useMemo(() => {
+        if (!searchTerm.trim()) return games;
+        const term = searchTerm.toLowerCase();
+        return games.filter((game) => game.name.toLowerCase().includes(term));
+    }, [games, searchTerm]);
 
     const handleDelete = async (gameId: string, gameName: string) => {
         if (!confirm(`Tem certeza que deseja deletar "${gameName}"?`)) return;
@@ -104,29 +113,31 @@ const supabase = createClient();
                 Gerenciamento de Jogos
             </div>
 
-            <div className="flex flex-col items-center rounded-lg border p-2 gap-4 mb-4">
-                <div className="flex gap-5 justify-center">
-                    <Button
-                        variant="outline"
-                        onClick={() => router.push('/user-app/administration/manage-publishers')}
-                        className="flex items-center gap-2"
+            {/* Campo de busca */}
+            <div className="relative">
+                <Input
+                    type="text"
+                    placeholder="🔍 Buscar jogos..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pr-10"
+                />
+                {searchTerm && (
+                    <button
+                        onClick={() => setSearchTerm('')}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
-                        Gerenciar Editoras
-                    </Button>
-                    <Button
-                        variant="outline"
-                        onClick={() => router.push('/user-app/administration/manage-mechanics')}
-                        className="flex items-center gap-2"
-                    >
-                        Gerenciar Tags
-                    </Button>
-                </div>
+                        ✕
+                    </button>
+                )}
             </div>
 
             {/* 🔹 Linha com título e botão lado a lado */}
             <div className="flex items-center justify-between mb-6 mt-8 ">
                 <h2 className="text-sm font-semibold">
-                    Todos os Jogos ({games.length})
+                    {searchTerm
+                        ? `${filteredGames.length} de ${games.length} jogos`
+                        : `Todos os Jogos (${games.length})`}
                 </h2>
 
                 <Button
@@ -139,7 +150,7 @@ const supabase = createClient();
             </div>
 
             <div className="grid gap-2">
-                {games.map((game) => {
+                {filteredGames.map((game) => {
                     const publisherName = getPublisherName(game);
 
                     return (
@@ -151,12 +162,6 @@ const supabase = createClient();
                                 <div className="flex-1 min-w-0">
                                     <div className="flex flex-wrap items-baseline gap-x-2">
                                         <h3 className="font-semibold text-md">{game.name}</h3>
-                                        {/* {publisherName && (
-                                            <div className="flex items-baseline gap-2">
-                                                <span className="text-gray-400">•</span>
-                                                <p className="text-sm text-gray-500 italic">{publisherName}</p>
-                                            </div>
-                                        )}*/}
                                     </div>
                                     <div className="flex gap-2 mt-1">
                                         {!game.active && (
@@ -189,6 +194,12 @@ const supabase = createClient();
                         </div>
                     );
                 })}
+
+                {filteredGames.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                        Nenhum jogo encontrado para &quot;{searchTerm}&quot;
+                    </div>
+                )}
             </div>
         </div>
     );
