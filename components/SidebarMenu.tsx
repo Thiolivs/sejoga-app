@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { useAndroidModern } from '@/hooks/useAndroidModern';
 import {
@@ -19,6 +19,7 @@ import {
     ClipboardList,
     Calendar,
     Check,
+    Settings,
     LogOut,
 } from 'lucide-react';
 
@@ -37,19 +38,25 @@ export function SidebarMenu({
 }: SidebarMenuProps) {
     const [open, setOpen] = useState(false);
     const router = useRouter();
+    const pathname = usePathname();
     const supabase = createClient();
     const isAndroidModern = useAndroidModern();
 
     const canSeeRestricted = isMonitor || isAdmin;
 
-    // Troca de aba dentro do /user-app (dispara evento que o page.tsx escuta)
+    // Troca de aba dentro do /user-app.
+    // Se ja estamos na tela das tabs, dispara o evento (troca na hora).
+    // Se estamos em outra pagina, navega para /user-app; o page.tsx le a aba do localStorage ao montar.
     const goToTab = (tab: Tab) => {
         localStorage.setItem('userapp-active-tab', tab);
-        window.dispatchEvent(new CustomEvent('sejoga-change-tab', { detail: tab }));
+        if (pathname === '/user-app') {
+            window.dispatchEvent(new CustomEvent('sejoga-change-tab', { detail: tab }));
+        } else {
+            router.push('/user-app');
+        }
         setOpen(false);
     };
 
-    // Navegação para páginas com rota própria
     const handleNavigation = (path: string) => {
         router.push(path);
         setOpen(false);
@@ -68,7 +75,6 @@ export function SidebarMenu({
         }
     };
 
-    // Ajusta posição do sidebar no Android 16
     useEffect(() => {
         if (open && isAndroidModern) {
             const timeoutId = setTimeout(() => {
@@ -95,6 +101,7 @@ export function SidebarMenu({
     }, [open]);
 
     const itemBase = "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-gray-100 text-gray-700";
+    const itemAdmin = "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-red-50 text-gray-700";
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -120,7 +127,7 @@ export function SidebarMenu({
                         <span className="font-medium">Meu SeJoga</span>
                     </button>
 
-                    {/* Só monitores/admins: Registros e Treinamentos */}
+                    {/* Monitores e admins: Registros e Treinamentos */}
                     {canSeeRestricted && <div className="border-t my-2" />}
 
                     {canSeeRestricted && (
@@ -137,14 +144,26 @@ export function SidebarMenu({
                         </button>
                     )}
 
-                    {/* Só monitores/admins: Seleção para Eventos (página própria) */}
-                    {canSeeRestricted && (
+                    {/* Só admins: Seleção para Eventos e Gerenciar */}
+                    {isAdmin && <div className="border-t my-2" />}
+
+                    {isAdmin && (
                         <button
                             onClick={() => handleNavigation('/user-app/administration/event-selection')}
-                            className={itemBase}
+                            className={itemAdmin}
                         >
                             <Check className="w-5 h-5" />
                             <span className="font-medium">Seleção para Eventos</span>
+                        </button>
+                    )}
+
+                    {isAdmin && (
+                        <button
+                            onClick={() => handleNavigation('/user-app/administration')}
+                            className={itemAdmin}
+                        >
+                            <Settings className="w-5 h-5" />
+                            <span className="font-medium">Gerenciar</span>
                         </button>
                     )}
 
