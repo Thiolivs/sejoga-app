@@ -9,28 +9,31 @@ import dynamic from 'next/dynamic';
 
 type Tab = 'training' | 'profile' | 'jogos' | 'register' | 'statistics';
 
+const VALID_TABS: Tab[] = ['training', 'profile', 'jogos', 'register', 'statistics'];
+
 function UserAppComponent() {
     const [activeTab, setActiveTab] = useState<Tab>('jogos');
     const { isAdmin, isMonitor } = useUserRole();
 
+    // Ao montar: sempre le a aba salva no localStorage (independente da sessao).
+    // Isso garante que, ao voltar de uma pagina externa, caia na aba certa.
     useEffect(() => {
-        const isActiveSession = sessionStorage.getItem('sejoga-session-active');
+        const savedTab = localStorage.getItem('userapp-active-tab');
+        if (savedTab && VALID_TABS.includes(savedTab as Tab)) {
+            setActiveTab(savedTab as Tab);
+        }
 
-        if (isActiveSession === 'true') {
-            const savedTab = localStorage.getItem('userapp-active-tab');
-            if (savedTab && ['training', 'profile', 'jogos', 'register', 'statistics'].includes(savedTab)) {
-                setActiveTab(savedTab as Tab);
-            }
-        } else {
+        // Marca a sessao como ativa (usado pela limpeza no unmount)
+        if (sessionStorage.getItem('sejoga-session-active') !== 'true') {
             sessionStorage.setItem('sejoga-session-active', 'true');
         }
     }, []);
 
-    // Escuta pedidos de troca de aba vindos do menu lateral
+    // Escuta pedidos de troca de aba vindos do menu lateral (quando ja estamos aqui)
     useEffect(() => {
         const handleTabRequest = (e: Event) => {
             const tab = (e as CustomEvent<Tab>).detail;
-            if (['training', 'profile', 'jogos', 'register', 'statistics'].includes(tab)) {
+            if (VALID_TABS.includes(tab)) {
                 setActiveTab(tab);
                 localStorage.setItem('userapp-active-tab', tab);
             }
@@ -44,13 +47,6 @@ function UserAppComponent() {
         setActiveTab(tab);
         localStorage.setItem('userapp-active-tab', tab);
     };
-
-    useEffect(() => {
-        return () => {
-            localStorage.removeItem('userapp-active-tab');
-            sessionStorage.removeItem('sejoga-session-active');
-        };
-    }, []);
 
     return (
         <div className="flex flex-col h-screen overflow-hidden" style={{ height: '100dvh' }}>
