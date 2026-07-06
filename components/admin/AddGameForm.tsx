@@ -21,7 +21,7 @@ import { PublisherAutocomplete } from '@/components/PublisherAutocomplete'; // �
 // Schema corrigido
 const formSchema = z.object({
     name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-    publisher_id: z.string().optional(), // ✅ mudado de publisher para publisher_id
+    publisher_id: z.string().min(1, 'Selecione uma editora da lista'),
     year_received: z.number().int().positive().optional(),
     year_release: z.number().int().positive().optional(),
     players_min: z.number().int().positive().optional(),
@@ -51,7 +51,7 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: '',
-            publisher_id: undefined, // ✅ mudado
+            publisher_id: '',
             year_received: undefined,
             year_release: undefined,
             players_min: undefined,

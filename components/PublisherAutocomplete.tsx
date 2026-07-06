@@ -27,7 +27,7 @@ export function PublisherAutocomplete({
     const [showDropdown, setShowDropdown] = useState(false);
     const [loading, setLoading] = useState(false);
     const [selectedPublisher, setSelectedPublisher] = useState<string>('');
-const supabase = createClient();
+    const supabase = createClient();
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [isInitialized, setIsInitialized] = useState(false);
 
@@ -109,9 +109,7 @@ const supabase = createClient();
                 onChange={(e) => {
                     setSearch(e.target.value);
                     setSelectedPublisher('');
-                    if (!e.target.value) {
-                        onChange('', '');
-                    }
+                    onChange('', '');
                 }}
                 onFocus={() => {
                     if (!selectedPublisher && search.length >= 2) {
