@@ -164,6 +164,19 @@ export function useBoardgames(userId?: string) {
         }
     };
 
+    const updateSingleGame = (
+        boardgameId: string,
+        updates: Partial<BoardgameWithTeachers>
+    ) => {
+        setBoardgames(prev =>
+            prev.map(game =>
+                game.id === boardgameId
+                    ? { ...game, ...updates }
+                    : game
+            )
+        );
+    };
+
     return {
         boardgames,
         loading,
@@ -171,5 +184,6 @@ export function useBoardgames(userId?: string) {
         toggleTeach,
         getGameTeachers,
         refetch: fetchBoardgames,
+        updateSingleGame,
     };
 }

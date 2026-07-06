@@ -20,7 +20,7 @@ interface Publisher {
 export function BoardgameList() {
     const { user, loading: userLoading } = useUser();
     const { isAdmin, isMonitor, loading: roleLoading } = useUserRole();
-    const { boardgames, loading, error, toggleTeach, getGameTeachers, refetch } = useBoardgames(user?.id);
+    const { boardgames, loading, error, toggleTeach, getGameTeachers, refetch, updateSingleGame } = useBoardgames(user?.id);
     const { borrowGame, returnGame, getLoanInfo, refetchLoans } = useGameLoans();
     const { mechanics, loading: mechanicsLoading } = useGameMechanics();
 
@@ -47,16 +47,16 @@ export function BoardgameList() {
     const [showScrollTop, setShowScrollTop] = useState(false);
 
     useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
+        const container = scrollContainerRef.current;
+        if (!container) return;
 
-    const handleScroll = () => {
-        setShowScrollTop(container.scrollTop > 300);
-    };
+        const handleScroll = () => {
+            setShowScrollTop(container.scrollTop > 300);
+        };
 
-    container.addEventListener('scroll', handleScroll);
-    return () => container.removeEventListener('scroll', handleScroll);
-}, [loading, userLoading, roleLoading, mechanicsLoading]);
+        container.addEventListener('scroll', handleScroll);
+        return () => container.removeEventListener('scroll', handleScroll);
+    }, [loading, userLoading, roleLoading, mechanicsLoading]);
 
     const scrollToTop = () => {
         scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
@@ -182,7 +182,13 @@ export function BoardgameList() {
         const result = await borrowGame(boardgameId, user.id);
         if (result.success) {
             await refetchLoans?.();
-            await refetch();
+
+            // Atualiza só este jogo no estado local (sem recarregar a lista)
+            updateSingleGame(boardgameId, {
+                isLoaned: true,
+                loanedBy: user.id,
+                borrowedAt: new Date().toISOString(),
+            });
 
             if (selectedGame?.id === boardgameId) {
                 const { borrower: gameBorrower } = await getLoanInfo(boardgameId);
@@ -195,7 +201,13 @@ export function BoardgameList() {
         const result = await returnGame(boardgameId);
         if (result.success) {
             await refetchLoans?.();
-            await refetch();
+
+            // Atualiza só este jogo no estado local (sem recarregar a lista)
+            updateSingleGame(boardgameId, {
+                isLoaned: false,
+                loanedBy: undefined,
+                borrowedAt: undefined,
+            });
 
             if (selectedGame?.id === boardgameId) {
                 setBorrower(null);
