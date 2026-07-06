@@ -15,13 +15,14 @@ import { Button } from '@/components/ui/button';
 import {
     Menu,
     Dices,
-    User,
-    BarChart,
-    Settings,
-    Users,
+    Star,
+    ClipboardList,
+    Calendar,
+    Check,
     LogOut,
-    Check
 } from 'lucide-react';
+
+type Tab = 'training' | 'profile' | 'jogos' | 'register' | 'statistics';
 
 interface SidebarMenuProps {
     isAdmin?: boolean;
@@ -39,6 +40,16 @@ export function SidebarMenu({
     const supabase = createClient();
     const isAndroidModern = useAndroidModern();
 
+    const canSeeRestricted = isMonitor || isAdmin;
+
+    // Troca de aba dentro do /user-app (dispara evento que o page.tsx escuta)
+    const goToTab = (tab: Tab) => {
+        localStorage.setItem('userapp-active-tab', tab);
+        window.dispatchEvent(new CustomEvent('sejoga-change-tab', { detail: tab }));
+        setOpen(false);
+    };
+
+    // Navegação para páginas com rota própria
     const handleNavigation = (path: string) => {
         router.push(path);
         setOpen(false);
@@ -57,7 +68,7 @@ export function SidebarMenu({
         }
     };
 
-    // ✅ Ajusta posição do sidebar no Android 16
+    // Ajusta posição do sidebar no Android 16
     useEffect(() => {
         if (open && isAndroidModern) {
             const timeoutId = setTimeout(() => {
@@ -74,17 +85,16 @@ export function SidebarMenu({
 
     useEffect(() => {
         if (open) {
-            // Quando abre, remove pointer-events: none após a animação
             const timeoutId = setTimeout(() => {
                 document.body.style.pointerEvents = 'auto';
             }, 300);
-
             return () => clearTimeout(timeoutId);
         } else {
-            // Quando fecha, garante que está 'auto'
             document.body.style.pointerEvents = 'auto';
         }
     }, [open]);
+
+    const itemBase = "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-gray-100 text-gray-700";
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -99,81 +109,42 @@ export function SidebarMenu({
                 </SheetHeader>
 
                 <nav className="flex flex-col gap-2 mt-6">
-                    <button
-                        onClick={() => handleNavigation('/user-app')}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'user-app'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'hover:bg-gray-100 text-gray-700'
-                            }`}
-                    >
+                    {/* Todos veem: Acervo e Meu SeJoga */}
+                    <button onClick={() => goToTab('jogos')} className={itemBase}>
                         <Dices className="w-5 h-5" />
                         <span className="font-medium">Acervo</span>
                     </button>
 
-                    <button
-                        onClick={() => handleNavigation('/user-app/profile')}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'perfil'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'hover:bg-gray-100 text-gray-700'
-                            }`}
-                    >
-                        <User className="w-5 h-5" />
-                        <span className="font-medium">Perfil</span>
+                    <button onClick={() => goToTab('profile')} className={itemBase}>
+                        <Star className="w-5 h-5" />
+                        <span className="font-medium">Meu SeJoga</span>
                     </button>
 
-                    {(isMonitor || isAdmin) && <div className="border-t my-2" />}
+                    {/* Só monitores/admins: Registros e Treinamentos */}
+                    {canSeeRestricted && <div className="border-t my-2" />}
 
-                    {(isMonitor || isAdmin) && (
+                    {canSeeRestricted && (
+                        <button onClick={() => goToTab('register')} className={itemBase}>
+                            <ClipboardList className="w-5 h-5" />
+                            <span className="font-medium">Registros</span>
+                        </button>
+                    )}
+
+                    {canSeeRestricted && (
+                        <button onClick={() => goToTab('training')} className={itemBase}>
+                            <Calendar className="w-5 h-5" />
+                            <span className="font-medium">Treinamentos</span>
+                        </button>
+                    )}
+
+                    {/* Só monitores/admins: Seleção para Eventos (página própria) */}
+                    {canSeeRestricted && (
                         <button
                             onClick={() => handleNavigation('/user-app/administration/event-selection')}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'event-selection'
-                                ? 'bg-blue-100 text-blue-700'
-                                : 'hover:bg-gray-100 text-gray-700'
-                                }`}
+                            className={itemBase}
                         >
                             <Check className="w-5 h-5" />
                             <span className="font-medium">Seleção para Eventos</span>
-                        </button>
-                    )}
-
-                    {(isMonitor || isAdmin) && (
-                        <button
-                            onClick={() => handleNavigation('/user-app/reports')}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'reports'
-                                ? 'bg-blue-100 text-blue-700'
-                                : 'hover:bg-gray-100 text-gray-700'
-                                }`}
-                        >
-                            <BarChart className="w-5 h-5" />
-                            <span className="font-medium">Relatórios</span>
-                        </button>
-                    )}
-
-                    {isAdmin && <div className="border-t my-2" />}
-
-                    {isAdmin && (
-                        <button
-                            onClick={() => handleNavigation('/user-app/administration')}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'manage'
-                                ? 'bg-red-100 text-red-700'
-                                : 'hover:bg-gray-100 text-gray-700'
-                                }`}
-                        >
-                            <Settings className="w-5 h-5" />
-                            <span className="font-medium">Gerenciar</span>
-                        </button>
-                    )}
-
-                    {isAdmin && (
-                        <button
-                            onClick={() => handleNavigation('/user-app/administration/manage-users')}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${currentPage === 'users'
-                                ? 'bg-red-100 text-red-700'
-                                : 'hover:bg-gray-100 text-gray-700'
-                                }`}
-                        >
-                            <Users className="w-5 h-5" />
-                            <span className="font-medium">Usuários</span>
                         </button>
                     )}
 

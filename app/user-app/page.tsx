@@ -26,6 +26,20 @@ function UserAppComponent() {
         }
     }, []);
 
+    // Escuta pedidos de troca de aba vindos do menu lateral
+    useEffect(() => {
+        const handleTabRequest = (e: Event) => {
+            const tab = (e as CustomEvent<Tab>).detail;
+            if (['training', 'profile', 'jogos', 'register', 'statistics'].includes(tab)) {
+                setActiveTab(tab);
+                localStorage.setItem('userapp-active-tab', tab);
+            }
+        };
+
+        window.addEventListener('sejoga-change-tab', handleTabRequest);
+        return () => window.removeEventListener('sejoga-change-tab', handleTabRequest);
+    }, []);
+
     const handleTabChange = (tab: Tab) => {
         setActiveTab(tab);
         localStorage.setItem('userapp-active-tab', tab);
