@@ -16,15 +16,21 @@ export function useBoardgames(userId?: string) {
 
     // Realtime: escuta mudanças em game_loans e atualiza os cards em tempo real
     useEffect(() => {
-        if (!userId) {
-            console.log('⏳ Realtime aguardando userId...');
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let cancelado = false;
+
+    const iniciar = async () => {
+        // Garante que há sessão antes de inscrever
+        const { data } = await supabase.auth.getSession();
+        if (!data.session || cancelado) {
+            console.log('⏳ Sem sessão para Realtime ainda');
             return;
         }
 
-        console.log('✅ Inscrevendo Realtime com userId:', userId);
+        console.log('✅ Inscrevendo Realtime');
 
-        const channel = supabase
-            .channel('game_loans_changes')
+        channel = supabase
+            .channel('game_loans_realtime')
             .on(
                 'postgres_changes',
                 { event: '*', schema: 'public', table: 'game_loans' },
@@ -74,11 +80,15 @@ export function useBoardgames(userId?: string) {
             .subscribe((status) => {
                 console.log('📡 Status do canal Realtime:', status);
             });
+    };
 
-        return () => {
-            supabase.removeChannel(channel);
-        };
-    }, [userId]);
+    iniciar();
+
+    return () => {
+        cancelado = true;
+        if (channel) supabase.removeChannel(channel);
+    };
+}, []);
 
     const fetchBoardgames = async () => {
         try {
