@@ -140,12 +140,20 @@ export function useGameLoans() {
     };
 
     const getLoanInfo = async (boardgameId: string): Promise<{ loan: GameLoan | null; borrower: Profile | null }> => {
-        const loan = loans.get(boardgameId);
-        if (!loan) {
-            return { loan: null, borrower: null };
-        }
-
         try {
+            // Busca o empréstimo ativo direto do banco (não do Map em memória)
+            const { data: loan, error: loanError } = await supabase
+                .from('game_loans')
+                .select('*')
+                .eq('boardgame_id', boardgameId)
+                .is('returned_at', null)
+                .maybeSingle();
+
+            if (loanError) throw loanError;
+            if (!loan) {
+                return { loan: null, borrower: null };
+            }
+
             const { data: borrower, error } = await supabase
                 .from('profiles')
                 .select('id, first_name, last_name, email, role')
@@ -157,7 +165,7 @@ export function useGameLoans() {
             return { loan, borrower };
         } catch (err) {
             console.error('Erro ao buscar info do empréstimo:', err);
-            return { loan, borrower: null };
+            return { loan: null, borrower: null };
         }
     };
 
