@@ -16,7 +16,7 @@ export function useBoardgames(userId?: string) {
 
     // Realtime: escuta mudanças em game_loans e atualiza os cards em tempo real
     useEffect(() => {
-        console.log('✅ useEffect Realtime EXECUTOU');
+        console.log('✅ useEffect Realtime EXECUTOU, userId:', userId);
 
         const channel = supabase
             .channel('game_loans_changes')
@@ -73,7 +73,7 @@ export function useBoardgames(userId?: string) {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, []);
+    }, [userId]);
 
     const fetchBoardgames = async () => {
         try {
