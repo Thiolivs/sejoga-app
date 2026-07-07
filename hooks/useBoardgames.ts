@@ -14,6 +14,79 @@ export function useBoardgames(userId?: string) {
         fetchBoardgames();
     }, [userId]);
 
+    // Realtime: escuta mudanças em game_loans e atualiza os cards em tempo real
+    useEffect(() => {
+        const channel = supabase
+            .channel('game_loans_changes')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'game_loans' },
+                (payload) => {
+                    const novo = payload.new as {
+                        boardgame_id?: string;
+                        user_id?: string;
+                        borrowed_at?: string;
+                        returned_at?: string | null;
+                    } | null;
+                    const antigo = payload.old as { boardgame_id?: string } | null;
+
+                    // INSERT: alguém pegou um jogo emprestado
+                    if (payload.eventType === 'INSERT' && novo?.boardgame_id) {
+                        setBoardgames(prev =>
+                            prev.map(game =>
+                                game.id === novo.boardgame_id
+                                    ? {
+                                        ...game,
+                                        isLoaned: true,
+                                        loanedBy: novo.user_id,
+                                        borrowedAt: novo.borrowed_at,
+                                    }
+                                    : game
+                            )
+                        );
+                    }
+
+                    // UPDATE: normalmente a devolução (returned_at preenchido)
+                    if (payload.eventType === 'UPDATE' && novo?.boardgame_id) {
+                        const foiDevolvido = !!novo.returned_at;
+                        setBoardgames(prev =>
+                            prev.map(game =>
+                                game.id === novo.boardgame_id
+                                    ? {
+                                        ...game,
+                                        isLoaned: !foiDevolvido,
+                                        loanedBy: foiDevolvido ? undefined : novo.user_id,
+                                        borrowedAt: foiDevolvido ? undefined : novo.borrowed_at,
+                                    }
+                                    : game
+                            )
+                        );
+                    }
+
+                    // DELETE: empréstimo removido -> jogo volta a disponível
+                    if (payload.eventType === 'DELETE' && antigo?.boardgame_id) {
+                        setBoardgames(prev =>
+                            prev.map(game =>
+                                game.id === antigo.boardgame_id
+                                    ? {
+                                        ...game,
+                                        isLoaned: false,
+                                        loanedBy: undefined,
+                                        borrowedAt: undefined,
+                                    }
+                                    : game
+                            )
+                        );
+                    }
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, []);
+
     const fetchBoardgames = async () => {
         try {
             setLoading(true);
