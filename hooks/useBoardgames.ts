@@ -22,6 +22,8 @@ export function useBoardgames(userId?: string) {
                 'postgres_changes',
                 { event: '*', schema: 'public', table: 'game_loans' },
                 (payload) => {
+                    console.log('🔔 Realtime evento:', payload.eventType, payload);
+
                     const novo = payload.new as {
                         boardgame_id?: string;
                         user_id?: string;
@@ -30,57 +32,41 @@ export function useBoardgames(userId?: string) {
                     } | null;
                     const antigo = payload.old as { boardgame_id?: string } | null;
 
-                    // INSERT: alguém pegou um jogo emprestado
                     if (payload.eventType === 'INSERT' && novo?.boardgame_id) {
                         setBoardgames(prev =>
                             prev.map(game =>
                                 game.id === novo.boardgame_id
-                                    ? {
-                                        ...game,
-                                        isLoaned: true,
-                                        loanedBy: novo.user_id,
-                                        borrowedAt: novo.borrowed_at,
-                                    }
+                                    ? { ...game, isLoaned: true, loanedBy: novo.user_id, borrowedAt: novo.borrowed_at }
                                     : game
                             )
                         );
                     }
 
-                    // UPDATE: normalmente a devolução (returned_at preenchido)
                     if (payload.eventType === 'UPDATE' && novo?.boardgame_id) {
                         const foiDevolvido = !!novo.returned_at;
                         setBoardgames(prev =>
                             prev.map(game =>
                                 game.id === novo.boardgame_id
-                                    ? {
-                                        ...game,
-                                        isLoaned: !foiDevolvido,
-                                        loanedBy: foiDevolvido ? undefined : novo.user_id,
-                                        borrowedAt: foiDevolvido ? undefined : novo.borrowed_at,
-                                    }
+                                    ? { ...game, isLoaned: !foiDevolvido, loanedBy: foiDevolvido ? undefined : novo.user_id, borrowedAt: foiDevolvido ? undefined : novo.borrowed_at }
                                     : game
                             )
                         );
                     }
 
-                    // DELETE: empréstimo removido -> jogo volta a disponível
                     if (payload.eventType === 'DELETE' && antigo?.boardgame_id) {
                         setBoardgames(prev =>
                             prev.map(game =>
                                 game.id === antigo.boardgame_id
-                                    ? {
-                                        ...game,
-                                        isLoaned: false,
-                                        loanedBy: undefined,
-                                        borrowedAt: undefined,
-                                    }
+                                    ? { ...game, isLoaned: false, loanedBy: undefined, borrowedAt: undefined }
                                     : game
                             )
                         );
                     }
                 }
             )
-            .subscribe();
+            .subscribe((status) => {
+                console.log('📡 Status do canal Realtime:', status);
+            });
 
         return () => {
             supabase.removeChannel(channel);
