@@ -15,17 +15,21 @@ function UserAppComponent() {
     const [activeTab, setActiveTab] = useState<Tab>('jogos');
     const { isAdmin, isMonitor } = useUserRole();
 
-    // Ao montar: sempre le a aba salva no localStorage (independente da sessao).
-    // Isso garante que, ao voltar de uma pagina externa, caia na aba certa.
-    useEffect(() => {
-        const savedTab = localStorage.getItem('userapp-active-tab');
-        if (savedTab && VALID_TABS.includes(savedTab as Tab)) {
-            setActiveTab(savedTab as Tab);
-        }
 
-        // Marca a sessao como ativa (usado pela limpeza no unmount)
-        if (sessionStorage.getItem('sejoga-session-active') !== 'true') {
+    useEffect(() => {
+        const sessaoAtiva = sessionStorage.getItem('sejoga-session-active');
+
+        if (sessaoAtiva === 'true') {
+            // Navegação interna (app já estava aberto): respeita a aba salva
+            const savedTab = localStorage.getItem('userapp-active-tab');
+            if (savedTab && VALID_TABS.includes(savedTab as Tab)) {
+                setActiveTab(savedTab as Tab);
+            }
+        } else {
+            // App recém-aberto: começa no acervo
             sessionStorage.setItem('sejoga-session-active', 'true');
+            setActiveTab('jogos');
+            localStorage.setItem('userapp-active-tab', 'jogos');
         }
     }, []);
 
