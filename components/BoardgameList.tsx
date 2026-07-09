@@ -558,7 +558,7 @@ export function BoardgameList() {
                     >
                         <div className="flex gap-2">
                             {/* Conteúdo principal - esquerda */}
-                            <div className="flex-1 p-3">
+                            <div className="flex-1 p-2.5">
                                 {/* LINHA 1 - Nome + Tag */}
                                 <div
                                     className="flex items-center justify-between gap-4 cursor-pointer"
@@ -571,7 +571,7 @@ export function BoardgameList() {
 
                                 {/* LINHA 2 - Checkbox */}
                                 {isMonitor && (
-                                    <div className="flex items-center gap-2 text-left pt-1.5 border-t-2 border-gray-100 mt-1.5">
+                                    <div className="flex items-center gap-2 text-left pt-2 border-t-2 border-gray-100 ">
                                         <input
                                             type="checkbox"
                                             id={`teach-${game.id}`}
@@ -596,23 +596,23 @@ export function BoardgameList() {
                                         game.loanedBy === user?.id ? (
                                             <button
                                                 onClick={() => handleReturn(game.id)}
-                                                className="w-22 h-full py-4 bg-green-50 text-sejoga-verde-oficial border-l-2 border-sejoga-verde-oficial hover:bg-green-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
+                                                className="w-22 h-full py-2 bg-green-50 text-sejoga-verde-oficial border-l-2 border-sejoga-verde-oficial hover:bg-green-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
                                             >
-                                                <span className="text-base">⬅️</span>
+                                                <span className="text-xl">⬅️</span>
                                                 <span>Devolver</span>
                                             </button>
                                         ) : (
-                                            <div className="w-22 h-full py-4 bg-gray-100 text-gray-500 border-l-2 border-gray-300 text-xs font-medium cursor-not-allowed flex flex-col items-center justify-center gap-1 rounded-r-lg">
-                                                <span className="text-lg">⚔️</span>
+                                            <div className="w-22 h-full py-2 bg-gray-100 text-gray-500 border-l-2 border-gray-300 text-xs font-medium cursor-not-allowed flex flex-col items-center justify-center gap-1 rounded-r-lg">
+                                                <span className="text-xl">⚔️</span>
                                                 <span className="text-center">Indisponível</span>
                                             </div>
                                         )
                                     ) : (
                                         <button
                                             onClick={() => handleBorrow(game.id)}
-                                            className="w-22 h-full py-4 bg-blue-50 text-sejoga-azul-oficial border-l-2 border-sejoga-azul-oficial hover:bg-blue-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
+                                            className="w-22 h-full py-2 bg-blue-50 text-sejoga-azul-oficial border-l-2 border-sejoga-azul-oficial hover:bg-blue-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
                                         >
-                                            <span className="text-base">➡️</span>
+                                            <span className="text-xl">➡️</span>
                                             <span className="text-center leading-tight">
                                                 Pegar<br />Emprestado
                                             </span>
@@ -671,7 +671,6 @@ export function BoardgameList() {
                             )}
 
                             <div>
-                                <h4 className="font-semibold mb-2">Informações do Jogo:</h4>
                                 <div className="grid grid-cols-2 text-sm">
                                     {selectedGame.publisher && (
                                         <>
