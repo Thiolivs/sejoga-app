@@ -98,7 +98,7 @@ export function TrainingSession() {
                     'postgres_changes',
                     { event: '*', schema: 'public', table: 'training_availability' },
                     async (payload) => {
-                        console.log('🔔 Treino evento:', payload.eventType, 'new:', payload.new, 'old:', payload.old);
+                        console.log('🔔 Treino evento:', payload.eventType, 'old:', payload.old);
 
                         const novo = payload.new as { training_id?: string } | null;
                         const antigo = payload.old as { training_id?: string } | null;
