@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTrainings } from '@/hooks/useTrainings';
 import { useUser } from '@/hooks/useUser';
@@ -54,6 +54,12 @@ export function TrainingSession() {
     } = useTrainings();
 
     const [availabilities, setAvailabilities] = useState<Record<string, TrainingAvailabilityWithProfile[]>>({});
+    const availabilitiesRef = useRef<Record<string, TrainingAvailabilityWithProfile[]>>({});
+
+    useEffect(() => {
+        availabilitiesRef.current = availabilities;
+    }, [availabilities]);
+    
     const [cycleUnavailabilities, setCycleUnavailabilities] = useState<Record<string, boolean>>({});
     const [unavailableUsers, setUnavailableUsers] = useState<Record<string, CycleUnavailabilityWithProfile[]>>({});
     const [expandedTrainings, setExpandedTrainings] = useState<Record<string, boolean>>({}); // ✅ NOVO
@@ -98,19 +104,22 @@ export function TrainingSession() {
                     'postgres_changes',
                     { event: '*', schema: 'public', table: 'training_availability' },
                     async (payload) => {
-                        console.log('🔔 Treino evento:', payload.eventType, 'old:', payload.old);
-
                         const novo = payload.new as { training_id?: string } | null;
                         const antigo = payload.old as { training_id?: string } | null;
                         const trainingId = novo?.training_id || antigo?.training_id;
 
-                        if (!trainingId) {
-                            console.log('⚠️ Sem training_id no evento');
-                            return;
+                        if (trainingId) {
+                            // INSERT (ou DELETE com FULL): atualiza só o treino afetado
+                            const atualizado = await getTrainingAvailability(trainingId);
+                            setAvailabilities(prev => ({ ...prev, [trainingId]: atualizado }));
+                        } else {
+                            // DELETE sem training_id: rebusca todos os treinos carregados
+                            const ids = Object.keys(availabilitiesRef.current);
+                            for (const tid of ids) {
+                                const atualizado = await getTrainingAvailability(tid);
+                                setAvailabilities(prev => ({ ...prev, [tid]: atualizado }));
+                            }
                         }
-
-                        const atualizado = await getTrainingAvailability(trainingId);
-                        setAvailabilities(prev => ({ ...prev, [trainingId]: atualizado }));
                     }
                 )
                 .subscribe();
