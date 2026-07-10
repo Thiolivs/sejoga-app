@@ -529,7 +529,7 @@ export function BoardgameList() {
                 {showScrollTop && (
                     <button
                         onClick={scrollToTop}
-                        className="fixed bottom-12 right-8 z-40 bg-sejoga-azul-oficial text-white rounded-full p-3 shadow-lg hover:bg-blue-500 transition-opacity"
+                        className="fixed bottom-24 right-4 z-40 bg-sejoga-azul-oficial text-white rounded-full p-3 shadow-lg hover:bg-blue-500 transition-opacity"
                         aria-label="Voltar ao topo"
                     >
                         <ArrowUp className="w-5 h-5" />
