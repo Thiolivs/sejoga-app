@@ -82,6 +82,45 @@ export function TrainingSession() {
         }
     }, [cycles.length]);
 
+    // Realtime: disponibilidade de treinos aparece para todos em tempo real
+    useEffect(() => {
+        const supabase = createClient();
+        let channel: ReturnType<typeof supabase.channel> | null = null;
+        let cancelado = false;
+
+        const iniciar = async () => {
+            const { data } = await supabase.auth.getSession();
+            if (!data.session || cancelado) return;
+
+            channel = supabase
+                .channel('training_availability_realtime')
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'training_availability' },
+                    async (payload) => {
+                        // Descobre qual treino foi afetado (INSERT usa new, DELETE usa old)
+                        const novo = payload.new as { training_id?: string } | null;
+                        const antigo = payload.old as { training_id?: string } | null;
+                        const trainingId = novo?.training_id || antigo?.training_id;
+
+                        if (!trainingId) return;
+
+                        // Rebusca a disponibilidade daquele treino (traz os perfis/nomes)
+                        const atualizado = await getTrainingAvailability(trainingId);
+                        setAvailabilities(prev => ({ ...prev, [trainingId]: atualizado }));
+                    }
+                )
+                .subscribe();
+        };
+
+        iniciar();
+
+        return () => {
+            cancelado = true;
+            if (channel) supabase.removeChannel(channel);
+        };
+    }, [getTrainingAvailability]);
+
     const handleCycleUnavailability = async (cycleId: string, isCurrentlyUnavailable: boolean) => {
         if (!user) return;
 
