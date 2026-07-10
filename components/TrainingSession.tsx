@@ -98,14 +98,17 @@ export function TrainingSession() {
                     'postgres_changes',
                     { event: '*', schema: 'public', table: 'training_availability' },
                     async (payload) => {
-                        // Descobre qual treino foi afetado (INSERT usa new, DELETE usa old)
+                        console.log('🔔 Treino evento:', payload.eventType, 'new:', payload.new, 'old:', payload.old);
+
                         const novo = payload.new as { training_id?: string } | null;
                         const antigo = payload.old as { training_id?: string } | null;
                         const trainingId = novo?.training_id || antigo?.training_id;
 
-                        if (!trainingId) return;
+                        if (!trainingId) {
+                            console.log('⚠️ Sem training_id no evento');
+                            return;
+                        }
 
-                        // Rebusca a disponibilidade daquele treino (traz os perfis/nomes)
                         const atualizado = await getTrainingAvailability(trainingId);
                         setAvailabilities(prev => ({ ...prev, [trainingId]: atualizado }));
                     }
