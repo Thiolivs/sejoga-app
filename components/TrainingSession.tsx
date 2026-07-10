@@ -59,7 +59,13 @@ export function TrainingSession() {
     useEffect(() => {
         availabilitiesRef.current = availabilities;
     }, [availabilities]);
-    
+
+    const getTrainingAvailabilityRef = useRef(getTrainingAvailability);
+
+    useEffect(() => {
+        getTrainingAvailabilityRef.current = getTrainingAvailability;
+    }, [getTrainingAvailability]);
+
     const [cycleUnavailabilities, setCycleUnavailabilities] = useState<Record<string, boolean>>({});
     const [unavailableUsers, setUnavailableUsers] = useState<Record<string, CycleUnavailabilityWithProfile[]>>({});
     const [expandedTrainings, setExpandedTrainings] = useState<Record<string, boolean>>({}); // ✅ NOVO
@@ -108,21 +114,23 @@ export function TrainingSession() {
                         const antigo = payload.old as { training_id?: string } | null;
                         const trainingId = novo?.training_id || antigo?.training_id;
 
+                        const buscar = getTrainingAvailabilityRef.current;
+
                         if (trainingId) {
-                            // INSERT (ou DELETE com FULL): atualiza só o treino afetado
-                            const atualizado = await getTrainingAvailability(trainingId);
+                            const atualizado = await buscar(trainingId);
                             setAvailabilities(prev => ({ ...prev, [trainingId]: atualizado }));
                         } else {
-                            // DELETE sem training_id: rebusca todos os treinos carregados
                             const ids = Object.keys(availabilitiesRef.current);
                             for (const tid of ids) {
-                                const atualizado = await getTrainingAvailability(tid);
+                                const atualizado = await buscar(tid);
                                 setAvailabilities(prev => ({ ...prev, [tid]: atualizado }));
                             }
                         }
                     }
                 )
-                .subscribe();
+                .subscribe((status) => {
+                    console.log('📡 Status treino:', status);
+                });
         };
 
         iniciar();
@@ -131,7 +139,7 @@ export function TrainingSession() {
             cancelado = true;
             if (channel) supabase.removeChannel(channel);
         };
-    }, [getTrainingAvailability]);
+    }, []);
 
     const handleCycleUnavailability = async (cycleId: string, isCurrentlyUnavailable: boolean) => {
         if (!user) return;
