@@ -129,7 +129,7 @@ export function useTrainings() {
                 .select('id')
                 .eq('cycle_id', cycleId)
                 .eq('user_id', userId)
-                .single();
+                .maybeSingle();
 
             if (error && error.code !== 'PGRST116') throw error;
             return !!data;
