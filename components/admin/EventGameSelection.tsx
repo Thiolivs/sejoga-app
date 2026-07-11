@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
-import { ChevronDown, ChevronRight, LogOut, LogIn, X, Copy, Check } from 'lucide-react';
+import { ChevronDown, ChevronRight, LogOut, LogIn, X, Copy, Check, ArrowRight, ArrowLeft, ArrowBigRight, ArrowBigLeft, SquareArrowLeft, SquareArrowRight } from 'lucide-react';
 import {
     Select,
     SelectContent,
@@ -682,7 +682,7 @@ export function EventGameSelection() {
                                                                         : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
                                                                         }`}
                                                                 >
-                                                                    <LogOut className="w-3.5 h-3.5" />
+                                                                    <ArrowRight className="w-3.5 h-3.5" />
                                                                     Vai pro evento
                                                                 </button>
 
@@ -695,7 +695,7 @@ export function EventGameSelection() {
                                                                             : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
                                                                             }`}
                                                                     >
-                                                                        <LogIn className="w-3.5 h-3.5" />
+                                                                        <ArrowLeft className="w-3.5 h-3.5" />
                                                                         Voltou
                                                                     </button>
                                                                 )}
