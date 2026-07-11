@@ -333,7 +333,7 @@ export function EventGameSelection() {
                 .single();
 
             setLoanBorrower({
-                name: profile ? `${profile.first_name} ${profile.last_name}` : 'Desconhecido',
+                name: profile ? `${profile.first_name}` : 'Desconhecido',
                 since: loan.borrowed_at,
             });
         } catch (error) {
@@ -475,7 +475,7 @@ export function EventGameSelection() {
                                 <p className="text-2xl font-bold text-sejoga-verde-oficial">
                                     {foramCount}
                                 </p>
-                                <p className="text-xs text-gray-600">Foram</p>
+                                <p className="text-xs text-gray-600">Selecionados</p>
                             </button>
 
                             {/* Retornaram - clicável */}
@@ -707,7 +707,7 @@ export function EventGameSelection() {
 
                                                             <button
                                                                 onClick={() => openTeachersModal(game)}
-                                                                className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded font-semibold hover:bg-green-200 transition-colors"
+                                                                className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded font-semibold hover:bg-green-200 transition-colors"
                                                                 title="Ver quem sabe ensinar"
                                                             >
                                                                 👤{game.teacherCount}
@@ -715,7 +715,7 @@ export function EventGameSelection() {
                                                             {game.isLoaned && (
                                                                 <button
                                                                     onClick={() => openLoanModal(game)}
-                                                                    className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded font-semibold hover:bg-orange-200 transition-colors"
+                                                                    className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded font-semibold hover:bg-orange-200 transition-colors"
                                                                     title="Ver com quem está"
                                                                 >
                                                                     ⚔️ !
