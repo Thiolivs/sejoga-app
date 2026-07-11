@@ -129,7 +129,6 @@ export function TrainingSession() {
                     }
                 )
                 .subscribe((status) => {
-                    console.log('📡 Status treino:', status);
                 });
         };
 

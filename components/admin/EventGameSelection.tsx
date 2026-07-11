@@ -41,8 +41,8 @@ export function EventGameSelection() {
     const [saving, setSaving] = useState(false);
     
     // ✅ Estados de collapse
-    const [availableCollapsed, setAvailableCollapsed] = useState(false);
-    const [selectedCollapsed, setSelectedCollapsed] = useState(false);
+    const [availableCollapsed, setAvailableCollapsed] = useState(true);
+    const [selectedCollapsed, setSelectedCollapsed] = useState(true);
     const [unavailableCollapsed, setUnavailableCollapsed] = useState(true);
     
     const supabase = createClient();
@@ -87,7 +87,7 @@ export function EventGameSelection() {
             const { data: games, error: gamesError } = await supabase
                 .from('boardgames')
                 .select('id, name, publisher, active, copies')
-                .order('name');
+                .order('publisher');
 
             if (gamesError) throw gamesError;
 
@@ -139,7 +139,7 @@ export function EventGameSelection() {
 
                 if (isSelected) {
                     selected.push(gameWithTeachers);
-                } else if (game.active && teacherCount >= 2) {
+                } else if (game.active && teacherCount >= 0) {
                     available.push(gameWithTeachers);
                 } else {
                     unavailable.push(gameWithTeachers);
@@ -240,7 +240,7 @@ export function EventGameSelection() {
     }
 
     return (
-        <div className="space-y-6 bg-white border rounded-lg p-3 pt-6">
+        <div className="space-y-3 bg-white border rounded-lg p-3 pt-6">
             <div className="text-[35px] font-aladin text-center text-blue-800 flex-1 mb-5">
                 Seleção para Eventos
             </div>
@@ -274,7 +274,7 @@ export function EventGameSelection() {
             ) : (
                 <>
                     {/* Header com estatísticas */}
-                    <div className="bg-white mt-6 border rounded-lg shadow p-3">
+                    <div className="bg-white border rounded-lg shadow p-2">
                         <div className="grid grid-cols-3 gap-4">
                             <div className="text-center">
                                 <p className="text-3xl font-bold text-sejoga-verde-oficial">
