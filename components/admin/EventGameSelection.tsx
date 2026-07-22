@@ -661,70 +661,73 @@ export function EventGameSelection() {
 
                                     {!isCollapsed && (
                                         <div className="p-2 space-y-2">
-                                            {pubGames.map(game => (
-                                                <div
-                                                    key={game.id}
-                                                    className={`rounded-lg p-3 border ${game.selectedForEvent ? 'bg-green-50 border-green-200' : 'bg-white border-gray-100'}`}
-                                                >
-                                                    <div className="flex items-start justify-between gap-2">
-                                                        <div className="flex-1 min-w-0">
-                                                            <h4 className="font-semibold text-gray-900 text-sm break-words">
-                                                                {game.name}
-                                                            </h4>
+                                            {pubGames.map(game => {
+                                                // Cores do card conforme o estado
+                                                const cardClass = game.returned
+                                                    ? 'bg-green-100 border-green-300'
+                                                    : game.selectedForEvent
+                                                        ? 'bg-orange-100 border-orange-300'
+                                                        : 'bg-white border-gray-200';
 
-                                                            {/* Botões "Selecionado" e "Retornou" lado a lado */}
-                                                            <div className="flex gap-1.5 mt-2">
-                                                                <button
-                                                                    onClick={() => toggleFoi(game)}
+                                                return (
+                                                    <div key={game.id} className={`border rounded-lg overflow-hidden transition-colors ${cardClass}`}>
+                                                        <div className="flex items-stretch">
+                                                            {/* Faixa esquerda: checkbox "foi para o evento" */}
+                                                            <div className="flex items-center justify-center px-3 border-r-2 border-sejoga-laranja-oficial bg-sejoga-laranja-oficial">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={game.selectedForEvent}
+                                                                    onChange={() => toggleFoi(game)}
                                                                     disabled={saving}
-                                                                    className={`flex items-center justify-center gap-1.5 px-1.5 py-1.5 rounded-lg border text-xs  transition-all ${game.selectedForEvent
-                                                                        ? 'bg-sejoga-verde-oficial text-white border-sejoga-verde-oficial'
-                                                                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
-                                                                        }`}
-                                                                >
-                                                                    <ArrowRight className="w-3.5 h-3.5" />
-                                                                    Vai pro evento
-                                                                </button>
-
-                                                                {game.selectedForEvent && (
-                                                                    <button
-                                                                        onClick={() => toggleVoltou(game)}
-                                                                        disabled={saving}
-                                                                        className={`flex items-center justify-center gap-1.5 px-1.5 py-1.5 rounded-lg border text-xs transition-all ${game.returned
-                                                                            ? 'bg-sejoga-laranja-oficial text-white border-sejoga-laranja-oficial'
-                                                                            : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
-                                                                            }`}
-                                                                    >
-                                                                        <ArrowLeft className="w-3.5 h-3.5" />
-                                                                        Voltou
-                                                                    </button>
-                                                                )}
+                                                                    title="Foi para o evento"
+                                                                    className="appearance-none w-7 h-7 rounded border-0 cursor-pointer bg-[#B85D12] checked:bg-sejoga-laranja-oficial checked:bg-[url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%2220%206%209%2017%204%2012%22/%3E%3C/svg%3E')] bg-center bg-no-repeat bg-[length:20px_20px] transition-colors" 
+                                                                    />
                                                             </div>
-                                                        </div>
 
-                                                        {/* Tag de monitores (clicável) */}
-                                                        <div className="flex flex-col items-end gap-1 flex-none">
+                                                            {/* Conteúdo central */}
+                                                            <div className="flex-1 min-w-0 p-3">
+                                                                <div className="flex items-center justify-between gap-2">
+                                                                    <h4 className="font-semibold text-gray-900 text-sm break-words flex-1 min-w-0">
+                                                                        {game.name}
+                                                                    </h4>
 
-                                                            <button
-                                                                onClick={() => openTeachersModal(game)}
-                                                                className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded font-semibold hover:bg-green-200 transition-colors"
-                                                                title="Ver quem sabe ensinar"
-                                                            >
-                                                                👤{game.teacherCount}
-                                                            </button>
-                                                            {game.isLoaned && (
-                                                                <button
-                                                                    onClick={() => openLoanModal(game)}
-                                                                    className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded font-semibold hover:bg-orange-200 transition-colors"
-                                                                    title="Ver com quem está"
-                                                                >
-                                                                    ⚔️ !
-                                                                </button>
+                                                                    <div className="flex items-center gap-1 flex-none">
+                                                                        {game.isLoaned && (
+                                                                            <button
+                                                                                onClick={() => openLoanModal(game)}
+                                                                                className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded font-semibold hover:bg-orange-200 transition-colors"
+                                                                                title="Ver com quem está"
+                                                                            >
+                                                                                ⚔️
+                                                                            </button>
+                                                                        )}
+                                                                        <button
+                                                                            onClick={() => openTeachersModal(game)}
+                                                                            className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded font-semibold hover:bg-green-200 transition-colors"
+                                                                            title="Ver quem sabe ensinar"
+                                                                        >
+                                                                            👤{game.teacherCount}
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Faixa direita: checkbox "voltou" (só se foi) */}
+                                                            {game.selectedForEvent && (
+                                                                <div className="flex items-center justify-center px-3 border-l-2 border-sejoga-verde-oficial bg-sejoga-verde-oficial">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={game.returned}
+                                                                        onChange={() => toggleVoltou(game)}
+                                                                        disabled={saving}
+                                                                        title="Voltou do evento"
+className="appearance-none w-7 h-7 rounded border-0 cursor-pointer bg-[#4E8A22] checked:bg-sejoga-verde-oficial checked:bg-[url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%2220%206%209%2017%204%2012%22/%3E%3C/svg%3E')] bg-center bg-no-repeat bg-[length:20px_20px] transition-colors"                                                                    />
+                                                                </div>
                                                             )}
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     )}
                                 </div>
