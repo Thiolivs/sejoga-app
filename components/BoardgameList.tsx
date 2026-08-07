@@ -565,7 +565,7 @@ export function BoardgameList() {
                                     onClick={() => handleGameClick(game)}
                                 >
                                     <div className="flex items-center gap-2 flex-wrap">
-                                        <h3 className="font-semibold text-base">{game.name}</h3>
+                                        <h3 className="font-semibold text-[15px] text-base">{game.name}</h3>
                                     </div>
                                 </div>
 
@@ -596,24 +596,24 @@ export function BoardgameList() {
                                         game.loanedBy === user?.id ? (
                                             <button
                                                 onClick={() => handleReturn(game.id)}
-                                                className="w-22 h-full py-2 bg-green-50 text-sejoga-verde-oficial border-l-2 border-sejoga-verde-oficial hover:bg-green-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
+                                                className="w-23 h-full py-2 bg-green-50 text-sejoga-verde-oficial border-l-2 border-sejoga-verde-oficial hover:bg-green-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
                                             >
                                                 <span className="text-xl">⬅️</span>
                                                 <span>Devolver</span>
                                             </button>
                                         ) : (
-                                            <div className="w-22 h-full py-2 bg-gray-100 text-gray-500 border-l-2 border-gray-300 text-xs font-medium cursor-not-allowed flex flex-col items-center justify-center gap-1 rounded-r-lg">
+                                            <div className="w-23 h-full py-2 bg-gray-100 text-gray-500 border-l-2 border-gray-300 text-xs font-medium cursor-not-allowed flex flex-col items-center justify-center gap-1 rounded-r-lg">
                                                 <span className="text-xl">⚔️</span>
-                                                <span className="text-center">Indisponível</span>
+                                                <span className="text-center text-[11px]">Indisponível</span>
                                             </div>
                                         )
                                     ) : (
                                         <button
                                             onClick={() => handleBorrow(game.id)}
-                                            className="w-22 h-full py-2 bg-blue-50 text-sejoga-azul-oficial border-l-2 border-sejoga-azul-oficial hover:bg-blue-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
+                                            className="w-23 h-full py-2 bg-blue-50 text-sejoga-azul-oficial border-l-2 border-sejoga-azul-oficial hover:bg-blue-100 text-xs font-medium flex flex-col items-center justify-center gap-1 rounded-r-lg"
                                         >
                                             <span className="text-xl">➡️</span>
-                                            <span className="text-center leading-tight">
+                                            <span className="text-center text-[11px] leading-tight">
                                                 Pegar<br />Emprestado
                                             </span>
                                         </button>

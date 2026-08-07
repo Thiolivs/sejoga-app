@@ -28,7 +28,7 @@ export function UserAppHeader() {
                     </div>
 
                     <div className="absolute left-1/2 -translate-x-1/2">
-                        <h1 className="text-[35px] font-caveat text-gray-900">
+                        <h1 className="text-[30px] font-caveat text-gray-900">
                             SeJoga no App!
                         </h1>
                     </div>
