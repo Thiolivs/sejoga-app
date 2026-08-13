@@ -8,6 +8,8 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase';
 import { Plus, Sun, Sunset, Moon, MapPin, Calendar, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { gerarOpcoes, MonitorAvailability, Shift, DistributionOption } from '@/lib/distribuicao';
+
 
 interface TrainingAvailabilityWithProfile {
     id: string;
@@ -97,6 +99,119 @@ export function TrainingSession() {
         };
         fetchVotingMonitors();
     }, []);
+
+    // Aba Treinamentos (distribuição)
+    const [opcoesPorCiclo, setOpcoesPorCiclo] = useState<Record<string, DistributionOption[]>>({});
+    const [distribuicaoVisivel, setDistribuicaoVisivel] = useState<Record<string, { id: string; data: DistributionOption } | null>>({});
+    const [salvandoVisivel, setSalvandoVisivel] = useState(false);
+
+    // Monta as disponibilidades do ciclo no formato do algoritmo e gera as opções
+    const gerarOpcoesDoCiclo = useCallback((cycleId: string): DistributionOption[] => {
+        const cycleTrainings = getTrainingsByCycle(cycleId);
+
+        // IDs dos monitores indisponíveis no ciclo (ficam de fora)
+        const indisponiveis = new Set(
+            (unavailableUsers[cycleId] || []).map(u => u.user_id)
+        );
+
+        // Agrupa por monitor: monitorId -> { name, availability: dateId -> Set<shift> }
+        const porMonitor = new Map<string, MonitorAvailability>();
+
+        cycleTrainings.forEach(training => {
+            const avs = availabilities[training.id] || [];
+            avs.forEach(a => {
+                if (indisponiveis.has(a.user_id)) return; // pula indisponíveis
+                let entry = porMonitor.get(a.user_id);
+                if (!entry) {
+                    entry = {
+                        monitorId: a.user_id,
+                        name: a.profiles?.first_name || 'Monitor',
+                        availability: {},
+                    };
+                    porMonitor.set(a.user_id, entry);
+                }
+                if (!entry.availability[training.id]) {
+                    entry.availability[training.id] = new Set<Shift>();
+                }
+                entry.availability[training.id].add(a.shift as Shift);
+            });
+        });
+
+        const monitores = Array.from(porMonitor.values());
+        const todasAsDatas = cycleTrainings.map(t => t.id);
+
+        return gerarOpcoes(monitores, todasAsDatas, 5);
+    }, [getTrainingsByCycle, availabilities, unavailableUsers]);
+
+    // Busca a distribuição visível salva de um ciclo
+    const carregarDistribuicaoVisivel = useCallback(async (cycleId: string) => {
+        const supabase = createClient();
+        const { data } = await supabase
+            .from('training_distributions')
+            .select('id, data')
+            .eq('cycle_id', cycleId)
+            .eq('is_visible', true)
+            .maybeSingle();
+
+        setDistribuicaoVisivel(prev => ({
+            ...prev,
+            [cycleId]: data ? { id: data.id, data: data.data as DistributionOption } : null,
+        }));
+    }, []);
+
+    // Torna uma opção visível (salva no banco, substituindo a anterior do ciclo)
+    const tornarVisivel = async (cycleId: string, opcao: DistributionOption) => {
+        if (!confirm('Tornar esta opção visível para os monitores? Isso substitui a anterior.')) return;
+
+        try {
+            setSalvandoVisivel(true);
+            const supabase = createClient();
+
+            // Remove a visível anterior do ciclo (apaga, para não acumular)
+            await supabase
+                .from('training_distributions')
+                .delete()
+                .eq('cycle_id', cycleId);
+
+            // Insere a nova como visível
+            const { data, error } = await supabase
+                .from('training_distributions')
+                .insert({
+                    cycle_id: cycleId,
+                    is_visible: true,
+                    data: opcao,
+                })
+                .select('id, data')
+                .single();
+
+            if (error) throw error;
+
+            setDistribuicaoVisivel(prev => ({
+                ...prev,
+                [cycleId]: { id: data.id, data: data.data as DistributionOption },
+            }));
+
+            alert('✅ Opção definida como visível para os monitores!');
+        } catch (err) {
+            console.error('Erro ao tornar visível:', err);
+            alert('Erro ao salvar. Tente novamente.');
+        } finally {
+            setSalvandoVisivel(false);
+        }
+    };
+
+    useEffect(() => {
+        if (activeSubTab !== 'treinamentos' || cycles.length === 0) return;
+
+        cycles.forEach(cycle => {
+            if (isAdmin) {
+                const ops = gerarOpcoesDoCiclo(cycle.id);
+                setOpcoesPorCiclo(prev => ({ ...prev, [cycle.id]: ops }));
+            }
+            carregarDistribuicaoVisivel(cycle.id);
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeSubTab, cycles.length, isAdmin]);
 
     const loadCycleData = useCallback(async (cycleId: string) => {
         if (!user) return;
@@ -284,11 +399,10 @@ export function TrainingSession() {
                     <button
                         key={key}
                         onClick={() => setActiveSubTab(key)}
-                        className={`flex-1 py-2 px-2 rounded-md text-sm font-semibold transition-colors ${
-                            activeSubTab === key
-                                ? 'bg-white text-sejoga-azul-oficial shadow-sm'
-                                : 'text-gray-600 hover:text-gray-800'
-                        }`}
+                        className={`flex-1 py-2 px-2 rounded-md text-sm font-semibold transition-colors ${activeSubTab === key
+                            ? 'bg-white text-sejoga-azul-oficial shadow-sm'
+                            : 'text-gray-600 hover:text-gray-800'
+                            }`}
                     >
                         {label}
                     </button>
@@ -521,13 +635,143 @@ export function TrainingSession() {
                 )
             )}
 
-            {/* ABA: TREINAMENTOS (opções de distribuição - parte 2) */}
+            {/* ABA: TREINAMENTOS (opções de distribuição) */}
             {activeSubTab === 'treinamentos' && (
-                <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <p className="text-gray-500 text-sm">
-                        Em breve: sugestões de distribuição dos monitores por data.
-                    </p>
-                </div>
+                cycles.length === 0 ? (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+                        <h3 className="text-yellow-800 font-semibold text-lg">
+                            Nenhum ciclo disponível
+                        </h3>
+                    </div>
+                ) : (
+                    <div className="space-y-8">
+                        {cycles.map((cycle) => {
+                            const cycleTrainings = getTrainingsByCycle(cycle.id);
+                            const opcoes = opcoesPorCiclo[cycle.id] || [];
+                            const visivel = distribuicaoVisivel[cycle.id];
+
+                            // Helper para achar a data formatada a partir do dateId
+                            const nomeData = (dateId: string) => {
+                                const t = cycleTrainings.find(ct => ct.id === dateId);
+                                if (!t) return 'Data';
+                                const [year, month, day] = t.training_date.split('-');
+                                const d = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                                const wd = d.toLocaleDateString('pt-BR', { weekday: 'long' })
+                                    .replace('-feira', '').replace(/^./, c => c.toUpperCase());
+                                const dm = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
+                                return `${wd}, ${dm.replace(' De ', ' de ')}`;
+                            };
+
+                            const nomeTurno = (s: string) =>
+                                s === 'morning' ? 'Manhã' : s === 'afternoon' ? 'Tarde' : 'Noite';
+
+                            return (
+                                <div key={cycle.id} className="border border-gray-300 rounded-xl p-3 bg-gradient-to-br from-white to-gray-50">
+                                    <h3 className="text-[20px] text-center font-bold text-gray-900 mb-3">{cycle.name}</h3>
+
+                                    {/* Admin: vê as opções geradas */}
+                                    {isAdmin ? (
+                                        opcoes.length === 0 ? (
+                                            <p className="text-center text-gray-500 text-sm py-4">
+                                                Aguardando disponibilidade dos monitores para gerar treinamentos.
+                                            </p>
+                                        ) : (
+                                            <div className="space-y-4">
+                                                {opcoes.map((opcao, idx) => {
+                                                    // Verifica se esta opção é a que está visível (comparação simples por conteúdo)
+                                                    const ehVisivel = visivel &&
+                                                        JSON.stringify(visivel.data.trainings) === JSON.stringify(opcao.trainings);
+
+                                                    return (
+                                                        <div
+                                                            key={idx}
+                                                            className={`border rounded-lg p-3 ${ehVisivel ? 'border-green-400 bg-green-50' : 'border-gray-200 bg-white'}`}
+                                                        >
+                                                            <div className="flex items-center justify-between mb-2">
+                                                                <h4 className="font-semibold text-sm text-gray-800">
+                                                                    Opção {idx + 1}
+                                                                    {ehVisivel && <span className="ml-2 text-xs text-green-700">(visível)</span>}
+                                                                </h4>
+                                                                <button
+                                                                    onClick={() => tornarVisivel(cycle.id, opcao)}
+                                                                    disabled={salvandoVisivel || !!ehVisivel}
+                                                                    className={`px-3 py-1 rounded text-xs font-semibold transition-colors ${ehVisivel
+                                                                        ? 'bg-green-200 text-green-800 cursor-default'
+                                                                        : 'bg-sejoga-azul-oficial text-white hover:bg-blue-500'
+                                                                        }`}
+                                                                >
+                                                                    {ehVisivel ? 'Visível' : 'Tornar visível'}
+                                                                </button>
+                                                            </div>
+
+                                                            <div className="space-y-2">
+                                                                {opcao.trainings.map((t, i) => (
+                                                                    <div key={i} className="bg-gray-50 rounded p-2">
+                                                                        <div className="font-semibold text-xs text-gray-700 mb-1">
+                                                                            {nomeData(t.dateId)} · {t.monitorIds.length} monitores
+                                                                        </div>
+                                                                        <div className="grid grid-cols-3 gap-2">
+                                                                            {Object.entries(t.shifts).map(([turno, nomes]) => (
+                                                                                <div key={turno}>
+                                                                                    <div className="text-[11px] font-semibold text-gray-600">{nomeTurno(turno)}:</div>
+                                                                                    <div className="text-[11px] text-gray-600">
+                                                                                        {(nomes as string[]).map((n, j) => (
+                                                                                            <div key={j}>• {n}</div>
+                                                                                        ))}
+                                                                                    </div>
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+
+                                                            {opcao.unassigned.length > 0 && (
+                                                                <div className="mt-2 bg-red-50 border border-red-200 rounded p-2">
+                                                                    <span className="text-xs text-red-700 font-semibold">Sem encaixe: </span>
+                                                                    <span className="text-xs text-red-700">{opcao.unassigned.join(', ')}</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )
+                                    ) : (
+                                        /* Monitor: vê a distribuição visível (parte 2B - por ora só um aviso) */
+                                        visivel ? (
+                                            <div className="space-y-2">
+                                                {visivel.data.trainings.map((t, i) => (
+                                                    <div key={i} className="bg-white border rounded-lg p-2">
+                                                        <div className="font-semibold text-xs text-gray-700 mb-1">
+                                                            {nomeData(t.dateId)}
+                                                        </div>
+                                                        <div className="grid grid-cols-3 gap-2">
+                                                            {Object.entries(t.shifts).map(([turno, nomes]) => (
+                                                                <div key={turno}>
+                                                                    <div className="text-[11px] font-semibold text-gray-600">{nomeTurno(turno)}:</div>
+                                                                    <div className="text-[11px] text-gray-600">
+                                                                        {(nomes as string[]).map((n, j) => (
+                                                                            <div key={j}>• {n}</div>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-center text-gray-500 text-sm py-4">
+                                                As datas de treinamento ainda não foram definidas.
+                                            </p>
+                                        )
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                )
             )}
 
             {/* ABA: JOGOS (parte 3) */}
