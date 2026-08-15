@@ -32,6 +32,12 @@ export function BoardgameList() {
     const [publishers, setPublishers] = useState<Publisher[]>([]);
     const [openSections, setOpenSections] = useState<string[]>([]);
 
+    // Filtro de monitores
+    const [teachersList, setTeachersList] = useState<{ id: string; name: string }[]>([]);
+
+    // mapa: boardgame_id -> Set de user_ids que sabem ensinar
+    const [gameTeachersMap, setGameTeachersMap] = useState<Record<string, Set<string>>>({});
+
 
     // Estados de filtros
     const [searchTerm, setSearchTerm] = useState('');
@@ -40,7 +46,9 @@ export function BoardgameList() {
         minPlayers: null as number | null,
         maxPlayers: null as number | null,
         selectedMechanics: [] as string[],
-        selectedPublishers: [] as string[], // ✅ NOVO
+        selectedPublishers: [] as string[],
+        selectedTeachers: [] as string[],
+
     });
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -76,6 +84,59 @@ export function BoardgameList() {
 
         setPublishers(data || []);
     };
+
+    useEffect(() => {
+        const carregarMonitores = async () => {
+            const supabase = createClient();
+
+            // Lista de monitores (para os chips do filtro) - role monitor/admin/producao/rpg
+            const { data: perfis } = await supabase
+                .from('profiles')
+                .select('id, first_name, last_name')
+                .in('role', ['monitor', 'admin', 'producao', 'rpg']);
+
+            if (perfis) {
+                setTeachersList(
+                    perfis
+                        .map(p => ({ id: p.id, name: `${p.first_name}${p.last_name ? ' ' + p.last_name : ''}` }))
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                );
+            }
+
+            // Relação jogo -> monitores
+            // Relação jogo -> monitores (paginado, pois pode passar de 1000 linhas)
+            const mapa: Record<string, Set<string>> = {};
+            const passo = 1000;
+            let inicio = 0;
+            let continua = true;
+
+            while (continua) {
+                const { data: relacoes, error } = await supabase
+                    .from('user_teaches_game')
+                    .select('boardgame_id, user_id')
+                    .range(inicio, inicio + passo - 1);
+
+                if (error || !relacoes || relacoes.length === 0) {
+                    continua = false;
+                    break;
+                }
+
+                relacoes.forEach(r => {
+                    if (!mapa[r.boardgame_id]) mapa[r.boardgame_id] = new Set();
+                    mapa[r.boardgame_id].add(r.user_id);
+                });
+
+                if (relacoes.length < passo) {
+                    continua = false; // último lote
+                } else {
+                    inicio += passo;
+                }
+            }
+
+            setGameTeachersMap(mapa);
+        };
+        carregarMonitores();
+    }, []);
 
     // Agrupar mecânicas por tipo
     const mechanicsByType = useMemo(() => {
@@ -120,9 +181,20 @@ export function BoardgameList() {
                 }
             }
 
+            // Filtro por monitores selecionados (jogos que TODOS eles sabem ensinar)
+            if (filters.selectedTeachers.length > 0) {
+                const teachersDoJogo = gameTeachersMap[game.id] || new Set();
+                const todosSabemEnsinar = filters.selectedTeachers.every(
+                    teacherId => teachersDoJogo.has(teacherId)
+                );
+                if (!todosSabemEnsinar) {
+                    return false;
+                }
+            }
+
             return true;
         });
-    }, [boardgames, searchTerm, filters]);
+    }, [boardgames, searchTerm, filters, gameTeachersMap]);
 
     // Verificar se há filtros ativos
     const hasActiveFilters =
@@ -140,7 +212,17 @@ export function BoardgameList() {
             maxPlayers: null,
             selectedMechanics: [],
             selectedPublishers: [],
+            selectedTeachers: [],
         });
+    };
+
+    const toggleTeacher = (teacherId: string) => {
+        setFilters(prev => ({
+            ...prev,
+            selectedTeachers: prev.selectedTeachers.includes(teacherId)
+                ? prev.selectedTeachers.filter(id => id !== teacherId)
+                : [...prev.selectedTeachers, teacherId]
+        }));
     };
 
     const toggleMechanic = (mechanicId: string) => {
@@ -456,6 +538,41 @@ export function BoardgameList() {
                                                     onChange={() => toggleMechanic(mechanic.id)}
                                                 />
                                                 {mechanic.name}
+                                            </label>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Monitores (quem sabe ensinar) - só para monitores/admins */}
+                        {isMonitor && teachersList.length > 0 && (
+                            <div className="border rounded-lg overflow-hidden">
+                                <button
+                                    onClick={() => toggleSection('teachers')}
+                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                >
+                                    <span>🧑‍🏫 Monitores</span>
+                                    <span>{openSections.includes('teachers') ? '▲' : '▼'}</span>
+                                </button>
+
+                                {openSections.includes('teachers') && (
+                                    <div className="flex flex-wrap gap-2 px-3 pb-3">
+                                        {teachersList.map((teacher) => (
+                                            <label
+                                                key={teacher.id}
+                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedTeachers.includes(teacher.id)
+                                                    ? 'bg-sejoga-azul-oficial text-white'
+                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                                    }`}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    className="hidden"
+                                                    checked={filters.selectedTeachers.includes(teacher.id)}
+                                                    onChange={() => toggleTeacher(teacher.id)}
+                                                />
+                                                {teacher.name}
                                             </label>
                                         ))}
                                     </div>
