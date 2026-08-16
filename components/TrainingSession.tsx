@@ -65,6 +65,9 @@ export function TrainingSession() {
 
     const [activeSubTab, setActiveSubTab] = useState<SubTab>('disponibilidade');
 
+    // Confirmações de presença: distribution_id -> Set de "user_id|date_id" confirmados
+    const [confirmacoes, setConfirmacoes] = useState<Record<string, Set<string>>>({});
+
     const [availabilities, setAvailabilities] = useState<Record<string, TrainingAvailabilityWithProfile[]>>({});
     const availabilitiesRef = useRef<Record<string, TrainingAvailabilityWithProfile[]>>({});
 
@@ -157,6 +160,18 @@ export function TrainingSession() {
             ...prev,
             [cycleId]: data ? { id: data.id, data: data.data as DistributionOption } : null,
         }));
+
+        // Carrega as confirmações desta distribuição
+        if (data) {
+            const { data: confs } = await supabase
+                .from('training_confirmations')
+                .select('user_id, date_id')
+                .eq('distribution_id', data.id);
+
+            const set = new Set<string>();
+            (confs || []).forEach(c => set.add(`${c.user_id}|${c.date_id}`));
+            setConfirmacoes(prev => ({ ...prev, [data.id]: set }));
+        }
     }, []);
 
     // Torna uma opção visível (salva no banco, substituindo a anterior do ciclo)
@@ -332,6 +347,50 @@ export function TrainingSession() {
 
     const toggleExpand = (trainingId: string) => {
         setExpandedTrainings(prev => ({ ...prev, [trainingId]: !prev[trainingId] }));
+    };
+
+    const toggleConfirmacao = async (distributionId: string, dateId: string) => {
+        if (!user) return;
+
+        const chave = `${user.id}|${dateId}`;
+        const jaConfirmou = confirmacoes[distributionId]?.has(chave);
+
+        const supabase = createClient();
+
+        try {
+            if (jaConfirmou) {
+                // Remove confirmação
+                await supabase
+                    .from('training_confirmations')
+                    .delete()
+                    .eq('distribution_id', distributionId)
+                    .eq('user_id', user.id)
+                    .eq('date_id', dateId);
+            } else {
+                // Adiciona confirmação
+                await supabase
+                    .from('training_confirmations')
+                    .insert({
+                        distribution_id: distributionId,
+                        user_id: user.id,
+                        date_id: dateId,
+                    });
+            }
+
+            // Atualiza o estado local
+            setConfirmacoes(prev => {
+                const set = new Set(prev[distributionId] || []);
+                if (jaConfirmou) {
+                    set.delete(chave);
+                } else {
+                    set.add(chave);
+                }
+                return { ...prev, [distributionId]: set };
+            });
+        } catch (err) {
+            console.error('Erro ao confirmar presença:', err);
+            alert('Erro ao confirmar presença. Tente novamente.');
+        }
     };
 
     // Calcula quem ainda NAO votou naquele ciclo.
@@ -671,95 +730,192 @@ export function TrainingSession() {
 
                                     {/* Admin: vê as opções geradas */}
                                     {isAdmin ? (
-                                        opcoes.length === 0 ? (
-                                            <p className="text-center text-gray-500 text-sm py-4">
-                                                Aguardando disponibilidade dos monitores para gerar treinamentos.
-                                            </p>
-                                        ) : (
-                                            <div className="space-y-4">
-                                                {opcoes.map((opcao, idx) => {
-                                                    // Verifica se esta opção é a que está visível (comparação simples por conteúdo)
-                                                    const ehVisivel = visivel &&
-                                                        JSON.stringify(visivel.data.trainings) === JSON.stringify(opcao.trainings);
+                                        <div className="space-y-4">
+                                            {/* ÁREA 1: Treinamento definido (a opção visível) */}
+                                            {visivel && (
+                                                <div className="border-2 border-sejoga-azul-oficial bg-blue-50 rounded-lg p-3">
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <span className="text-sejoga-azul-oficial text-lg">★</span>
+                                                        <h4 className="font-bold text-sm text-sejoga-azul-oficial">
+                                                            Treinamento definido
+                                                        </h4>
+                                                        <span className="text-[10px] bg-sejoga-azul-oficial text-white px-2 py-0.5 rounded-full">
+                                                            visível para os monitores
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="space-y-2">
+                                                        {visivel.data.trainings.map((t, i) => {
+                                                            const usuarioNaData = t.monitorIds.includes(user?.id || '');
+                                                            const jaConfirmou = confirmacoes[visivel.id]?.has(`${user?.id}|${t.dateId}`);
+
+                                                            return (
+                                                                <div key={i} className="bg-white border border-blue-200 rounded p-2">
+                                                                    <div className="font-semibold text-xs text-gray-700 mb-1">
+                                                                        {nomeData(t.dateId)} · {t.monitorIds.length} monitores
+                                                                    </div>
+                                                                    <div className="grid grid-cols-3 gap-2">
+                                                                        {Object.entries(t.shifts).map(([turno, nomes]) => (
+                                                                            <div key={turno}>
+                                                                                <div className="text-[11px] font-semibold text-gray-600">{nomeTurno(turno)}:</div>
+                                                                                <div className="text-[11px] text-gray-600">
+                                                                                    {(nomes as { id: string; name: string }[]).map((m, j) => {
+                                                                                        const confirmou = confirmacoes[visivel.id]?.has(`${m.id}|${t.dateId}`);
+                                                                                        return (
+                                                                                            <div key={j}>
+                                                                                                • {m.name}
+                                                                                                {confirmou && <span className="text-green-600 ml-1">✓</span>}
+                                                                                            </div>
+                                                                                        );
+                                                                                    })}
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+
+                                                                    {/* Confirmação de presença para o admin (também participa) */}
+                                                                    {usuarioNaData && (
+                                                                        <label className="flex items-center gap-2 mt-2 pt-2 border-t cursor-pointer">
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                checked={jaConfirmou || false}
+                                                                                onChange={() => toggleConfirmacao(visivel.id, t.dateId)}
+                                                                                className="w-4 h-4 rounded"
+                                                                            />
+                                                                            <span className="text-xs font-medium text-gray-700">
+                                                                                Confirmo presença nesta data
+                                                                            </span>
+                                                                        </label>
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* ÁREA 2: Outras opções (alternativas) */}
+                                            {opcoes.length === 0 ? (
+                                                <p className="text-center text-gray-500 text-sm py-4">
+                                                    Aguardando disponibilidade dos monitores para gerar treinamentos.
+                                                </p>
+                                            ) : (
+                                                <div>
+                                                    <h4 className="font-semibold text-xs text-gray-500 mb-2 uppercase tracking-wide">
+                                                        {visivel ? 'Outras opções' : 'Opções geradas'}
+                                                    </h4>
+                                                    <div className="space-y-4">
+                                                        {opcoes.map((opcao, idx) => {
+                                                            const ehVisivel = visivel &&
+                                                                JSON.stringify(visivel.data.trainings) === JSON.stringify(opcao.trainings);
+
+                                                            // Não repete a opção que já está no topo como "definida"
+                                                            if (ehVisivel) return null;
+
+                                                            return (
+                                                                <div
+                                                                    key={idx}
+                                                                    className="border border-gray-200 bg-white rounded-lg p-3"
+                                                                >
+                                                                    <div className="flex items-center justify-between mb-2">
+                                                                        <h4 className="font-semibold text-sm text-gray-800">
+                                                                            Opção {idx + 1}
+                                                                        </h4>
+                                                                        <button
+                                                                            onClick={() => tornarVisivel(cycle.id, opcao)}
+                                                                            disabled={salvandoVisivel}
+                                                                            className="px-3 py-1 rounded text-xs font-semibold transition-colors bg-sejoga-azul-oficial text-white hover:bg-blue-500"
+                                                                        >
+                                                                            Tornar visível
+                                                                        </button>
+                                                                    </div>
+
+                                                                    <div className="space-y-2">
+                                                                        {opcao.trainings.map((t, i) => (
+                                                                            <div key={i} className="bg-gray-50 rounded p-2">
+                                                                                <div className="font-semibold text-xs text-gray-700 mb-1">
+                                                                                    {nomeData(t.dateId)} · {t.monitorIds.length} monitores
+                                                                                </div>
+                                                                                <div className="grid grid-cols-3 gap-2">
+                                                                                    {Object.entries(t.shifts).map(([turno, nomes]) => (
+                                                                                        <div key={turno}>
+                                                                                            <div className="text-[11px] font-semibold text-gray-600">{nomeTurno(turno)}:</div>
+                                                                                            <div className="text-[11px] text-gray-600">
+                                                                                                {(nomes as { id: string; name: string }[]).map((m, j) => (
+                                                                                                    <div key={j}>• {m.name}</div>
+                                                                                                ))}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    ))}
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+
+                                                                    {opcao.unassigned.length > 0 && (
+                                                                        <div className="mt-2 bg-red-50 border border-red-200 rounded p-2">
+                                                                            <span className="text-xs text-red-700 font-semibold">Sem encaixe: </span>
+                                                                            <span className="text-xs text-red-700">{opcao.unassigned.join(', ')}</span>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        /* Monitor: vê a distribuição visível + confirma presença */
+                                        visivel ? (
+                                            <div className="space-y-2">
+                                                {visivel.data.trainings.map((t, i) => {
+                                                    // O usuário atual está alocado nesta data?
+                                                    const usuarioNaData = t.monitorIds.includes(user?.id || '');
+                                                    // Ele já confirmou presença nesta data?
+                                                    const jaConfirmou = confirmacoes[visivel.id]?.has(`${user?.id}|${t.dateId}`);
 
                                                     return (
-                                                        <div
-                                                            key={idx}
-                                                            className={`border rounded-lg p-3 ${ehVisivel ? 'border-green-400 bg-green-50' : 'border-gray-200 bg-white'}`}
-                                                        >
-                                                            <div className="flex items-center justify-between mb-2">
-                                                                <h4 className="font-semibold text-sm text-gray-800">
-                                                                    Opção {idx + 1}
-                                                                    {ehVisivel && <span className="ml-2 text-xs text-green-700">(visível)</span>}
-                                                                </h4>
-                                                                <button
-                                                                    onClick={() => tornarVisivel(cycle.id, opcao)}
-                                                                    disabled={salvandoVisivel || !!ehVisivel}
-                                                                    className={`px-3 py-1 rounded text-xs font-semibold transition-colors ${ehVisivel
-                                                                        ? 'bg-green-200 text-green-800 cursor-default'
-                                                                        : 'bg-sejoga-azul-oficial text-white hover:bg-blue-500'
-                                                                        }`}
-                                                                >
-                                                                    {ehVisivel ? 'Visível' : 'Tornar visível'}
-                                                                </button>
+                                                        <div key={i} className="bg-white border rounded-lg p-2">
+                                                            <div className="font-semibold text-xs text-gray-700 mb-1">
+                                                                {nomeData(t.dateId)}
                                                             </div>
-
-                                                            <div className="space-y-2">
-                                                                {opcao.trainings.map((t, i) => (
-                                                                    <div key={i} className="bg-gray-50 rounded p-2">
-                                                                        <div className="font-semibold text-xs text-gray-700 mb-1">
-                                                                            {nomeData(t.dateId)} · {t.monitorIds.length} monitores
-                                                                        </div>
-                                                                        <div className="grid grid-cols-3 gap-2">
-                                                                            {Object.entries(t.shifts).map(([turno, nomes]) => (
-                                                                                <div key={turno}>
-                                                                                    <div className="text-[11px] font-semibold text-gray-600">{nomeTurno(turno)}:</div>
-                                                                                    <div className="text-[11px] text-gray-600">
-                                                                                        {(nomes as { id: string; name: string }[]).map((m, j) => (
-                                                                                            <div key={j}>• {m.name}</div>
-                                                                                        ))}
+                                                            <div className="grid grid-cols-3 gap-2">
+                                                                {Object.entries(t.shifts).map(([turno, nomes]) => (
+                                                                    <div key={turno}>
+                                                                        <div className="text-[11px] font-semibold text-gray-600">{nomeTurno(turno)}:</div>
+                                                                        <div className="text-[11px] text-gray-600">
+                                                                            {(nomes as { id: string; name: string }[]).map((m, j) => {
+                                                                                const confirmou = confirmacoes[visivel.id]?.has(`${m.id}|${t.dateId}`);
+                                                                                return (
+                                                                                    <div key={j}>
+                                                                                        • {m.name}
+                                                                                        {confirmou && <span className="text-green-600 ml-1">✓</span>}
                                                                                     </div>
-                                                                                </div>
-                                                                            ))}
+                                                                                );
+                                                                            })}
                                                                         </div>
                                                                     </div>
                                                                 ))}
                                                             </div>
 
-                                                            {opcao.unassigned.length > 0 && (
-                                                                <div className="mt-2 bg-red-50 border border-red-200 rounded p-2">
-                                                                    <span className="text-xs text-red-700 font-semibold">Sem encaixe: </span>
-                                                                    <span className="text-xs text-red-700">{opcao.unassigned.join(', ')}</span>
-                                                                </div>
+                                                            {/* Checkbox de confirmação - só se o monitor está alocado nesta data */}
+                                                            {usuarioNaData && (
+                                                                <label className="flex items-center gap-2 mt-2 pt-2 border-t cursor-pointer">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={jaConfirmou || false}
+                                                                        onChange={() => toggleConfirmacao(visivel.id, t.dateId)}
+                                                                        className="w-4 h-4 rounded"
+                                                                    />
+                                                                    <span className="text-xs font-medium text-gray-700">
+                                                                        Confirmo presença nesta data
+                                                                    </span>
+                                                                </label>
                                                             )}
                                                         </div>
                                                     );
                                                 })}
-                                            </div>
-                                        )
-                                    ) : (
-                                        /* Monitor: vê a distribuição visível (parte 2B - por ora só um aviso) */
-                                        visivel ? (
-                                            <div className="space-y-2">
-                                                {visivel.data.trainings.map((t, i) => (
-                                                    <div key={i} className="bg-white border rounded-lg p-2">
-                                                        <div className="font-semibold text-xs text-gray-700 mb-1">
-                                                            {nomeData(t.dateId)}
-                                                        </div>
-                                                        <div className="grid grid-cols-3 gap-2">
-                                                            {Object.entries(t.shifts).map(([turno, nomes]) => (
-                                                                <div key={turno}>
-                                                                    <div className="text-[11px] font-semibold text-gray-600">{nomeTurno(turno)}:</div>
-                                                                    <div className="text-[11px] text-gray-600">
-                                                                        {(nomes as { id: string; name: string }[]).map((m, j) => (
-                                                                            <div key={j}>• {m.name}</div>
-                                                                        ))}
-                                                                    </div>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                ))}
                                             </div>
                                         ) : (
                                             <p className="text-center text-gray-500 text-sm py-4">
