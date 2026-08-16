@@ -14,7 +14,7 @@ export interface MonitorAvailability {
 
 export interface TrainingInOption {
     dateId: string;
-    shifts: Partial<Record<Shift, string[]>>; // turno -> nomes
+    shifts: Partial<Record<Shift, { id: string; name: string }[]>>; // turno -> monitores
     monitorIds: string[];
 }
 
@@ -30,7 +30,7 @@ function montarData(
     dateId: string,
     monitorIds: string[],
     porMonitor: Map<string, MonitorAvailability>
-): { shifts: Partial<Record<Shift, string[]>>; validos: string[] } {
+): { shifts: Partial<Record<Shift, { id: string; name: string }[]>>; validos: string[] } {
     const contagemTurno: Record<Shift, string[]> = { morning: [], afternoon: [], night: [] };
     for (const mId of monitorIds) {
         const av = porMonitor.get(mId);
@@ -42,10 +42,13 @@ function montarData(
         }
     }
 
-    const shifts: Partial<Record<Shift, string[]>> = {};
+    const shifts: Partial<Record<Shift, { id: string; name: string }[]>> = {};
     for (const s of ALL_SHIFTS) {
         if (contagemTurno[s].length >= 2) {
-            shifts[s] = contagemTurno[s].map(id => porMonitor.get(id)!.name);
+            shifts[s] = contagemTurno[s].map(id => ({
+                id,
+                name: porMonitor.get(id)!.name,
+            }));
         }
     }
 

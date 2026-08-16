@@ -715,8 +715,8 @@ export function TrainingSession() {
                                                                                 <div key={turno}>
                                                                                     <div className="text-[11px] font-semibold text-gray-600">{nomeTurno(turno)}:</div>
                                                                                     <div className="text-[11px] text-gray-600">
-                                                                                        {(nomes as string[]).map((n, j) => (
-                                                                                            <div key={j}>• {n}</div>
+                                                                                        {(nomes as { id: string; name: string }[]).map((m, j) => (
+                                                                                            <div key={j}>• {m.name}</div>
                                                                                         ))}
                                                                                     </div>
                                                                                 </div>
@@ -751,8 +751,8 @@ export function TrainingSession() {
                                                                 <div key={turno}>
                                                                     <div className="text-[11px] font-semibold text-gray-600">{nomeTurno(turno)}:</div>
                                                                     <div className="text-[11px] text-gray-600">
-                                                                        {(nomes as string[]).map((n, j) => (
-                                                                            <div key={j}>• {n}</div>
+                                                                        {(nomes as { id: string; name: string }[]).map((m, j) => (
+                                                                            <div key={j}>• {m.name}</div>
                                                                         ))}
                                                                     </div>
                                                                 </div>

@@ -98,13 +98,16 @@ export function BoardgameList() {
             if (perfis) {
                 setTeachersList(
                     perfis
-                        .map(p => ({ id: p.id, name: `${p.first_name}${p.last_name ? ' ' + p.last_name : ''}` }))
+                        .map(p => {
+                            const ultimoSobrenome = p.last_name ? p.last_name.trim().split(/\s+/).pop() : '';
+                            return { id: p.id, name: `${p.first_name}${ultimoSobrenome ? ' ' + ultimoSobrenome : ''}` };
+                        })
+
                         .sort((a, b) => a.name.localeCompare(b.name))
                 );
             }
 
-            // Relação jogo -> monitores
-            // Relação jogo -> monitores (paginado, pois pode passar de 1000 linhas)
+            // Relação jogo -> monitores (paginado, 1000+ rows)
             const mapa: Record<string, Set<string>> = {};
             const passo = 1000;
             let inicio = 0;
@@ -580,7 +583,7 @@ export function BoardgameList() {
                             </div>
                         )}
 
-                        {/* Modos */}
+                        {/* Modos 
                         {mechanicsByType.mode.length > 0 && (
                             <div className="border rounded-lg overflow-hidden">
                                 <button
@@ -613,7 +616,7 @@ export function BoardgameList() {
                                     </div>
                                 )}
                             </div>
-                        )}
+                        )}*/}
                     </div>
                 )}
             </div>
