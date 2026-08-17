@@ -978,7 +978,7 @@ export function TrainingSession() {
 
                                                             <div className="border border-pink-300 rounded-b-lg rounded-tr-sm overflow-hidden">
                                                                 {/* Cabeçalho*/}
-                                                                <div className="bg-white px-2 py-1.5 border-b border-pink-300">
+                                                                <div className="bg-white px-2 py-1.5 border-b border-gray-300">
                                                                     <div className="flex items-center">
                                                                         <span className="font-semibold text-xs text-gray-800 flex items-center gap-1">
                                                                             {nomeData(t.dateId)}
