@@ -764,7 +764,7 @@ export function TrainingSession() {
                                         <div className="space-y-4">
                                             {/* ÁREA 1: Treinamento definido (a opção visível) */}
                                             {visivel && (
-                                                <div className="pt-3 p-3 border rounded-sm border-pink-300">
+                                                <div className="pt-3 p-3 border rounded-sm bg-pink-100  border-pink-300">
                                                     {/* Cabeçalho da área: estrela + título + remover */}
                                                     <div className="flex items-center gap-2 mb-3">
                                                         <span className="text-sejoga-rosa-oficial text-lg">★</span>
@@ -806,7 +806,7 @@ export function TrainingSession() {
 
                                                                     <div className="border border-pink-300 rounded-b-lg rounded-tr-sm overflow-hidden">
                                                                         {/* Cabeçalho*/}
-                                                                        <div className="bg-pink-100 px-2 py-1.5 border-b border-pink-300">
+                                                                        <div className="px-2 bg-white py-1.5 border-b">
                                                                             <div className="flex items-center">
                                                                                 <span className="font-semibold text-xs text-gray-800 flex items-center gap-1">
                                                                                     {nomeData(t.dateId)}
@@ -951,7 +951,7 @@ export function TrainingSession() {
                                     ) : (
                                         /* Monitor: vê a distribuição visível + confirma presença */
                                         visivel ? (
-                                            <div className="space-y-2 pt-5 p-3  border rounded-sm border-pink-300">
+                                            <div className="space-y-2 pt-5 p-3  border rounded-sm bg-pink-100  border-pink-300">
                                                 {visivel.data.trainings.map((t, i) => {
                                                     const usuarioNaData = t.monitorIds.includes(user?.id || '');
                                                     const jaConfirmou = confirmacoes[visivel.id]?.has(`${user?.id}|${t.dateId}`);
@@ -977,7 +977,7 @@ export function TrainingSession() {
 
                                                             <div className="border border-pink-300 rounded-b-lg rounded-tr-sm overflow-hidden">
                                                                 {/* Cabeçalho*/}
-                                                                <div className="bg-pink-100 px-2 py-1.5 border-b border-pink-300">
+                                                                <div className="bg-white px-2 py-1.5 border-b border-pink-300">
                                                                     <div className="flex items-center">
                                                                         <span className="font-semibold text-xs text-gray-800 flex items-center gap-1">
                                                                             {nomeData(t.dateId)}
