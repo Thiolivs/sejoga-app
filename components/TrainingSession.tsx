@@ -764,17 +764,17 @@ export function TrainingSession() {
                                         <div className="space-y-4">
                                             {/* ÁREA 1: Treinamento definido (a opção visível) */}
                                             {visivel && (
-                                                <div className="pt-3 p-3 bg-pink-100 border rounded-sm border-sejoga-rosa-oficial">
+                                                <div className="pt-3 p-3 border rounded-sm border-pink-300">
                                                     {/* Cabeçalho da área: estrela + título + remover */}
                                                     <div className="flex items-center gap-2 mb-3">
                                                         <span className="text-sejoga-rosa-oficial text-lg">★</span>
-                                                        <h4 className="font-bold text-sm text-sejoga-rosa-oficial">
+                                                        <h4 className="text-sm">
                                                             Treinamento selecionado
                                                         </h4>
                                                         <button
                                                             onClick={() => removerVisivel(cycle.id, visivel.id)}
                                                             disabled={salvandoVisivel}
-                                                            className="ml-auto text-xs font-semibold text-sejoga-rosa-oficial hover:underline"
+                                                            className="ml-auto text-xs font-semibold text-red-500 hover:underline"
                                                         >
                                                             Remover
                                                         </button>
@@ -785,6 +785,7 @@ export function TrainingSession() {
                                                             const usuarioNaData = t.monitorIds.includes(user?.id || '');
                                                             const jaConfirmou = confirmacoes[visivel.id]?.has(`${user?.id}|${t.dateId}`);
 
+                                                            // Cores por turno (herdadas do padrão dos botões)
                                                             const corTurno: Record<string, string> = {
                                                                 morning: 'bg-yellow-50 border-yellow-300',
                                                                 afternoon: 'bg-orange-50 border-orange-300',
@@ -799,17 +800,18 @@ export function TrainingSession() {
                                                             return (
                                                                 <div key={i} className="mb-5">
                                                                     {/* Rótulo fora do card */}
-                                                                    <div className="text-xs text-white bg-sejoga-rosa-oficial rounded-t-sm px-2 py-1 inline-block">
+                                                                    <div className=" text-xs text-white bg-sejoga-rosa-oficial rounded-t-sm px-2 py-1 inline-block">
                                                                         Treinamento {i + 1}
                                                                     </div>
 
                                                                     <div className="border border-pink-300 rounded-b-lg rounded-tr-sm overflow-hidden">
-                                                                        {/* Cabeçalho */}
+                                                                        {/* Cabeçalho*/}
                                                                         <div className="bg-pink-100 px-2 py-1.5 border-b border-pink-300">
                                                                             <div className="flex items-center">
                                                                                 <span className="font-semibold text-xs text-gray-800 flex items-center gap-1">
                                                                                     {nomeData(t.dateId)}
                                                                                 </span>
+
                                                                                 <span className="text-[11px] text-gray-600 ml-2">
                                                                                     · {t.monitorIds.length} monitores
                                                                                 </span>
@@ -827,20 +829,20 @@ export function TrainingSession() {
                                                                                         onChange={() => toggleConfirmacao(visivel.id, t.dateId)}
                                                                                         className="w-5 h-5 rounded"
                                                                                     />
-                                                                                    <span className="text-xs font-semibold text-sejoga-verde-oficial">
+                                                                                    <span className="text-xs font-semibold text-sejoga-verde-oficial text-gray-700">
                                                                                         Confirmar presença no Treinamento
                                                                                     </span>
                                                                                 </label>
                                                                             )}
-
                                                                             <div className="grid grid-cols-3 gap-2">
                                                                                 {(['morning', 'afternoon', 'night'] as const).map((turno) => {
                                                                                     const nomes = (t.shifts as Record<string, { id: string; name: string }[]>)[turno] || [];
                                                                                     return (
                                                                                         <div key={turno} className={`rounded p-2 ${corTurno[turno] || 'bg-gray-50 border-gray-200'}`}>
-                                                                                            <div className={`text-[11px] text-center mb-2 font-semibold ${corTituloTurno[turno] || 'text-gray-600'}`}>
+                                                                                            <div className={`text-[11px] border-b border-gray-300 text-center pb-2 mb-2 font-semibold ${corTituloTurno[turno] || 'text-gray-600'}`}>
                                                                                                 {nomeTurno(turno)}:
                                                                                             </div>
+
                                                                                             <div className="text-[11px] text-gray-600">
                                                                                                 {nomes.length > 0 ? (
                                                                                                     nomes.map((m, j) => {
@@ -864,6 +866,8 @@ export function TrainingSession() {
                                                                                     );
                                                                                 })}
                                                                             </div>
+
+
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -947,7 +951,7 @@ export function TrainingSession() {
                                     ) : (
                                         /* Monitor: vê a distribuição visível + confirma presença */
                                         visivel ? (
-                                            <div className="space-y-2 pt-5 p-3 bg-pink-100 border rounded-sm border-sejoga-rosa-oficial">
+                                            <div className="space-y-2 pt-5 p-3  border rounded-sm border-pink-300">
                                                 {visivel.data.trainings.map((t, i) => {
                                                     const usuarioNaData = t.monitorIds.includes(user?.id || '');
                                                     const jaConfirmou = confirmacoes[visivel.id]?.has(`${user?.id}|${t.dateId}`);
@@ -1006,9 +1010,10 @@ export function TrainingSession() {
                                                                             const nomes = (t.shifts as Record<string, { id: string; name: string }[]>)[turno] || [];
                                                                             return (
                                                                                 <div key={turno} className={`rounded p-2 ${corTurno[turno] || 'bg-gray-50 border-gray-200'}`}>
-                                                                                    <div className={`text-[11px] text-center mb-2 font-semibold ${corTituloTurno[turno] || 'text-gray-600'}`}>
+                                                                                    <div className={`text-[11px] border-b border-gray-300 text-center pb-2 mb-2 font-semibold ${corTituloTurno[turno] || 'text-gray-600'}`}>
                                                                                         {nomeTurno(turno)}:
                                                                                     </div>
+
                                                                                     <div className="text-[11px] text-gray-600">
                                                                                         {nomes.length > 0 ? (
                                                                                             nomes.map((m, j) => {
