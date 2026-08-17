@@ -91,7 +91,8 @@ export function AddGameForm({ onSuccess }: { onSuccess?: () => void }) {
             // 1. Inserir o jogo
             const gameData = {
                 name: values.name,
-                publisher_id: values.publisher_id || null, // ✅ salva o ID da editora
+                publisher_id: values.publisher_id || null, 
+                publisher: publisherName || null, 
                 year_received: values.year_received || null,
                 year_release: values.year_release || null,
                 players_min: values.players_min || null,

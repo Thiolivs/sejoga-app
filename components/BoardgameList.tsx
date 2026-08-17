@@ -396,12 +396,47 @@ export function BoardgameList() {
 
                 {/* Painel de Filtros Avançados */}
                 {showFilters && (
-                    <div className="mt-4 pt-4 border-t space-y-2">
+                    <div className="mt-1 pt-1 space-y-2">
+
+                        {/* Monitores (quem sabe ensinar) - só para monitores/admins */}
+                        {isMonitor && teachersList.length > 0 && (
+                            <div className="border rounded-lg overflow-hidden">
+                                <button
+                                    onClick={() => toggleSection('teachers')}
+                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-2 hover:bg-gray-50"
+                                >
+                                    <span>🧑‍🏫 Monitores <span className="text-xs text-gray-400 font-normal">(*novidade)</span></span>                                    <span>{openSections.includes('teachers') ? '▲' : '▼'}</span>
+                                </button>
+
+                                {openSections.includes('teachers') && (
+                                    <div className="flex flex-wrap gap-2 px-3 pb-3">
+                                        {teachersList.map((teacher) => (
+                                            <label
+                                                key={teacher.id}
+                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedTeachers.includes(teacher.id)
+                                                    ? 'bg-sejoga-azul-oficial text-white'
+                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                                    }`}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    className="hidden"
+                                                    checked={filters.selectedTeachers.includes(teacher.id)}
+                                                    onChange={() => toggleTeacher(teacher.id)}
+                                                />
+                                                {teacher.name}
+                                            </label>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                         {/* Filtro por número de jogadores */}
                         <div className="border rounded-lg overflow-hidden">
                             <button
                                 onClick={() => toggleSection('players')}
-                                className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-2 hover:bg-gray-50"
                             >
                                 <span>👤 Jogadores</span>
                                 <span>{openSections.includes('players') ? '▲' : '▼'}</span>
@@ -448,7 +483,7 @@ export function BoardgameList() {
                             <div className="border rounded-lg overflow-hidden">
                                 <button
                                     onClick={() => toggleSection('publishers')}
-                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-2 hover:bg-gray-50"
                                 >
                                     <span>🏢 Editoras</span>
                                     <span>{openSections.includes('publishers') ? '▲' : '▼'}</span>
@@ -459,7 +494,7 @@ export function BoardgameList() {
                                         {publishers.map((publisher) => (
                                             <label
                                                 key={publisher.id}
-                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedPublishers.includes(publisher.id)
+                                                className={`px-1.5 py-1 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedPublishers.includes(publisher.id)
                                                     ? 'bg-sejoga-laranja-oficial text-white'
                                                     : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                                     }`}
@@ -483,9 +518,9 @@ export function BoardgameList() {
                             <div className="border rounded-lg overflow-hidden">
                                 <button
                                     onClick={() => toggleSection('categories')}
-                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-2 hover:bg-gray-50"
                                 >
-                                    <span>📚Categorias</span>
+                                    <span>📚Categorias<span className="text-xs text-gray-400 font-normal"> (em breve)</span></span>
                                     <span>{openSections.includes('categories') ? '▲' : '▼'}</span>
                                 </button>
 
@@ -518,9 +553,9 @@ export function BoardgameList() {
                             <div className="border rounded-lg overflow-hidden">
                                 <button
                                     onClick={() => toggleSection('mechanics')}
-                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
+                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-2 hover:bg-gray-50"
                                 >
-                                    <span>⚙️ Mecânicas</span>
+                                    <span>⚙️ Mecânicas<span className="text-xs text-gray-400 font-normal"> (em breve)</span></span>
                                     <span>{openSections.includes('mechanics') ? '▲' : '▼'}</span>
                                 </button>
 
@@ -529,7 +564,7 @@ export function BoardgameList() {
                                         {mechanicsByType.mechanic.map((mechanic) => (
                                             <label
                                                 key={mechanic.id}
-                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
+                                                className={`px-1.5 py-1 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedMechanics.includes(mechanic.id)
                                                     ? 'bg-sejoga-verde-oficial text-white'
                                                     : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                                     }`}
@@ -548,40 +583,7 @@ export function BoardgameList() {
                             </div>
                         )}
 
-                        {/* Monitores (quem sabe ensinar) - só para monitores/admins */}
-                        {isMonitor && teachersList.length > 0 && (
-                            <div className="border rounded-lg overflow-hidden">
-                                <button
-                                    onClick={() => toggleSection('teachers')}
-                                    className="flex items-center justify-between w-full text-sm font-medium text-gray-700 p-3 hover:bg-gray-50"
-                                >
-                                    <span>🧑‍🏫 Monitores</span>
-                                    <span>{openSections.includes('teachers') ? '▲' : '▼'}</span>
-                                </button>
 
-                                {openSections.includes('teachers') && (
-                                    <div className="flex flex-wrap gap-2 px-3 pb-3">
-                                        {teachersList.map((teacher) => (
-                                            <label
-                                                key={teacher.id}
-                                                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all text-xs ${filters.selectedTeachers.includes(teacher.id)
-                                                    ? 'bg-sejoga-azul-oficial text-white'
-                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                                    }`}
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    className="hidden"
-                                                    checked={filters.selectedTeachers.includes(teacher.id)}
-                                                    onChange={() => toggleTeacher(teacher.id)}
-                                                />
-                                                {teacher.name}
-                                            </label>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        )}
 
                         {/* Modos 
                         {mechanicsByType.mode.length > 0 && (
