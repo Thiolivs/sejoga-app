@@ -226,24 +226,22 @@ export function ManageUsers() {
                     return (
                         <div
                             key={user.id}
-                            className={`bg-white border rounded-lg p-2.5 ${isCurrentUser ? 'border-yellow-400 bg-yellow-50' : ''
+                            className={`bg-white border rounded-lg p-2.5 overflow-hidden ${isCurrentUser ? 'border-yellow-400 bg-yellow-50' : ''
                                 }`}
                         >
                             <div className="flex items-center justify-between gap-3">
                                 {/* Info do usuário - esquerda */}
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                                    <div className="flex items-center gap-1.5 mb-0.5">
                                         <span
-                                            className={`px-1.5 py-0.5 rounded border text-[10px] font-medium flex-shrink-0 text-center justify-center ${getRoleColor(
-                                                user.role
-                                            )}`}
+                                            className={`px-1.5 py-0.5 rounded border text-[10px] font-medium flex-shrink-0 text-center justify-center ${getRoleColor(user.role)}`}
                                         >
                                             {getRoleLabel(user.role)}
                                         </span>
 
-                                        <h3 className="font-semibold text-sm truncate">
+                                        <span className="text-[12px] truncate min-w-0">
                                             {user.first_name} {user.last_name}
-                                        </h3>
+                                        </span>
 
                                         {isCurrentUser && (
                                             <span className="px-1.5 py-0.5 bg-yellow-200 text-yellow-800 text-[10px] rounded flex-shrink-0">
@@ -251,7 +249,7 @@ export function ManageUsers() {
                                             </span>
                                         )}
                                     </div>
-                                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                                    <p className="text-[10px] text-gray-500 truncate">{user.email}</p>
                                 </div>
 
                                 {/* Seletor de role - direita */}
@@ -267,7 +265,7 @@ export function ManageUsers() {
                                             }}
                                             disabled={isUpdating}
                                         >
-                                            <SelectTrigger className="h-8 w-32 text-xs">
+                                            <SelectTrigger className="h-8 w-29 text-xs">
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -282,7 +280,7 @@ export function ManageUsers() {
                                             </SelectContent>
                                         </Select>
                                     ) : (
-                                        <div className="text-[10px] text-gray-500 italic max-w-[80px] text-right">
+                                        <div className="text-[10px] text-gray-500 italic max-w-[100px] text-right mr-2">
                                             Não pode alterar
                                         </div>
                                     )}
