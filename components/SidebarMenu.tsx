@@ -21,6 +21,7 @@ import {
     Check,
     Settings,
     LogOut,
+    Package,
 } from 'lucide-react';
 
 type Tab = 'training' | 'profile' | 'jogos' | 'register' | 'statistics';
@@ -141,6 +142,16 @@ export function SidebarMenu({
                         <button onClick={() => goToTab('training')} className={itemBase}>
                             <Calendar className="w-5 h-5" />
                             <span className="font-medium">Treinamentos</span>
+                        </button>
+                    )}
+
+                    {canSeeRestricted && (
+                        <button
+                            onClick={() => handleNavigation('/user-app/administration/loans')}
+                            className={itemBase}
+                        >
+                            <Package className="w-5 h-5" />
+                            <span className="font-medium">Empréstimos</span>
                         </button>
                     )}
 
