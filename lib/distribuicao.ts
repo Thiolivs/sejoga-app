@@ -196,7 +196,7 @@ function gerarVariacoesDuasDatas(
 export function gerarOpcoes(
     monitores: MonitorAvailability[],
     todasAsDatas: string[],
-    maxOpcoes = 5
+    maxOpcoes = 10
 ): DistributionOption[] {
     const porMonitor = new Map<string, MonitorAvailability>();
     monitores.forEach(m => porMonitor.set(m.monitorId, m));
@@ -270,5 +270,11 @@ export function gerarOpcoes(
         return varianciaA - varianciaB;
     });
 
-    return opcoes.slice(0, maxOpcoes);
+    // Ordena as datas dentro de cada opção (mais antiga primeiro)
+    const opcoesOrdenadas = opcoes.map(opt => ({
+        ...opt,
+        trainings: [...opt.trainings].sort((a, b) => a.dateId.localeCompare(b.dateId))
+    }));
+
+    return opcoesOrdenadas.slice(0, maxOpcoes);
 }
